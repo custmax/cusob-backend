@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cusob.mapper.ContactMapper">
+
+
+    <select id="pageQuery" resultType="com.cusob.vo.ContactVo">
+        SELECT contact.id, contact.first_name, contact.last_name, contact.email,
+        contact.phone, contact.mobile, contact.company, contact_groups.group_name
+        FROM contact JOIN contact_groups ON contact.group_id = contact_groups.id
+        WHERE contact.user_id = #{userId} AND contact.is_deleted = 0
+        <if test="groupId != null and groupId != 0">
+              and contact.group_id = #{groupId}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            and contact.first_name like concat('%', #{keyword}, '%')
+            or contact.last_name like concat('%', #{keyword}, '%')
+            or contact.company like concat('%', #{keyword}, '%')
+            or contact.email like concat('%', #{keyword}, '%')
+            or contact.phone like concat('%', #{keyword}, '%')
+        </if>
+    </select>
+
+    <select id="pageQueryByCompanyId" resultType="com.cusob.vo.ContactVo">
+        SELECT contact.id, contact.user_id, contact.first_name, contact.last_name, contact.email,
+        contact.phone, contact.mobile, contact.company, contact_groups.group_name
+        FROM contact JOIN contact_groups ON contact.group_id = contact_groups.id
+        WHERE contact.company_id = #{companyId} AND contact.is_deleted = 0
+        <if test="groupId != null and groupId != 0">
+            and contact.group_id = #{groupId}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            and contact.first_name like concat('%', #{keyword}, '%')
+            or contact.last_name like concat('%', #{keyword}, '%')
+            or contact.company like concat('%', #{keyword}, '%')
+            or contact.email like concat('%', #{keyword}, '%')
+            or contact.phone like concat('%', #{keyword}, '%')
+        </if>
+    </select>
+</mapper>
