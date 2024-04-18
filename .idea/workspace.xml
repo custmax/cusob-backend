@@ -22,18 +22,9 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ad470dbc-db14-4164-90ee-30b71e6134ec" name="默认更改列表" comment="switch paypal mode from sandbox to live">
+    <list default="true" id="ad470dbc-db14-4164-90ee-30b71e6134ec" name="默认更改列表" comment="get public key by domain">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/com/cusob/utils/DnsUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/utils/DnsUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/controller/DkimController.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/controller/DkimController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/DkimService.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/DkimService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/DkimServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/DkimServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/DomainServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/DomainServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/UserServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/resources/application-dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/resources/application-prod.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/target/classes/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/application-dev.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/target/classes/com/cusob/service/impl/UserServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/server/target/classes/com/cusob/service/impl/UserServiceImpl.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +74,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/server/src/main/resources/mapper" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="项目" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -94,6 +85,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\daybr\cusob\project\cusob" />
       <recent name="C:\Users\daybr\cusob\project\cusob\server\src\main\resources\mapper" />
       <recent name="C:\Users\daybr\cusob\project\cusob\server\src\main\resources\templates" />
       <recent name="C:\Users\daybr\cusob\project\cusob\server\src\main\java\com\cusob\service\doc" />
@@ -244,13 +236,7 @@
       <workItem from="1713273518339" duration="3492000" />
       <workItem from="1713315028974" duration="1639000" />
       <workItem from="1713319201911" duration="10856000" />
-    </task>
-    <task id="LOCAL-00018" summary="save email template">
-      <created>1711076257754</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1711076257754</updated>
+      <workItem from="1713401471161" duration="1395000" />
     </task>
     <task id="LOCAL-00019" summary="add table template field isCustomized">
       <created>1711088015148</created>
@@ -588,7 +574,14 @@
       <option name="project" value="LOCAL" />
       <updated>1713274962772</updated>
     </task>
-    <option name="localTasksCounter" value="67" />
+    <task id="LOCAL-00067" summary="get public key by domain">
+      <created>1713401553348</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1713401553348</updated>
+    </task>
+    <option name="localTasksCounter" value="68" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -607,7 +600,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="company contacts and emails count" />
     <MESSAGE value="add admin, remove admin and remove user" />
     <MESSAGE value="get media list(user and admin)" />
     <MESSAGE value="media" />
@@ -632,7 +624,8 @@
     <MESSAGE value="Optimized email sending time" />
     <MESSAGE value="fix send email bug(report send count)" />
     <MESSAGE value="switch paypal mode from sandbox to live" />
-    <option name="LAST_COMMIT_MESSAGE" value="switch paypal mode from sandbox to live" />
+    <MESSAGE value="get public key by domain" />
+    <option name="LAST_COMMIT_MESSAGE" value="get public key by domain" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
