@@ -27,7 +27,7 @@ public enum ResultCodeEnum {
     REMOVE_YOURSELF_WRONG(216, "You can't delete yourself"),
 
     EMAIL_NOT_EXIST(220, "Email is not registered"),
-    PASSWORD_WRONG(221, "The password is wrong"),
+    PASSWORD_WRONG(221, "Incorrect email or password"),
 
     EMAIL_IS_REGISTERED(222, "The email is already registered"),
     EMAIL_IS_EMPTY(223, "The email is empty"),
@@ -55,6 +55,8 @@ public enum ResultCodeEnum {
     EMAIL_SEND_FAIL(243, "The email failed to be sent"),
 
     KEY_GENERATE_FAIL(245, "The key generation failed"),
+
+    PARAM_IS_EMPTY(246, "The parameter is empty"),
 
     VERIFY_CODE_EMPTY(250, "The verify code is empty"),
     VERIFY_CODE_WRONG(251, "The verify code is wrong"),

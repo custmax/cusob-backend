@@ -15,6 +15,14 @@ public interface MailService {
     void sendTextMailMessage(String to,String subject,String text);
 
     /**
+     * 发送Html邮件
+     * @param to
+     * @param subject
+     * @param content
+     */
+    void sendHtmlMailMessage(String to,String subject,String content);
+
+    /**
      * send email
      * @param sender
      * @param senderName

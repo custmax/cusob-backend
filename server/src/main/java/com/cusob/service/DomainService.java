@@ -1,8 +1,13 @@
 package com.cusob.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.cusob.entity.Domain;
+import com.cusob.vo.DomainListVo;
+
+import java.util.List;
 import java.util.Map;
 
-public interface DomainService {
+public interface DomainService extends IService<Domain> {
 
     /**
      * domain Verify
@@ -10,4 +15,10 @@ public interface DomainService {
      * @return
      */
     Map<String, Boolean> domainVerify(String email);
+
+    /**
+     * get DomainList
+     * @return
+     */
+    List<DomainListVo> getDomainList();
 }

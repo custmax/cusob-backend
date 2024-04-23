@@ -1,11 +1,16 @@
 package com.cusob.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cusob.auth.AuthContext;
 import com.cusob.entity.Dkim;
+import com.cusob.entity.Domain;
 import com.cusob.exception.CusobException;
+import com.cusob.mapper.DomainMapper;
 import com.cusob.result.ResultCodeEnum;
 import com.cusob.service.DkimService;
 import com.cusob.service.DomainService;
 import com.cusob.utils.DnsUtil;
+import com.cusob.vo.DomainListVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class DomainServiceImpl implements DomainService {
+public class DomainServiceImpl extends ServiceImpl<DomainMapper, Domain> implements DomainService {
 
     @Autowired
     private DkimService dkimService;
@@ -45,6 +50,17 @@ public class DomainServiceImpl implements DomainService {
         map.put("spf", flagSpf);
         map.put("dkim", flagDkim);
         return map;
+    }
+
+    /**
+     * get DomainList
+     * @return
+     */
+    @Override
+    public List<DomainListVo> getDomainList() {
+        Long userId = AuthContext.getUserId();
+        List<DomainListVo> list = baseMapper.getDomainList(userId);
+        return list;
     }
 
     private Boolean dkimVerify(String domain) {

@@ -22,9 +22,20 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ad470dbc-db14-4164-90ee-30b71e6134ec" name="默认更改列表" comment="get public key by domain">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="ad470dbc-db14-4164-90ee-30b71e6134ec" name="默认更改列表" comment="get priceList monthly or yearly">
+      <change afterPath="$PROJECT_DIR$/model/src/main/java/com/cusob/entity/Price.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/controller/PriceController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/mapper/PriceMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/PriceService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/PriceServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/src/main/resources/mapper/PriceMapper.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/com/cusob/auth/LoginMvcConfigurerAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/auth/LoginMvcConfigurerAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/com/cusob/constant/RedisConst.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/constant/RedisConst.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/com/cusob/result/ResultCodeEnum.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/result/ResultCodeEnum.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/MailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/MailService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/MailServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/MailServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/UserServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,19 +85,19 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/server/src/main/resources/mapper" />
     <property name="project.structure.last.edited" value="项目" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.importing" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.repository.indices" />
   </component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\daybr\cusob\project\cusob" />
       <recent name="C:\Users\daybr\cusob\project\cusob\server\src\main\resources\mapper" />
+      <recent name="C:\Users\daybr\cusob\project\cusob" />
       <recent name="C:\Users\daybr\cusob\project\cusob\server\src\main\resources\templates" />
       <recent name="C:\Users\daybr\cusob\project\cusob\server\src\main\java\com\cusob\service\doc" />
     </key>
@@ -236,14 +247,16 @@
       <workItem from="1713273518339" duration="3492000" />
       <workItem from="1713315028974" duration="1639000" />
       <workItem from="1713319201911" duration="10856000" />
-      <workItem from="1713401471161" duration="1395000" />
-    </task>
-    <task id="LOCAL-00019" summary="add table template field isCustomized">
-      <created>1711088015148</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1711088015148</updated>
+      <workItem from="1713401471161" duration="2388000" />
+      <workItem from="1713405721145" duration="10757000" />
+      <workItem from="1713453577412" duration="1233000" />
+      <workItem from="1713486313455" duration="10573000" />
+      <workItem from="1713585060480" duration="980000" />
+      <workItem from="1713705027395" duration="658000" />
+      <workItem from="1713753425503" duration="3753000" />
+      <workItem from="1713769800391" duration="3791000" />
+      <workItem from="1713791434954" duration="5591000" />
+      <workItem from="1713831596638" duration="910000" />
     </task>
     <task id="LOCAL-00020" summary="get plan price by contact capacity">
       <created>1711094653796</created>
@@ -581,7 +594,14 @@
       <option name="project" value="LOCAL" />
       <updated>1713401553348</updated>
     </task>
-    <option name="localTasksCounter" value="68" />
+    <task id="LOCAL-00068" summary="add Domain entity">
+      <created>1713432937113</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1713432937113</updated>
+    </task>
+    <option name="localTasksCounter" value="69" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -600,8 +620,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="add admin, remove admin and remove user" />
-    <MESSAGE value="get media list(user and admin)" />
     <MESSAGE value="media" />
     <MESSAGE value="get Order History by userId or companyId" />
     <MESSAGE value="template permission control" />
@@ -625,7 +643,9 @@
     <MESSAGE value="fix send email bug(report send count)" />
     <MESSAGE value="switch paypal mode from sandbox to live" />
     <MESSAGE value="get public key by domain" />
-    <option name="LAST_COMMIT_MESSAGE" value="get public key by domain" />
+    <MESSAGE value="add Domain entity" />
+    <MESSAGE value="get priceList monthly or yearly" />
+    <option name="LAST_COMMIT_MESSAGE" value="get priceList monthly or yearly" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

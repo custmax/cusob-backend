@@ -2,11 +2,12 @@ package com.cusob.controller;
 
 import com.cusob.result.Result;
 import com.cusob.service.DomainService;
+import com.cusob.vo.DomainListVo;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -20,5 +21,19 @@ public class DomainController {
     public Result verify(String email){
         Map<String, Boolean> map = domainService.domainVerify(email);
         return Result.ok(map);
+    }
+
+    @ApiOperation("get DomainList")
+    @GetMapping("getList")
+    public Result getDomainList(){
+        List<DomainListVo> list = domainService.getDomainList();
+        return Result.ok(list);
+    }
+
+    @ApiOperation("remove Domain")
+    @DeleteMapping("remove")
+    public Result removeDomain(Long id){
+        domainService.removeById(id);
+        return Result.ok();
     }
 }
