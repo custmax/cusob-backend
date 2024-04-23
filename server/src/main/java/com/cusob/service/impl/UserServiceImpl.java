@@ -391,17 +391,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new CusobException(ResultCodeEnum.EMAIL_IS_EMPTY);
         }
         String code = String.valueOf((int)((Math.random() * 9 + 1) * Math.pow(10,5)));
-        String subject = "Welcome to Our Email Marketing Platform! Verification Code Reminder";
+        String subject = code + " is your Cusob verification code";
         // todo 待优化
-        String content = "Hi \n" +
-                "You are now in the process of signing up for a Cusob account, and the verification code is as follows \n" +
-                code;
+        String content = "<html><body><h1>Hello World!</h1></body></html>";
         Email mail = new Email();
         mail.setEmail(email);
         mail.setSubject(subject);
         mail.setContent(content);
         String key = RedisConst.REGISTER_PREFIX + email;
-        // set verify code ttl 10 minutes
+        // set verify code ttl 30 minutes
         redisTemplate.opsForValue().set(key, code, RedisConst.REGISTER_TIMEOUT, TimeUnit.MINUTES);
         rabbitTemplate.convertAndSend(MqConst.EXCHANGE_SIGN_DIRECT, MqConst.ROUTING_SEND_CODE, mail);
     }

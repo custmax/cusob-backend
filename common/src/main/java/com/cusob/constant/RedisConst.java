@@ -4,7 +4,7 @@ public class RedisConst {
 
     public static final String REGISTER_PREFIX = "register:";
 
-    public static final long REGISTER_TIMEOUT = 10;
+    public static final long REGISTER_TIMEOUT = 30;
 
     public static final String PASSWORD_PREFIX = "password:";
 
