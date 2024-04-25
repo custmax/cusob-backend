@@ -6,22 +6,30 @@ import com.cusob.auth.AuthContext;
 import com.cusob.constant.MqConst;
 import com.cusob.constant.RedisConst;
 import com.cusob.dto.SenderDto;
+import com.cusob.entity.Dkim;
+import com.cusob.entity.Domain;
 import com.cusob.entity.Email;
 import com.cusob.entity.Sender;
 import com.cusob.exception.CusobException;
 import com.cusob.mapper.SenderMapper;
 import com.cusob.result.ResultCodeEnum;
+import com.cusob.service.DkimService;
+import com.cusob.service.DomainService;
 import com.cusob.service.MailService;
 import com.cusob.service.SenderService;
+import com.cusob.utils.DkimGeneratorUtil;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -32,6 +40,19 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
 
     @Resource
     private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private DomainService domainService;
+
+    @Value("${cusob.domain.dkim.prefix}")
+    private String dkimPrefix;
+
+    @Value("${cusob.domain.dkim.selector}")
+    private String selectorPrefix;
+
+    @Autowired
+    private DkimService dkimService;
+
     /**
      * save Sender
      * @param senderDto
@@ -53,6 +74,30 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
         BeanUtils.copyProperties(senderDto, sender);
         sender.setUserId(AuthContext.getUserId());
         baseMapper.insert(sender);
+
+        String email = sender.getEmail();
+        String domain = email.substring(email.lastIndexOf('@') + 1);
+        Domain domainSave = new Domain();
+        domainSave.setDomain(domain);
+        domainSave.setUserId(AuthContext.getUserId());
+        domainService.save(domainSave);
+
+        try {
+            Dkim dkim = new Dkim();
+            Map<String, String> map = DkimGeneratorUtil.generateKey();
+            String privateKey = map.get(DkimGeneratorUtil.PRIVATE_KEY);
+            String publicKey = map.get(DkimGeneratorUtil.PUBLIC_KEY);
+            double num = (Math.random()*9 + 1)*10000;
+            String str = String.valueOf(Math.round(num));
+            dkim.setPrivateKey(privateKey);
+            dkim.setPublicKey(dkimPrefix + publicKey);
+            dkim.setSelector(selectorPrefix + str);
+            dkim.setDomain(domain);
+            dkimService.save(dkim);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**

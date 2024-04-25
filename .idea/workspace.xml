@@ -22,27 +22,12 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ad470dbc-db14-4164-90ee-30b71e6134ec" name="默认更改列表" comment="get priceList monthly or yearly">
-      <change afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/keys/private.key.der" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/keys/private_key.der" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c36be01e-1cad-4f21-8944-f5b8a033686a.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c36be01e-1cad-4f21-8944-f5b8a033686a/storage_v2/_src_/schema/information_schema.FNRwLQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c36be01e-1cad-4f21-8944-f5b8a033686a/storage_v2/_src_/schema/mysql.osA4Bg.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c36be01e-1cad-4f21-8944-f5b8a033686a/storage_v2/_src_/schema/performance_schema.kIw0nw.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c36be01e-1cad-4f21-8944-f5b8a033686a/storage_v2/_src_/schema/sys.zb4BAA.meta" beforeDir="false" />
+    <list default="true" id="ad470dbc-db14-4164-90ee-30b71e6134ec" name="默认更改列表" comment="generate public key and secret key">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/com/cusob/result/ResultCodeEnum.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/result/ResultCodeEnum.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/src/main/java/com/cusob/utils/DkimGeneratorUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/utils/DkimGeneratorUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/com/cusob/utils/DnsUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/utils/DnsUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/com/cusob/utils/EmailUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/utils/EmailUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/src/main/java/com/cusob/entity/Dkim.java" beforeDir="false" afterPath="$PROJECT_DIR$/model/src/main/java/com/cusob/entity/Dkim.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/src/main/java/com/cusob/entity/Domain.java" beforeDir="false" afterPath="$PROJECT_DIR$/model/src/main/java/com/cusob/entity/Domain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/controller/DkimController.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/controller/DkimController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/controller/DomainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/controller/DomainController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/DomainService.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/DomainService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/DkimServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/DkimServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/DomainServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/DomainServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/SenderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/SenderServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/resources/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/resources/application-dev.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/resources/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/resources/application-prod.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -122,7 +107,7 @@
       <recent name="com.cusob.dto" />
     </key>
   </component>
-  <component name="RunManager" selected="应用程序.EmailUtil">
+  <component name="RunManager" selected="应用程序.DkimGeneratorUtil">
     <configuration name="DelaySendUtil" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.cusob.utils.DelaySendUtil" />
       <module name="common" />
@@ -190,9 +175,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="应用程序.DkimGeneratorUtil" />
         <item itemvalue="Spring Boot.CusObApplication" />
         <item itemvalue="应用程序.EmailUtil" />
-        <item itemvalue="应用程序.DkimGeneratorUtil" />
         <item itemvalue="应用程序.DelaySendUtil" />
         <item itemvalue="应用程序.DnsUtil" />
       </list>
@@ -270,14 +255,7 @@
       <workItem from="1713924135006" duration="4161000" />
       <workItem from="1713936764702" duration="4591000" />
       <workItem from="1713965094497" duration="4144000" />
-      <workItem from="1714004450432" duration="10032000" />
-    </task>
-    <task id="LOCAL-00021" summary="get plan price by id">
-      <created>1711095429116</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1711095429116</updated>
+      <workItem from="1714004450432" duration="15500000" />
     </task>
     <task id="LOCAL-00022" summary="get Contact Count By Group and add company">
       <created>1711284741585</created>
@@ -615,7 +593,14 @@
       <option name="project" value="LOCAL" />
       <updated>1713837484539</updated>
     </task>
-    <option name="localTasksCounter" value="70" />
+    <task id="LOCAL-00070" summary="generate public key and secret key">
+      <created>1714027930936</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1714027930936</updated>
+    </task>
+    <option name="localTasksCounter" value="71" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -634,7 +619,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="media" />
     <MESSAGE value="get Order History by userId or companyId" />
     <MESSAGE value="template permission control" />
     <MESSAGE value="user numbers limit" />
@@ -659,7 +643,8 @@
     <MESSAGE value="get public key by domain" />
     <MESSAGE value="add Domain entity" />
     <MESSAGE value="get priceList monthly or yearly" />
-    <option name="LAST_COMMIT_MESSAGE" value="get priceList monthly or yearly" />
+    <MESSAGE value="generate public key and secret key" />
+    <option name="LAST_COMMIT_MESSAGE" value="generate public key and secret key" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
