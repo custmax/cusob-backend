@@ -35,9 +35,8 @@ public class DnsUtil {
         }
     }
 
-    public static List<String> checkDkim(String domain){
-        // todo selector may update
-        String selector = "s1"; // DKIM选择器，通常与你的邮件服务器配置相关 自定义
+    public static List<String> checkDkim(String selector, String domain){
+
         try {
             // 构造DKIM记录的查询名称，通常是"<selector>._domainkey.<domain>"
             String dkimRecordName = selector + "."  + "_domainkey."+ domain;
@@ -69,6 +68,6 @@ public class DnsUtil {
 
     public static void main(String[] args) {
         String domain = "daybreakhust.top";
-        System.out.println(checkDkim(domain).get(0));
+
     }
 }

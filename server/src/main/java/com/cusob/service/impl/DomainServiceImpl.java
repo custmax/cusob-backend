@@ -1,5 +1,6 @@
 package com.cusob.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cusob.auth.AuthContext;
 import com.cusob.entity.Dkim;
@@ -29,26 +30,26 @@ public class DomainServiceImpl extends ServiceImpl<DomainMapper, Domain> impleme
     @Value("${cusob.domain.spf}")
     private String spf;
 
-    @Value("${cusob.domain.dkim.prefix}")
-    private String dkimPrefix;
-
     /**
      * domain Verify
-     * @param email
+     * @param domain
      * @return
      */
     @Override
-    public Map<String, Boolean> domainVerify(String email) {
-        if (!StringUtils.hasText(email)){
-            throw new CusobException(ResultCodeEnum.EMAIL_IS_EMPTY);
+    public Map<String, Boolean> domainVerify(String domain) {
+        if (!StringUtils.hasText(domain)){
+            throw new CusobException(ResultCodeEnum.DOMAIN_IS_EMPTY);
         }
-        String domain = email.substring(email.lastIndexOf('@') + 1);
         Map<String, Boolean> map = new HashMap<>();
         // todo 采用异步操作
         Boolean flagSpf = this.spfVerify(domain);
         Boolean flagDkim = this.dkimVerify(domain);
         map.put("spf", flagSpf);
         map.put("dkim", flagDkim);
+        Domain domainSelect = this.getByDomain(domain);
+        domainSelect.setSpf(flagSpf);
+        domainSelect.setDkim(flagDkim);
+        baseMapper.updateById(domainSelect);
         return map;
     }
 
@@ -63,11 +64,26 @@ public class DomainServiceImpl extends ServiceImpl<DomainMapper, Domain> impleme
         return list;
     }
 
+    /**
+     * get Domain
+     * @param domain
+     */
+    @Override
+    public Domain getByDomain(String domain) {
+        Domain domainSelect = baseMapper.selectOne(
+                new LambdaQueryWrapper<Domain>()
+                        .eq(Domain::getDomain, domain)
+        );
+        return domainSelect;
+    }
+
     private Boolean dkimVerify(String domain) {
-        List<String> dkimList = DnsUtil.checkDkim(domain);
         Dkim dkimSelect = dkimService.getDkim(domain);
-        String dkim = dkimPrefix + dkimSelect.getPublicKey();
-        if (dkimList!=null && dkimList.contains(dkim)){
+        String selector = dkimSelect.getSelector();
+        List<String> dkimList = DnsUtil.checkDkim(selector ,domain);
+
+        String publicKey = dkimSelect.getPublicKey();
+        if (dkimList!=null && dkimList.contains(publicKey)){
             return true;
         }
         return false;

@@ -11,6 +11,9 @@ public class Dkim extends BaseEntity{
     @TableField("domain")
     private String domain;
 
+    @TableField("selector")
+    private String selector;
+
     @TableField("private_key")
     private String privateKey;
 

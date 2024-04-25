@@ -23,19 +23,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ad470dbc-db14-4164-90ee-30b71e6134ec" name="默认更改列表" comment="get priceList monthly or yearly">
-      <change afterPath="$PROJECT_DIR$/model/src/main/java/com/cusob/entity/Price.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/controller/PriceController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/mapper/PriceMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/PriceService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/PriceServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/resources/mapper/PriceMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/keys/private.key.der" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/keys/private_key.der" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c36be01e-1cad-4f21-8944-f5b8a033686a.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c36be01e-1cad-4f21-8944-f5b8a033686a/storage_v2/_src_/schema/information_schema.FNRwLQ.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c36be01e-1cad-4f21-8944-f5b8a033686a/storage_v2/_src_/schema/mysql.osA4Bg.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c36be01e-1cad-4f21-8944-f5b8a033686a/storage_v2/_src_/schema/performance_schema.kIw0nw.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/c36be01e-1cad-4f21-8944-f5b8a033686a/storage_v2/_src_/schema/sys.zb4BAA.meta" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/com/cusob/auth/LoginMvcConfigurerAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/auth/LoginMvcConfigurerAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/java/com/cusob/constant/RedisConst.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/constant/RedisConst.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/common/src/main/java/com/cusob/result/ResultCodeEnum.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/result/ResultCodeEnum.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/MailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/MailService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/MailServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/MailServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/UserServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/com/cusob/utils/DkimGeneratorUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/utils/DkimGeneratorUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/com/cusob/utils/DnsUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/utils/DnsUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/java/com/cusob/utils/EmailUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/common/src/main/java/com/cusob/utils/EmailUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/src/main/java/com/cusob/entity/Dkim.java" beforeDir="false" afterPath="$PROJECT_DIR$/model/src/main/java/com/cusob/entity/Dkim.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/src/main/java/com/cusob/entity/Domain.java" beforeDir="false" afterPath="$PROJECT_DIR$/model/src/main/java/com/cusob/entity/Domain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/controller/DkimController.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/controller/DkimController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/controller/DomainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/controller/DomainController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/DomainService.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/DomainService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/DkimServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/DkimServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/DomainServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/java/com/cusob/service/impl/DomainServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,7 +92,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/server/src/main/resources/mapper" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/common/src/main/java/com/cusob/keys" />
     <property name="project.structure.last.edited" value="项目" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -96,12 +103,14 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\daybr\cusob\project\cusob\common\src\main\java\com\cusob\keys" />
       <recent name="C:\Users\daybr\cusob\project\cusob\server\src\main\resources\mapper" />
       <recent name="C:\Users\daybr\cusob\project\cusob" />
       <recent name="C:\Users\daybr\cusob\project\cusob\server\src\main\resources\templates" />
       <recent name="C:\Users\daybr\cusob\project\cusob\server\src\main\java\com\cusob\service\doc" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\daybr\cusob\project\cusob\common\src\main\java\com\cusob\keys" />
       <recent name="C:\Users\daybr\cusob\project\cusob\server\src\main\resources" />
       <recent name="D:\project\CusOb\common\src\main\java\com\cusob\exception" />
     </key>
@@ -113,7 +122,7 @@
       <recent name="com.cusob.dto" />
     </key>
   </component>
-  <component name="RunManager" selected="Spring Boot.CusObApplication">
+  <component name="RunManager" selected="应用程序.EmailUtil">
     <configuration name="DelaySendUtil" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.cusob.utils.DelaySendUtil" />
       <module name="common" />
@@ -182,9 +191,9 @@
     <recent_temporary>
       <list>
         <item itemvalue="Spring Boot.CusObApplication" />
-        <item itemvalue="应用程序.DelaySendUtil" />
         <item itemvalue="应用程序.EmailUtil" />
         <item itemvalue="应用程序.DkimGeneratorUtil" />
+        <item itemvalue="应用程序.DelaySendUtil" />
         <item itemvalue="应用程序.DnsUtil" />
       </list>
     </recent_temporary>
@@ -256,14 +265,12 @@
       <workItem from="1713753425503" duration="3753000" />
       <workItem from="1713769800391" duration="3791000" />
       <workItem from="1713791434954" duration="5591000" />
-      <workItem from="1713831596638" duration="910000" />
-    </task>
-    <task id="LOCAL-00020" summary="get plan price by contact capacity">
-      <created>1711094653796</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1711094653796</updated>
+      <workItem from="1713831596638" duration="6319000" />
+      <workItem from="1713876037925" duration="6827000" />
+      <workItem from="1713924135006" duration="4161000" />
+      <workItem from="1713936764702" duration="4591000" />
+      <workItem from="1713965094497" duration="4144000" />
+      <workItem from="1714004450432" duration="10032000" />
     </task>
     <task id="LOCAL-00021" summary="get plan price by id">
       <created>1711095429116</created>
@@ -601,7 +608,14 @@
       <option name="project" value="LOCAL" />
       <updated>1713432937113</updated>
     </task>
-    <option name="localTasksCounter" value="69" />
+    <task id="LOCAL-00069" summary="get priceList monthly or yearly">
+      <created>1713837484539</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1713837484539</updated>
+    </task>
+    <option name="localTasksCounter" value="70" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

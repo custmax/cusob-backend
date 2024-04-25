@@ -1,5 +1,6 @@
 package com.cusob.controller;
 
+import com.cusob.entity.Dkim;
 import com.cusob.result.Result;
 import com.cusob.service.DkimService;
 import io.swagger.annotations.ApiOperation;
@@ -28,6 +29,13 @@ public class DkimController {
     public Result getPublicKey(String domain){
         String publicKey = dkimService.getPublicKey(domain);
         return Result.ok(publicKey);
+    }
+
+    @ApiOperation("get Dkim by domain")
+    @GetMapping("get")
+    public Result getDkim(String domain){
+        Dkim dkim = dkimService.getDkim(domain);
+        return Result.ok(dkim);
     }
 
 }

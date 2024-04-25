@@ -11,14 +11,20 @@ public interface DomainService extends IService<Domain> {
 
     /**
      * domain Verify
-     * @param email
+     * @param domain
      * @return
      */
-    Map<String, Boolean> domainVerify(String email);
+    Map<String, Boolean> domainVerify(String domain);
 
     /**
      * get DomainList
      * @return
      */
     List<DomainListVo> getDomainList();
+
+    /**
+     * get Domain
+     * @param domain
+     */
+    Domain getByDomain(String domain);
 }

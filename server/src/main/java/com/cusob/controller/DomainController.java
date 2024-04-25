@@ -17,9 +17,10 @@ public class DomainController {
     @Autowired
     private DomainService domainService;
 
+    @ApiOperation("verify domain")
     @PostMapping("verify")
-    public Result verify(String email){
-        Map<String, Boolean> map = domainService.domainVerify(email);
+    public Result verify(String domain){
+        Map<String, Boolean> map = domainService.domainVerify(domain);
         return Result.ok(map);
     }
 

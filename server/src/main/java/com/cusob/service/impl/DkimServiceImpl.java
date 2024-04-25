@@ -21,15 +21,15 @@ public class DkimServiceImpl extends ServiceImpl<DkimMapper, Dkim> implements Dk
      */
     @Override
     public void saveDkim(String domain) {
-        Dkim dkim = new Dkim();
-        dkim.setDomain(domain);
-        Map<String, String> map = DkimGeneratorUtil.generator();
-        if (map==null){
-            throw new CusobException(ResultCodeEnum.KEY_GENERATE_FAIL);
-        }
-        dkim.setPrivateKey(map.get(DkimGeneratorUtil.PRIVATE_KEY));
-        dkim.setPublicKey(map.get(DkimGeneratorUtil.PUBLIC_KEY));
-        baseMapper.insert(dkim);
+//        Dkim dkim = new Dkim();
+//        dkim.setDomain(domain);
+//        Map<String, String> map = DkimGeneratorUtil.generator();
+//        if (map==null){
+//            throw new CusobException(ResultCodeEnum.KEY_GENERATE_FAIL);
+//        }
+//        dkim.setPrivateKey(map.get(DkimGeneratorUtil.PRIVATE_KEY));
+//        dkim.setPublicKey(map.get(DkimGeneratorUtil.PUBLIC_KEY));
+//        baseMapper.insert(dkim);
     }
 
     /**
@@ -43,6 +43,7 @@ public class DkimServiceImpl extends ServiceImpl<DkimMapper, Dkim> implements Dk
                 new LambdaQueryWrapper<Dkim>()
                         .eq(Dkim::getDomain, domain)
         );
+        dkim.setPrivateKey(null);
         return dkim;
     }
 
