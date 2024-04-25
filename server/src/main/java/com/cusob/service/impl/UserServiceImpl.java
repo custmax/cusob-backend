@@ -1,7 +1,6 @@
 package com.cusob.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -12,10 +11,7 @@ import com.cusob.dto.ForgetPasswordDto;
 import com.cusob.dto.UpdatePasswordDto;
 import com.cusob.dto.UserDto;
 import com.cusob.dto.UserLoginDto;
-import com.cusob.entity.Company;
-import com.cusob.entity.Email;
-import com.cusob.entity.PlanPrice;
-import com.cusob.entity.User;
+import com.cusob.entity.*;
 import com.cusob.exception.CusobException;
 import com.cusob.mapper.UserMapper;
 import com.cusob.properties.JwtProperties;
@@ -25,6 +21,7 @@ import com.cusob.service.MailService;
 import com.cusob.service.PlanPriceService;
 import com.cusob.service.UserService;
 import com.cusob.utils.JwtUtil;
+import com.cusob.utils.ReadEmail;
 import com.cusob.vo.UserLoginVo;
 import com.cusob.vo.UserVo;
 
@@ -227,6 +224,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return userVo;
     }
 
+
+
     /**
      * update UserInfo
      * @param userVo
@@ -338,11 +337,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String code = String.valueOf((int)((Math.random() * 9 + 1) * Math.pow(10,5)));
         String subject = "Password Reset Instructions for Your Email Marketing Platform Account";
         // todo 待优化
-        String content = "Hi " + user.getFirstName() + ",\n" +
-                "Forgot your password?\n" +
-                "We received a request to reset the password for your account.\n" +
-                "To reset your password, copy the verification code below:\n" +
-                code;
+        String content = ReadEmail.readwithcode("emails/email-forgetpassword.html",code);
+
         String key = RedisConst.PASSWORD_PREFIX + email;
         redisTemplate.opsForValue().set(key, code, RedisConst.PASSWORD_TIMEOUT, TimeUnit.MINUTES);
         Email mail = new Email();
@@ -374,11 +370,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String email = user.getEmail();
         String subject = "Welcome to Our Email Marketing Platform! New User Guide";
         // todo 待优化
-        String content = "Hi,\n" +
-                "We are glad to you explore our suite of software and see how our technology stack can help you meet your business needs.\n" +
-                "Our system is in internal testing and will be notified by email when it is officially released.\n" +
-                "If you have any questions about your account, please feel free to contact us support@cusob.com\n" +
-                "Thank you for using our services";
+        String content = ReadEmail.read("emails/email-registersuccess.html");
         mailService.sendTextMailMessage(email, subject, content);
     }
 
@@ -391,15 +383,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new CusobException(ResultCodeEnum.EMAIL_IS_EMPTY);
         }
         String code = String.valueOf((int)((Math.random() * 9 + 1) * Math.pow(10,5)));
-        String subject = code + " is your Cusob verification code";
+
+        String subject = "Welcome to Our Email Marketing Platform! Verification Code Reminder";
+        String content = ReadEmail.readwithcode("emails/email-signup.html",code);
         // todo 待优化
-        String content = "<html><body><h1>Hello World!</h1></body></html>";
         Email mail = new Email();
         mail.setEmail(email);
         mail.setSubject(subject);
         mail.setContent(content);
         String key = RedisConst.REGISTER_PREFIX + email;
-        // set verify code ttl 30 minutes
+        // set verify code ttl 10 minutes
         redisTemplate.opsForValue().set(key, code, RedisConst.REGISTER_TIMEOUT, TimeUnit.MINUTES);
         rabbitTemplate.convertAndSend(MqConst.EXCHANGE_SIGN_DIRECT, MqConst.ROUTING_SEND_CODE, mail);
     }
