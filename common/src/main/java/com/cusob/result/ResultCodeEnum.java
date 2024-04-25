@@ -57,6 +57,7 @@ public enum ResultCodeEnum {
     KEY_GENERATE_FAIL(245, "The key generation failed"),
 
     PARAM_IS_EMPTY(246, "The parameter is empty"),
+    DOMAIN_IS_EMPTY(247, "The domain is empty"),
 
     VERIFY_CODE_EMPTY(250, "The verify code is empty"),
     VERIFY_CODE_WRONG(251, "The verify code is wrong"),

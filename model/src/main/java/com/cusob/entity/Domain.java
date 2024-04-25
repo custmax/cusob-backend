@@ -19,13 +19,4 @@ public class Domain extends BaseEntity {
 
     @TableField("dkim")
     private Boolean dkim;
-
-    @TableField("selector")
-    private String selector;
-
-    @TableField("private_key")
-    private String privateKey;
-
-    @TableField("public_key")
-    private String publicKey;
 }
