@@ -33,25 +33,4 @@ public class DkimGeneratorUtil {
         return map;
     }
 
-    private static void savePemFile(Key key, String filename)
-            throws IOException {
-        String encodedKey = Base64.getEncoder()
-                .encodeToString(key.getEncoded());
-        String keyType = (key instanceof PrivateKey) ? "PRIVATE KEY"
-                : "PUBLIC KEY";
-
-        try (FileWriter writer = new FileWriter(filename)) {
-            writer.write("-----BEGIN " + keyType + "-----\n");
-            writer.write(encodedKey);
-            writer.write("\n-----END " + keyType + "-----");
-            writer.flush();
-        }
-    }
-
-    public static void main(String[] args) throws Exception {
-//        Double n = Math.random();
-        double num = (Math.random()*9 + 1)*10000;
-        String str = String.valueOf(Math.round(num));
-        System.out.println(str);
-    }
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -108,6 +109,35 @@ public class MinioServiceImpl implements MinioService {
             String url= minio.getUrl()+"/"+minio.getBucketName()+"/"+filename;
             return url;
         } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("文件上传失败");
+        }
+    }
+
+    /**
+     *  upload Dkim secret key
+     * @return
+     */
+    @Override
+    public String uploadDkim(String bucketName, String filePath, InputStream inputStream) {
+        try {
+            // 判断桶是否存在
+            boolean bucketExists = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+            if (!bucketExists){
+                // 如果不存在，就创建桶
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+            }
+
+            // 加一个/表示创建一个文件夹
+            minioClient.putObject(PutObjectArgs.builder().
+                    bucket(bucketName).
+                    object(filePath).
+                    stream(inputStream, inputStream.available(), -1).
+                    build());
+
+            String url= minio.getUrl()+"/"+minio.getBucketName()+"/"+filePath;
+            return url;
+        }catch (Exception e){
             e.printStackTrace();
             throw new RuntimeException("文件上传失败");
         }

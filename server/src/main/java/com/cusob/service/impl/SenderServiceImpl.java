@@ -84,9 +84,9 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
 
         try {
             Dkim dkim = new Dkim();
-            Map<String, String> map = DkimGeneratorUtil.generateKey();
-            String privateKey = map.get(DkimGeneratorUtil.PRIVATE_KEY);
-            String publicKey = map.get(DkimGeneratorUtil.PUBLIC_KEY);
+            Map<String, String> map = dkimService.generateKey(domain);
+            String privateKey = map.get(Dkim.PRIVATE_KEY);
+            String publicKey = map.get(Dkim.PUBLIC_KEY);
             double num = (Math.random()*9 + 1)*10000;
             String str = String.valueOf(Math.round(num));
             dkim.setPrivateKey(privateKey);
@@ -94,7 +94,7 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
             dkim.setSelector(selectorPrefix + str);
             dkim.setDomain(domain);
             dkimService.save(dkim);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
