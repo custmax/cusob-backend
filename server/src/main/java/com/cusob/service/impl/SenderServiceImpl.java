@@ -7,11 +7,12 @@ import com.cusob.constant.MqConst;
 import com.cusob.constant.RedisConst;
 import com.cusob.dto.SenderDto;
 import com.cusob.entity.Email;
+import com.cusob.entity.EmailSettings;
 import com.cusob.entity.Sender;
 import com.cusob.exception.CusobException;
 import com.cusob.mapper.SenderMapper;
 import com.cusob.result.ResultCodeEnum;
-import com.cusob.service.MailService;
+import com.cusob.service.EmailSettingsService;
 import com.cusob.service.SenderService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
@@ -32,6 +33,9 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
 
     @Resource
     private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private EmailSettingsService emailSettingsService;
     /**
      * save Sender
      * @param senderDto
@@ -39,9 +43,9 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
     @Override
     public void saveSender(SenderDto senderDto) {
         // 参数校验
-        if(!StringUtils.hasText(senderDto.getServerType())){
-            throw new CusobException(ResultCodeEnum.SERVER_TYPE_IS_EMPTY);
-        }
+//        if(!StringUtils.hasText(senderDto.getServerType())){
+//            throw new CusobException(ResultCodeEnum.SERVER_TYPE_IS_EMPTY);
+//        }
         if (!StringUtils.hasText(senderDto.getEmail())){
             throw new CusobException(ResultCodeEnum.EMAIL_IS_EMPTY);
         }
@@ -50,7 +54,25 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
         }
         // todo 其他参数校验
         Sender sender = new Sender();
+
         BeanUtils.copyProperties(senderDto, sender);
+
+        String suffix = sender.getEmail().split("@")[1];
+        EmailSettings settings = emailSettingsService.getSettings(suffix);
+
+
+        if(sender.getImapServer()==null){
+            sender.setImapServer(settings.getImapServer());
+        }
+        if(sender.getImapPort()==null){
+            sender.setImapPort(settings.getImapPort());
+        }
+        if(sender.getSmtpServer()==null){
+            sender.setSmtpServer(settings.getSmtpServer());
+        }
+        if(sender.getSmtpPort()==null){
+            sender.setSmtpPort(settings.getSmtpPort());
+        }
         sender.setUserId(AuthContext.getUserId());
         baseMapper.insert(sender);
     }
