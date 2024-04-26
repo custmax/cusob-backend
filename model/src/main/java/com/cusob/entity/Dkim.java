@@ -8,6 +8,9 @@ import lombok.Data;
 @TableName("dkim")
 public class Dkim extends BaseEntity{
 
+    public static final String PRIVATE_KEY = "privateKey";
+    public static final String PUBLIC_KEY = "publicKey";
+
     @TableField("domain")
     private String domain;
 

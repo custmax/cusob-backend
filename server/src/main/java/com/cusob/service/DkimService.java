@@ -3,6 +3,8 @@ package com.cusob.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cusob.entity.Dkim;
 
+import java.util.Map;
+
 public interface DkimService extends IService<Dkim> {
 
     /**
@@ -24,4 +26,10 @@ public interface DkimService extends IService<Dkim> {
      * @return
      */
     String getPublicKey(String domain);
+
+    /**
+     * generate Dkim Key
+     * @return
+     */
+    Map<String, String> generateKey(String domain);
 }

@@ -2,6 +2,7 @@ package com.cusob.service;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.util.List;
 
 public interface MinioService {
@@ -27,4 +28,9 @@ public interface MinioService {
      * @return
      */
     String uploadAvatar(String bucketName, MultipartFile file);
+
+    /**
+     * upload Dkim secret key
+     */
+    String uploadDkim(String bucketName, String filePath, InputStream inputStream);
 }
