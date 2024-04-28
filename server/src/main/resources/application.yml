@@ -20,3 +20,4 @@ minio:
   username: admin
   password: cusob123
   bucketName: cusob
+  bucketDkim: dkim

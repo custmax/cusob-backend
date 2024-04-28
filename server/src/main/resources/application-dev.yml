@@ -64,6 +64,7 @@ cusob:
   domain:
     spf: v=spf1 include:cusob.com ~all
     dkim:
+      selector: cusob
       prefix: v=DKIM1; k=rsa; p=
 
 paypal:
