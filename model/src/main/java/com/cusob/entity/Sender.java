@@ -37,4 +37,13 @@ public class Sender extends BaseEntity {
 
     @TableField("imap_port")
     private Integer imapPort;
+
+    @TableField("imtp_Encryption")
+    private String imtpEncryption;
+
+    @TableField("smtp_Encryption")
+    private String smtpEncryption;
+
+    @TableField("pop_Encryption")
+    private String popEncryption;
 }

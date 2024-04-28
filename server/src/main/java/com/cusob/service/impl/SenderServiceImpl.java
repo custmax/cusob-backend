@@ -19,7 +19,9 @@ import com.cusob.service.DomainService;
 import com.cusob.service.MailService;
 import com.cusob.service.EmailSettingsService;
 import com.cusob.service.SenderService;
-import com.cusob.utils.DkimGeneratorUtil;
+
+import com.cusob.utils.Ports;
+
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,18 +84,40 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
         String suffix = sender.getEmail().split("@")[1];
         EmailSettings settings = emailSettingsService.getSettings(suffix);
 
-
-        if(sender.getImapServer()==null){
-            sender.setImapServer(settings.getImapServer());
-        }
-        if(sender.getImapPort()==null){
-            sender.setImapPort(settings.getImapPort());
+        if(sender.getServerType().equals("IMAP")){
+            if(sender.getImapServer()==null){
+                sender.setImapServer(settings.getImapServer());
+            }
+            if(sender.getImapPort()==null){
+                if(sender.getImtpEncryption().equals("SSL")){
+                    sender.setImapPort(Ports.IMAP_SSL_PORT);
+                }else {
+                    sender.setImapPort(Ports.IMAP_NOEncryption_PORT);
+                }
+            }
+        }else if(sender.getServerType().equals("POP3")){
+            if (sender.getPopServer()==null){
+                sender.setPopServer(settings.getPopServer());
+            }
+            if(sender.getPopPort()==null){
+                if(sender.getPopEncryption().equals("SSL")){
+                    sender.setPopPort(Ports.POP_SSL_PORT);
+                }else {
+                    sender.setPopPort(Ports.POP_NOEncryption_PORT);
+                }
+            }
         }
         if(sender.getSmtpServer()==null){
             sender.setSmtpServer(settings.getSmtpServer());
         }
         if(sender.getSmtpPort()==null){
-            sender.setSmtpPort(settings.getSmtpPort());
+            if(sender.getSmtpEncryption().equals("SSL")){
+                sender.setSmtpPort(Ports.SMTP_SSL_PORT);
+            }else if(sender.getSmtpEncryption().equals("STARTTLS")){
+                sender.setSmtpPort(Ports.SMTP_STARTTLS_PORT);
+            }else {
+                sender.setSmtpPort(Ports.SMTP_NOEncryption_PORT);
+            }
         }
         sender.setUserId(AuthContext.getUserId());
         baseMapper.insert(sender);

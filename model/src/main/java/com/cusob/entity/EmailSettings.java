@@ -11,11 +11,8 @@ public class EmailSettings {
     private String nameSuffix;
     @TableField("smtp_server")
     private String smtpServer;
-    @TableField("smtp_port")
-    private int smtpPort;
     @TableField("imap_server")
     private String imapServer;
-    @TableField("imap_port")
-    private int imapPort;
-
+    @TableField("pop_server")
+    private String popServer;
 }

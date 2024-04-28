@@ -8,7 +8,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 
 import javax.mail.*;
@@ -68,8 +70,10 @@ public class MailServiceImpl implements MailService {
     public void sendTextMailMessage(String to,String subject,String text){
         this.checkMail(to, subject, text);
         try {
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+
             //true 代表支持复杂的类型
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(javaMailSender.createMimeMessage(),true);
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,true);
             //邮件发信人
             mimeMessageHelper.setFrom(mailSender);
             //邮件收信人  1或多个
