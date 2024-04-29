@@ -1,5 +1,6 @@
 package com.cusob.controller;
 
+import com.cusob.entity.Domain;
 import com.cusob.result.Result;
 import com.cusob.service.DomainService;
 import com.cusob.vo.DomainListVo;
@@ -27,7 +28,7 @@ public class DomainController {
     @ApiOperation("get DomainList")
     @GetMapping("getList")
     public Result getDomainList(){
-        List<DomainListVo> list = domainService.getDomainList();
+        List<Domain> list = domainService.getDomainList();
         return Result.ok(list);
     }
 

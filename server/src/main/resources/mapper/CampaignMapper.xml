@@ -13,5 +13,11 @@
         <if test="name != null and name != ''">
             and campaign_name like concat('%', #{name}, '%')
         </if>
+        <if test="order != null and order == 0">
+            order by campaign.create_time desc
+        </if>
+        <if test="order != null and order == 1">
+            order by campaign.update_time desc
+        </if>
     </select>
 </mapper>

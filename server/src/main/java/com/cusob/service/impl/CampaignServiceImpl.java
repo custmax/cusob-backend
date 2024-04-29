@@ -111,8 +111,9 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
     public IPage<CampaignListVo> getCampaignPage(Page<Campaign> pageParam, CampaignQueryDto campaignQueryDto) {
         String name = campaignQueryDto.getName();
         Integer status = campaignQueryDto.getStatus();
+        Integer order = campaignQueryDto.getOrder();
         Long userId = AuthContext.getUserId();
-        IPage<CampaignListVo> pageModel = baseMapper.getCampaignPage(pageParam, userId, name, status);
+        IPage<CampaignListVo> pageModel = baseMapper.getCampaignPage(pageParam, userId, name, status, order);
         return pageModel;
     }
 
