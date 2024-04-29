@@ -19,5 +19,7 @@ public interface CampaignMapper extends BaseMapper<Campaign> {
     IPage<CampaignListVo> getCampaignPage(Page<Campaign> pageParam,
                                           @Param("userId") Long userId,
                                           @Param("name") String name,
-                                          @Param("status") Integer status);
+                                          @Param("status") Integer status,
+                                          @Param("order") Integer order
+    );
 }

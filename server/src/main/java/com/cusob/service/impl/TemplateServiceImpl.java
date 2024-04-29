@@ -101,7 +101,9 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
         }
         for (String item : folderList) {
             List<Template> list = this.getTemplateListByFolder(item, keyword);
-            map.put(item, list);
+            if (list!=null && list.size()>0){
+                map.put(item, list);
+            }
         }
         return map;
     }
@@ -126,6 +128,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
     public List<Template> getTemplateListByFolder(String folder, String keyword) {
         List<Template> templateList = baseMapper.selectList(
                 new LambdaQueryWrapper<Template>()
+                        .eq(Template::getUserId, AuthContext.getUserId())
                         .eq(Template::getFolder, folder)
                         .like(StringUtils.hasText(keyword), Template::getName, keyword)
         );

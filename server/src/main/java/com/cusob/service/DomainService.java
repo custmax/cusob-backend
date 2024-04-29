@@ -20,7 +20,7 @@ public interface DomainService extends IService<Domain> {
      * get DomainList
      * @return
      */
-    List<DomainListVo> getDomainList();
+    List<Domain> getDomainList();
 
     /**
      * get Domain

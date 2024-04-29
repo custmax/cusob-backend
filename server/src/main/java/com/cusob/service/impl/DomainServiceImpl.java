@@ -58,10 +58,13 @@ public class DomainServiceImpl extends ServiceImpl<DomainMapper, Domain> impleme
      * @return
      */
     @Override
-    public List<DomainListVo> getDomainList() {
+    public List<Domain> getDomainList() {
         Long userId = AuthContext.getUserId();
-        List<DomainListVo> list = baseMapper.getDomainList(userId);
-        return list;
+        List<Domain> domainList = baseMapper.selectList(
+                new LambdaQueryWrapper<Domain>()
+                        .eq(Domain::getUserId, userId)
+        );
+        return domainList;
     }
 
     /**

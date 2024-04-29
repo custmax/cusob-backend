@@ -31,4 +31,11 @@ public class PriceController {
         List<Integer> list = priceService.getContactList();
         return Result.ok(list);
     }
+
+    @ApiOperation("get Plan By Id")
+    @GetMapping("getPlan")
+    public Result getPlanById(Long id){
+        Price price = priceService.getById(id);
+        return Result.ok(price);
+    }
 }
