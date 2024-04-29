@@ -67,9 +67,9 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
     @Override
     public void saveSender(SenderDto senderDto) {
         // 参数校验
-//        if(!StringUtils.hasText(senderDto.getServerType())){
-//            throw new CusobException(ResultCodeEnum.SERVER_TYPE_IS_EMPTY);
-//        }
+        if(!StringUtils.hasText(senderDto.getServerType())){
+            throw new CusobException(ResultCodeEnum.SERVER_TYPE_IS_EMPTY);
+        }
         if (!StringUtils.hasText(senderDto.getEmail())){
             throw new CusobException(ResultCodeEnum.EMAIL_IS_EMPTY);
         }
@@ -111,13 +111,14 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
             sender.setSmtpServer(settings.getSmtpServer());
         }
         if(sender.getSmtpPort()==null){
-            if(sender.getSmtpEncryption().equals("SSL")){
+            if (sender.getSmtpEncryption().equals("SSL")) {
                 sender.setSmtpPort(Ports.SMTP_SSL_PORT);
-            }else if(sender.getSmtpEncryption().equals("STARTTLS")){
+            } else if (sender.getSmtpEncryption().equals("STARTTLS")) {
                 sender.setSmtpPort(Ports.SMTP_STARTTLS_PORT);
-            }else {
+            } else {
                 sender.setSmtpPort(Ports.SMTP_NOEncryption_PORT);
             }
+
         }
         sender.setUserId(AuthContext.getUserId());
         baseMapper.insert(sender);
