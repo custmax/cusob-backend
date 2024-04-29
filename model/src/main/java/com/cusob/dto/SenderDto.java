@@ -4,7 +4,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class SenderDto implements Serializable {
+public class  SenderDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -27,4 +27,10 @@ public class SenderDto implements Serializable {
     private String imapServer;
 
     private Integer imapPort;
+
+    private String imapEncryption;
+
+    private String smtpEncryption;
+
+    private String popEncryption;
 }

@@ -4,7 +4,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost/cusob?characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
-    password: daybreak
+    password: root
   redis:
     host: 69.164.202.126
     port: 6379
@@ -55,7 +55,7 @@ cusob:
     # 设置jwt签名加密时使用的秘钥
     secret-key: cusob
     # 设置jwt过期时间
-    ttl: 7200000
+    ttl: 1209600000 #14天
     # 设置前端传递过来的令牌名称
     token-name: token
   email:
