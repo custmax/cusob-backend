@@ -89,7 +89,7 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
                 sender.setImapServer(settings.getImapServer());
             }
             if(sender.getImapPort()==null){
-                if(sender.getImtpEncryption().equals("SSL")){
+                if(sender.getImapEncryption().equals("SSL")){
                     sender.setImapPort(Ports.IMAP_SSL_PORT);
                 }else {
                     sender.setImapPort(Ports.IMAP_NOEncryption_PORT);

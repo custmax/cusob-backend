@@ -202,15 +202,15 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                 String unsubscribeUrl = baseUrl + "/unsubscribe/campaign?email=" + URLEncoder.encode(encode);
                 String emailContent = replace + unsubscribe + unsubscribeUrl + url;
 
-                ScheduledThreadPoolExecutor executor =
-                        new ScheduledThreadPoolExecutor(2, new ThreadPoolExecutor.CallerRunsPolicy());
-                executor.schedule(() -> {
+//                ScheduledThreadPoolExecutor executor =
+//                        new ScheduledThreadPoolExecutor(2, new ThreadPoolExecutor.CallerRunsPolicy());
+//                executor.schedule(() -> {
                     mailService.sendEmail(sender, senderName, email, emailContent, subject);
                     campaignContactService.updateSendStatus(campaign.getId(), contact.getId());
                     reportService.updateDeliveredCount(campaign.getId());
-                }, totalTime, TimeUnit.MILLISECONDS);
-                executor.shutdown();
-                totalTime += 1000*(random.nextInt(60) + 60);
+//                }, totalTime, TimeUnit.MILLISECONDS);
+//                executor.shutdown();
+//                totalTime += 1000*(random.nextInt(60) + 60);
             }
         }
 
