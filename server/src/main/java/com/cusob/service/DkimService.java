@@ -8,12 +8,6 @@ import java.util.Map;
 public interface DkimService extends IService<Dkim> {
 
     /**
-     * save Dkim
-     * @param domain
-     */
-    void saveDkim(String domain);
-
-    /**
      * get Dkim
      * @param domain
      * @return
@@ -32,4 +26,10 @@ public interface DkimService extends IService<Dkim> {
      * @return
      */
     Map<String, String> generateKey(String domain);
+
+    /**
+     * generate Dkim Key and save dkim
+     * @param domain
+     */
+    void generateAndSaveDkim(String domain);
 }

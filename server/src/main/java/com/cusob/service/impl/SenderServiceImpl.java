@@ -67,18 +67,22 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
     @Override
     public void saveSender(SenderDto senderDto) {
         // 参数校验
-//        if(!StringUtils.hasText(senderDto.getServerType())){
-//            throw new CusobException(ResultCodeEnum.SERVER_TYPE_IS_EMPTY);
-//        }
         if (!StringUtils.hasText(senderDto.getEmail())){
             throw new CusobException(ResultCodeEnum.EMAIL_IS_EMPTY);
         }
         if (!StringUtils.hasText(senderDto.getPassword())){
             throw new CusobException(ResultCodeEnum.PASSWORD_IS_EMPTY);
         }
-        // todo 其他参数校验
-        Sender sender = new Sender();
+        String email = senderDto.getEmail();
+        Sender senderSelect = baseMapper.selectOne(
+                new LambdaQueryWrapper<Sender>()
+                        .eq(Sender::getEmail, email)
+        );
+        if (senderSelect!=null){
+            throw new CusobException(ResultCodeEnum.EMAIL_IS_BOUND);
+        }
 
+        Sender sender = new Sender();
         BeanUtils.copyProperties(senderDto, sender);
 
         String suffix = sender.getEmail().split("@")[1];
@@ -122,27 +126,16 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
         sender.setUserId(AuthContext.getUserId());
         baseMapper.insert(sender);
 
-        String email = sender.getEmail();
         String domain = email.substring(email.lastIndexOf('@') + 1);
-        Domain domainSave = new Domain();
-        domainSave.setDomain(domain);
-        domainSave.setUserId(AuthContext.getUserId());
-        domainService.save(domainSave);
+        Domain domainSelect = domainService.getByDomain(domain);
+        if (domainSelect == null){
+            Domain domainSave = new Domain();
+            domainSave.setDomain(domain);
+            domainSave.setUserId(AuthContext.getUserId());
+            domainService.save(domainSave);
 
-        try {
-            Dkim dkim = new Dkim();
-            Map<String, String> map = dkimService.generateKey(domain);
-            String privateKey = map.get(Dkim.PRIVATE_KEY);
-            String publicKey = map.get(Dkim.PUBLIC_KEY);
-            double num = (Math.random()*9 + 1)*10000;
-            String str = String.valueOf(Math.round(num));
-            dkim.setPrivateKey(privateKey);
-            dkim.setPublicKey(dkimPrefix + publicKey);
-            dkim.setSelector(selectorPrefix + str);
-            dkim.setDomain(domain);
-            dkimService.save(dkim);
-        } catch (Exception e) {
-            e.printStackTrace();
+            rabbitTemplate.convertAndSend(MqConst.EXCHANGE_DKIM_DIRECT,
+                    MqConst.ROUTING_GENERATE_DKIM, domain);
         }
 
     }
