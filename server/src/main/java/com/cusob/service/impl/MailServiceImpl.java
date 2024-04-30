@@ -194,13 +194,7 @@ public class MailServiceImpl implements MailService {
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.host", smtpServer);
         //加密方式：
-        if(sender.getSmtpEncryption().equals("SSL")) {
-            props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        }else if(sender.getSmtpEncryption().equals("STARTTLS")){
-            props.put("mail.smtp.starttls.enable", "true");
-        } else {
-            props.put("mail.smtp.starttls.enable", "false");
-        }
+        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         props.put("mail.smtp.socketFactory.port", smtpPort);
         props.put("mail.smtp.port", smtpPort);
         props.put("mail.smtp.from", email);
