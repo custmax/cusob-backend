@@ -33,4 +33,5 @@ public class  SenderDto implements Serializable {
     private String smtpEncryption;
 
     private String popEncryption;
+
 }

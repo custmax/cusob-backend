@@ -46,4 +46,5 @@ public class Sender extends BaseEntity {
 
     @TableField("pop_Encryption")
     private String popEncryption;
+
 }
