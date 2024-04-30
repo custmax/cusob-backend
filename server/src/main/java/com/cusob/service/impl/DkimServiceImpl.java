@@ -32,22 +32,11 @@ public class DkimServiceImpl extends ServiceImpl<DkimMapper, Dkim> implements Dk
     @Value("${minio.bucketDkim}")
     private String bucketDkim;
 
-    /**
-     * save Dkim
-     * @param domain
-     */
-    @Override
-    public void saveDkim(String domain) {
-//        Dkim dkim = new Dkim();
-//        dkim.setDomain(domain);
-//        Map<String, String> map = DkimGeneratorUtil.generator();
-//        if (map==null){
-//            throw new CusobException(ResultCodeEnum.KEY_GENERATE_FAIL);
-//        }
-//        dkim.setPrivateKey(map.get(DkimGeneratorUtil.PRIVATE_KEY));
-//        dkim.setPublicKey(map.get(DkimGeneratorUtil.PUBLIC_KEY));
-//        baseMapper.insert(dkim);
-    }
+    @Value("${cusob.domain.dkim.prefix}")
+    private String dkimPrefix;
+
+    @Value("${cusob.domain.dkim.selector}")
+    private String selectorPrefix;
 
     /**
      * get Dkim
@@ -97,6 +86,25 @@ public class DkimServiceImpl extends ServiceImpl<DkimMapper, Dkim> implements Dk
         map.put(Dkim.PUBLIC_KEY, encodedKey);
         map.put(Dkim.PRIVATE_KEY, url);
         return map;
+    }
+
+    /**
+     * generate Dkim Key and save dkim
+     * @param domain
+     */
+    @Override
+    public void generateAndSaveDkim(String domain) {
+        Dkim dkim = new Dkim();
+        Map<String, String> map = this.generateKey(domain);
+        String privateKey = map.get(Dkim.PRIVATE_KEY);
+        String publicKey = map.get(Dkim.PUBLIC_KEY);
+        double num = (Math.random()*9 + 1)*10000;
+        String str = String.valueOf(Math.round(num));
+        dkim.setPrivateKey(privateKey);
+        dkim.setPublicKey(dkimPrefix + publicKey);
+        dkim.setSelector(selectorPrefix + str);
+        dkim.setDomain(domain);
+        baseMapper.insert(dkim);
     }
 
 }

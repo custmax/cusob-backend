@@ -38,6 +38,8 @@ public class MqConst {
     public static final String QUEUE_MASS_MAILING = "cusob.mass.mailing";
     public static final String ROUTING_MASS_MAILING = "cusob.mass.mailing";
 
-
+    public static final String EXCHANGE_DKIM_DIRECT = "cusob.dkim.direct";
+    public static final String QUEUE_GENERATE_DKIM = "cusob.generate.dkim";
+    public static final String ROUTING_GENERATE_DKIM = "cusob.generate.dkim";
 
 }

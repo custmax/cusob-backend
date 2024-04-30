@@ -17,13 +17,6 @@ public class DkimController {
     @Autowired
     private DkimService dkimService;
 
-    @ApiOperation("save Dkim")
-    @PostMapping("save")
-    public Result save(String domain){
-        dkimService.saveDkim(domain);
-        return Result.ok();
-    }
-
     @ApiOperation("get publicKey by domain")
     @GetMapping("getPublicKey")
     public Result getPublicKey(String domain){
