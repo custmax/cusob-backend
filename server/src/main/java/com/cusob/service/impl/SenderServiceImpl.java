@@ -78,16 +78,17 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
                 new LambdaQueryWrapper<Sender>()
                         .eq(Sender::getEmail, email)
         );
-        if (senderSelect!=null){
+
+        if (senderSelect!=null ){
             throw new CusobException(ResultCodeEnum.EMAIL_IS_BOUND);
         }
-
         Sender sender = new Sender();
         BeanUtils.copyProperties(senderDto, sender);
 
+
         String suffix = sender.getEmail().split("@")[1];
         EmailSettings settings = emailSettingsService.getSettings(suffix);
-        if(settings == null){
+        if(settings == null && sender.getSmtpServer()==null){
             throw new CusobException(ResultCodeEnum.EMAIL_CATEGORY_NOEXIST);
         }
         else {
@@ -97,9 +98,9 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
             }
             if(sender.getImapPort()==null){
                 if(sender.getImapEncryption()==null){
-                    sender.setImapPort(Ports.IMAP_NOEncryption_PORT);
-                }else {
                     sender.setImapPort(Ports.IMAP_SSL_PORT);
+                }else {
+                    sender.setImapPort(Ports.IMAP_NOEncryption_PORT);
                 }
             }
         }else if(sender.getServerType().equals("POP3")){
@@ -108,24 +109,24 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
             }
             if(sender.getPopPort()==null){
                 if(sender.getPopEncryption()==null){
-                    sender.setPopPort(Ports.POP_NOEncryption_PORT);
-                }else {
                     sender.setPopPort(Ports.POP_SSL_PORT);
+                }else {
+                    sender.setPopPort(Ports.POP_NOEncryption_PORT);
                 }
             }
         }
         if(sender.getSmtpServer()==null){
             sender.setSmtpServer(settings.getSmtpServer());
         }
+
         if(sender.getSmtpPort()==null){
-            if (sender.getSmtpEncryption().equals("SSL")) {
-                sender.setSmtpPort(Ports.SMTP_SSL_PORT);
+            if (sender.getSmtpEncryption().equals("NO")) {
+                sender.setSmtpPort(Ports.SMTP_NOEncryption_PORT);
             } else if (sender.getSmtpEncryption().equals("STARTTLS")) {
                 sender.setSmtpPort(Ports.SMTP_STARTTLS_PORT);
             } else {
-                sender.setSmtpPort(Ports.SMTP_NOEncryption_PORT);
+                sender.setSmtpPort(Ports.SMTP_SSL_PORT);
             }
-
         }
         }
         sender.setUserId(AuthContext.getUserId());
