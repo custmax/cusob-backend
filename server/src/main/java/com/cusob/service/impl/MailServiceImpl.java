@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Service
 public class MailServiceImpl implements MailService {
@@ -51,6 +52,10 @@ public class MailServiceImpl implements MailService {
     private void checkMail(String to,String subject,String text){
         if(StringUtils.isEmpty(to)){
             throw new CusobException(ResultCodeEnum.EMAIL_RECIPIENT_EMPTY);
+        }
+        boolean flag = Pattern.matches("^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+", to);
+        if (!flag){
+            throw new CusobException(ResultCodeEnum.EMAIL_FORMAT_ERROR);
         }
         if(StringUtils.isEmpty(subject)){
             throw new CusobException(ResultCodeEnum.EMAIL_SUBJECT_EMPTY);
@@ -86,7 +91,7 @@ public class MailServiceImpl implements MailService {
             mimeMessageHelper.setSentDate(new Date());
             //发送邮件
             javaMailSender.send(mimeMessageHelper.getMimeMessage());
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             throw new CusobException(ResultCodeEnum.EMAIL_SEND_FAIL);
         }
     }

@@ -25,6 +25,7 @@ public enum ResultCodeEnum {
 
     NAME_IS_EMPTY(215, "The name is empty"),
     REMOVE_YOURSELF_WRONG(216, "You can't delete yourself"),
+    EMAIL_FORMAT_ERROR(217, "The email format is wrong"),
 
     EMAIL_NOT_EXIST(220, "Email is not registered"),
     PASSWORD_WRONG(221, "Incorrect email or password"),

@@ -78,8 +78,8 @@ public class DkimServiceImpl extends ServiceImpl<DkimMapper, Dkim> implements Dk
         PublicKey publicKey = keyPair.getPublic();
         // 将公钥和私钥写入到DER文件
         InputStream inputStream = new ByteArrayInputStream(keyPair.getPrivate().getEncoded());
-        Long userId = AuthContext.getUserId();
-        String filePath = userId.toString() + "/" + domain+ "/" +"privateKey.der";
+//        Long userId = AuthContext.getUserId();
+        String filePath = domain+ "/" +"privateKey.der";
         String url = minioService.uploadDkim(bucketDkim, filePath, inputStream);
         String encodedKey = Base64.getEncoder()
                 .encodeToString(publicKey.getEncoded());

@@ -222,8 +222,10 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
     @Override
     public void updateStatus(Long campaignId, Integer status) {
         Campaign campaign = baseMapper.selectById(campaignId);
-        campaign.setStatus(status);
-        baseMapper.updateById(campaign);
+        if (campaign != null){
+            campaign.setStatus(status);
+            baseMapper.updateById(campaign);
+        }
     }
 
 
