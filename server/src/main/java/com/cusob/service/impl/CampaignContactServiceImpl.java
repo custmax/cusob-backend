@@ -39,11 +39,14 @@ public class CampaignContactServiceImpl
                         .eq(CampaignContact::getCampaignId, campaignId)
                         .eq(CampaignContact::getContactId, contactId)
         );
-        if (!contact.getIsOpened().equals(CampaignContact.OPENED)){
-            contact.setIsOpened(CampaignContact.OPENED);
-            baseMapper.updateById(contact);
-            reportService.opened(campaignId);
+        if (contact != null){
+            if (!contact.getIsOpened().equals(CampaignContact.OPENED)){
+                contact.setIsOpened(CampaignContact.OPENED);
+                baseMapper.updateById(contact);
+                reportService.opened(campaignId);
+            }
         }
+
     }
 
     /**
@@ -77,7 +80,9 @@ public class CampaignContactServiceImpl
                         .eq(CampaignContact::getCampaignId, campaignId)
                         .eq(CampaignContact::getContactId, contactId)
         );
-        campaignContact.setIsDelivered(CampaignContact.DELIVERED);
-        baseMapper.updateById(campaignContact);
+        if (campaignContact != null){
+            campaignContact.setIsDelivered(CampaignContact.DELIVERED);
+            baseMapper.updateById(campaignContact);
+        }
     }
 }
