@@ -86,7 +86,6 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
     }
 
     private void paramVerify(ContactDto contactDto) {
-        // todo maybe need other params to verify
         if (!StringUtils.hasText(contactDto.getFirstName())){
             throw new CusobException(ResultCodeEnum.FIRST_NAME_IS_EMPTY);
         }
@@ -95,6 +94,9 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
         }
         if (!StringUtils.hasText(contactDto.getEmail())){
             throw new CusobException(ResultCodeEnum.EMAIL_IS_EMPTY);
+        }
+        if (!StringUtils.hasText(contactDto.getGroupName())){
+            throw new CusobException(ResultCodeEnum.GROUP_NAME_EMPTY);
         }
     }
 
@@ -122,12 +124,15 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
     @Override
     public ContactDto getContactById(Long contactId) {
         Contact contact = baseMapper.selectById(contactId);
-        Long groupId = contact.getGroupId();
-        Group group = groupService.getGroupById(groupId);
-        ContactDto contactDto = new ContactDto();
-        BeanUtils.copyProperties(contact, contactDto);
-        contactDto.setGroupName(group.getGroupName());
-        return contactDto;
+        if (contact!=null){
+            Long groupId = contact.getGroupId();
+            Group group = groupService.getGroupById(groupId);
+            ContactDto contactDto = new ContactDto();
+            BeanUtils.copyProperties(contact, contactDto);
+            contactDto.setGroupName(group.getGroupName());
+            return contactDto;
+        }
+        return null;
     }
 
     /**

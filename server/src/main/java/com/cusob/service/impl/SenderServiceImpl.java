@@ -184,11 +184,8 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
      * remove Sender by userId
      */
     @Override
-    public void removeSender() {
-        baseMapper.delete(
-                new LambdaQueryWrapper<Sender>()
-                        .eq(Sender::getUserId, AuthContext.getUserId())
-        );
+    public void removeSenderById(Long id) {
+        baseMapper.deleteById(id);
     }
 
     /**

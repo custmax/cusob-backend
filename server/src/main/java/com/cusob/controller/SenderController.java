@@ -40,8 +40,8 @@ public class SenderController {
 
     @ApiOperation("remove Sender")
     @DeleteMapping("remove")
-    public Result removeSender(){
-        senderService.removeSender();
+    public Result removeSender(Long id){
+        senderService.removeSenderById(id);
         return Result.ok();
     }
 
