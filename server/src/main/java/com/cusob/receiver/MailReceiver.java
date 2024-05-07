@@ -38,10 +38,15 @@ public class MailReceiver {
             key = {MqConst.ROUTING_SEND_CODE}
     ))
     public void sendVerifyCodeToRegister(Email mail, Message message, Channel channel) throws IOException {
-        if (StringUtils.hasText(mail.getEmail())){
-            mailService.sendTextMailMessage(mail.getEmail(), mail.getSubject(), mail.getContent());
+        try {
+            if (StringUtils.hasText(mail.getEmail())){
+                mailService.sendTextMailMessage(mail.getEmail(), mail.getSubject(), mail.getContent());
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         }
-        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
     }
 
     @RabbitListener(bindings = @QueueBinding(
