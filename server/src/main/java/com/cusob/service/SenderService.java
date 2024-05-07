@@ -29,7 +29,7 @@ public interface SenderService extends IService<Sender> {
     /**
      * remove Sender
      */
-    void removeSender();
+    void removeSenderById(Long id);
 
     /**
      * send verify code for binding sender
