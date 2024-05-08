@@ -161,6 +161,11 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                 MqConst.ROUTING_MASS_MAILING, campaign);
     }
 
+    @Override
+    public List<Contact> getSendList(Long groupId) {
+        return contactService.getListByGroupId(groupId);
+    }
+
     /**
      * remove Campaign
      * @param id
