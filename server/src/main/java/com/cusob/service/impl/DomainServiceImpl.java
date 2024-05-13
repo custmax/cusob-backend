@@ -76,6 +76,7 @@ public class DomainServiceImpl extends ServiceImpl<DomainMapper, Domain> impleme
         Domain domainSelect = baseMapper.selectOne(
                 new LambdaQueryWrapper<Domain>()
                         .eq(Domain::getDomain, domain)
+                        .eq(Domain::getUserId, AuthContext.getUserId())
         );
         return domainSelect;
     }
