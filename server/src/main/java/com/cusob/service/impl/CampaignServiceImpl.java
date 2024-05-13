@@ -71,6 +71,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
     public Long saveCampaign(CampaignDto campaignDto, Integer status) {
         Campaign campaign = new Campaign();
         BeanUtils.copyProperties(campaignDto, campaign);
+
         campaign.setUserId(AuthContext.getUserId());
         campaign.setStatus(status);
         baseMapper.insert(campaign);
