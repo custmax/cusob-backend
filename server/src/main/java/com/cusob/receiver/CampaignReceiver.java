@@ -68,31 +68,31 @@ public class CampaignReceiver {
         channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
     }
 
-    @RabbitListener(bindings = @QueueBinding(
-            value = @Queue(value = MqConst.QUEUE_MASS_MAILING, durable = "true"),
-            exchange = @Exchange(value = MqConst.EXCHANGE_MAIL_DIRECT),
-            key = {MqConst.ROUTING_MASS_MAILING}
-    ))
-    public void massMailing(Campaign campaign, Message message, Channel channel) throws IOException {
-        if (campaign!=null){
-            Date sendTime = campaign.getSendTime();
-            Date now = new Date();
-            if (now.after(sendTime)){
-                campaignService.MassMailing(campaign);
-                campaignService.updateStatus(campaign.getId(), Campaign.COMPLETED);
-            }else {
-                long delay = sendTime.getTime() - now.getTime();
-                ScheduledThreadPoolExecutor executor =
-                        new ScheduledThreadPoolExecutor(2, new ThreadPoolExecutor.CallerRunsPolicy());
-                executor.schedule(() -> {
-                    campaignService.MassMailing(campaign);
-                    campaignService.updateStatus(campaign.getId(), Campaign.COMPLETED);
-                }, delay, TimeUnit.MILLISECONDS);
-                executor.shutdown();
-            }
-
-        }
-        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
-    }
+//    @RabbitListener(bindings = @QueueBinding(
+//            value = @Queue(value = MqConst.QUEUE_MASS_MAILING, durable = "true"),
+//            exchange = @Exchange(value = MqConst.EXCHANGE_MAIL_DIRECT),
+//            key = {MqConst.ROUTING_MASS_MAILING}
+//    ))
+//    public void massMailing(Campaign campaign, Message message, Channel channel) throws IOException {
+//        if (campaign!=null){
+//            Date sendTime = campaign.getSendTime();
+//            Date now = new Date();
+//            if (now.after(sendTime)){
+//                campaignService.MassMailing(campaign);
+//                campaignService.updateStatus(campaign.getId(), Campaign.COMPLETED);
+//            }else {
+//                long delay = sendTime.getTime() - now.getTime();
+//                ScheduledThreadPoolExecutor executor =
+//                        new ScheduledThreadPoolExecutor(2, new ThreadPoolExecutor.CallerRunsPolicy());
+//                executor.schedule(() -> {
+//                    campaignService.MassMailing(campaign);
+//                    campaignService.updateStatus(campaign.getId(), Campaign.COMPLETED);
+//                }, delay, TimeUnit.MILLISECONDS);
+//                executor.shutdown();
+//            }
+//
+//        }
+//        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+//    }
 
 }

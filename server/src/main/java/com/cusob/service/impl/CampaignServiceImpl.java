@@ -134,6 +134,9 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
         // Parameter validation
         this.paramVerify(campaignDto);
         Long campaignId;
+        if(campaignDto.getId()==0 && this.getCampaignByname(campaignDto.getCampaignName())!=null){
+            throw new CusobException(ResultCodeEnum.TITLE_IS_EXISTED);
+        }
         Campaign campaign = this.getCampaignById(campaignDto.getId());
         if (campaign != null){
             campaignId = campaign.getId();
@@ -157,8 +160,8 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
         rabbitTemplate.convertAndSend(MqConst.EXCHANGE_CAMPAIGN_DIRECT,
                 MqConst.ROUTING_CAMPAIGN_CONTACT, report);
         // Email contacts
-        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_MAIL_DIRECT,
-                MqConst.ROUTING_MASS_MAILING, campaign);
+//        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_MAIL_DIRECT,
+//                MqConst.ROUTING_MASS_MAILING, campaign);
     }
 
     @Override
@@ -179,47 +182,47 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
      * Mass Mailing
      * @param campaign
      */
-    @Override
-    public void MassMailing(Campaign campaign) {
-        Long senderId = campaign.getSenderId();
-        Sender sender = senderService.getById(senderId);
-        String senderName = campaign.getSenderName();
-        String subject = campaign.getSubject();
-        String content = campaign.getContent();
-        Long userId = campaign.getUserId();
-        Long groupId = campaign.getToGroup();
-        List<Contact> contactList = contactService.getListByUserIdAndGroupId(userId, groupId);
-        List<String> emailList = unsubscribeService.selectEmailList();
-        String unsubscribe = "\n If you do not want to receive such emails, " +
-                "please click on the link below to unsubscribe: ";
-
-        Random random = new Random();
-        long totalTime = 1;
-        for (Contact contact : contactList) {
-            String email = contact.getEmail();
-            if (!emailList.contains(email)){
-                String replace = content.replace("#{First Name}", contact.getFirstName())
-                        .replace("#{Last Name}", contact.getLastName());
-                String url = "<img style=\"display: none;\" src=\"" + baseUrl + "/read/count/"
-                        + campaign.getId() + "/" + contact.getId() + "\">";
-
-                String encode = Base64.getEncoder().encodeToString(email.getBytes());
-                String unsubscribeUrl = baseUrl + "/unsubscribe/campaign?email=" + URLEncoder.encode(encode);
-                String emailContent = replace + unsubscribe + unsubscribeUrl + url;
-
-//                ScheduledThreadPoolExecutor executor =
-//                        new ScheduledThreadPoolExecutor(2, new ThreadPoolExecutor.CallerRunsPolicy());
-//                executor.schedule(() -> {
-                    mailService.sendEmail(sender, senderName, email, emailContent, subject);
-                    campaignContactService.updateSendStatus(campaign.getId(), contact.getId());
-                    reportService.updateDeliveredCount(campaign.getId());
+//    @Override
+//    public void MassMailing(Campaign campaign) {
+//        Long senderId = campaign.getSenderId();
+//        Sender sender = senderService.getById(senderId);
+//        String senderName = campaign.getSenderName();
+//        String subject = campaign.getSubject();
+//        String content = campaign.getContent();
+//        Long userId = campaign.getUserId();
+//        Long groupId = campaign.getToGroup();
+//        List<Contact> contactList = contactService.getListByUserIdAndGroupId(userId, groupId);
+//        List<String> emailList = unsubscribeService.selectEmailList();
+//        String unsubscribe = "\n If you do not want to receive such emails, " +
+//                "please click on the link below to unsubscribe: ";
+//
+//        Random random = new Random();
+//        long totalTime = 1;
+//        for (Contact contact : contactList) {
+//            String email = contact.getEmail();
+//            if (!emailList.contains(email)){
+//                String replace = content.replace("#{First Name}", contact.getFirstName())
+//                        .replace("#{Last Name}", contact.getLastName());
+//                String url = "<img style=\"display: none;\" src=\"" + baseUrl + "/read/count/"
+//                        + campaign.getId() + "/" + contact.getId() + "\">";
+//
+//                String encode = Base64.getEncoder().encodeToString(email.getBytes());
+//                String unsubscribeUrl = baseUrl + "/unsubscribe/campaign?email=" + URLEncoder.encode(encode);
+//                String emailContent = replace + unsubscribe + unsubscribeUrl + url;
+//
+////                ScheduledThreadPoolExecutor executor =
+////                        new ScheduledThreadPoolExecutor(2, new ThreadPoolExecutor.CallerRunsPolicy());
+////                executor.schedule(() -> {
+//                    mailService.sendEmail(sender, senderName, email, emailContent, subject);
+//                    campaignContactService.updateSendStatus(campaign.getId(), contact.getId());
+//                    reportService.updateDeliveredCount(campaign.getId());
 //                }, totalTime, TimeUnit.MILLISECONDS);
 //                executor.shutdown();
 //                totalTime += 1000*(random.nextInt(60) + 60);
-            }
-        }
-
-    }
+//            }
+//        }
+//
+//    }
 
     /**
      * update Status
@@ -231,6 +234,11 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
             campaign.setStatus(status);
             baseMapper.updateById(campaign);
         }
+    }
+
+    @Override
+    public Campaign getCampaignByname(String campaignName) {
+        return baseMapper.getCampaignByname(campaignName);
     }
 
 

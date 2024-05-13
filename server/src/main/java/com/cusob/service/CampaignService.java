@@ -48,6 +48,7 @@ public interface CampaignService extends IService<Campaign> {
 
     List<Contact> getSendList(Long groupId);
 
+
     /**
      * remove Campaign
      * @param id
@@ -58,10 +59,12 @@ public interface CampaignService extends IService<Campaign> {
      * Mass Mailing
      * @param campaign
      */
-    void MassMailing(Campaign campaign);
+//    void MassMailing(Campaign campaign);
 
     /**
      * update Status
      */
     void updateStatus(Long campaignId, Integer status);
+
+    Campaign getCampaignByname(String campaignName);
 }
