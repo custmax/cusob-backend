@@ -24,4 +24,5 @@ public interface CampaignMapper extends BaseMapper<Campaign> {
     );
 
     Campaign getCampaignByname(String campaignName);
+
 }
