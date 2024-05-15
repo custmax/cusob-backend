@@ -37,4 +37,13 @@
             or contact.phone like concat('%', #{keyword}, '%')
         </if>
     </select>
+    <select id="selectByEmail" resultType="com.cusob.vo.ContactVo">
+        SELECT contact.id, contact.user_id, contact.first_name, contact.last_name, contact.email,
+        contact.phone, contact.mobile, contact.company, contact_groups.group_name
+        FROM contact JOIN contact_groups ON contact.group_id = contact_groups.id
+        WHERE contact.email = #{email}  AND contact.is_deleted = 0
+        <if test="groupId != null and groupId != 0">
+            and contact.group_id = #{groupId}
+        </if>
+    </select>
 </mapper>

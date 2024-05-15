@@ -5,12 +5,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cusob.dto.CampaignDto;
 import com.cusob.dto.CampaignQueryDto;
 import com.cusob.entity.Campaign;
+import com.cusob.entity.Contact;
 import com.cusob.result.Result;
 import com.cusob.service.CampaignService;
 import com.cusob.vo.CampaignListVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/campaign")
@@ -55,6 +58,20 @@ public class CampaignController {
     public Result sendEmail(@RequestBody CampaignDto campaignDto){
         campaignService.sendEmail(campaignDto);
         return Result.ok();
+    }
+
+    @ApiOperation("Email list")
+    @GetMapping("emailList/{groupId}")
+    public Result EmailList(@PathVariable long groupId){
+        List<Contact> sendList = campaignService.getSendList(groupId);
+        return Result.ok(sendList);
+    }
+
+    @ApiOperation("Get SenderName")
+    @GetMapping("getSenderName/{campaignName}")
+    public Result EmailList(@PathVariable String campaignName){
+        System.out.println("两个："+campaignService.getCampaignByname(campaignName));
+        return Result.ok(campaignService.getCampaignByname(campaignName).getSenderName());
     }
 
     @ApiOperation("remove Campaign")
