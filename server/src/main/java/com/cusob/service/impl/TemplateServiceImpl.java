@@ -35,10 +35,10 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
      */
     @Override
     public void saveCustomizedTemplate(TemplateDto templateDto) {
-        Company company = companyService.getById(AuthContext.getCompanyId());
-        if (company.getPlanId().equals(PlanPrice.FREE)){
-            throw new CusobException(ResultCodeEnum.NO_PERMISSION);
-        }
+//        Company company = companyService.getById(AuthContext.getCompanyId());
+//        if (company.getPlanId().equals(PlanPrice.FREE)){
+//            throw new CusobException(ResultCodeEnum.NO_PERMISSION);
+//        }
         this.paramVerify(templateDto);
         Template template = new Template();
         BeanUtils.copyProperties(templateDto, template);

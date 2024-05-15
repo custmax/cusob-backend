@@ -88,7 +88,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // Password encryption
         user.setPassword(DigestUtils.md5DigestAsHex(password.getBytes()));
         user.setPermission(User.SUPER_ADMIN);
-        user.setIsAvailable(User.DISABLE); // TODO 默认禁用
+        user.setIsAvailable(User.AVAILABLE); // TODO 开启使用
         baseMapper.insert(user);
 
         Company company = new Company();
