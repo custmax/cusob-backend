@@ -161,8 +161,8 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
         rabbitTemplate.convertAndSend(MqConst.EXCHANGE_CAMPAIGN_DIRECT,
                 MqConst.ROUTING_CAMPAIGN_CONTACT, report);
         // Email contacts
-//        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_MAIL_DIRECT,
-//                MqConst.ROUTING_MASS_MAILING, campaign);
+        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_MAIL_DIRECT,
+                MqConst.ROUTING_MASS_MAILING, campaign);
     }
 
     @Override
