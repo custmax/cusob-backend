@@ -31,9 +31,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import javax.mail.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -129,6 +131,42 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
             }
         }
         }
+        final Properties props = new Properties();
+
+        // 表示SMTP发送邮件，需要进行身份验证
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.host", sender.getSmtpServer());
+        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        props.put("mail.smtp.socketFactory.port", sender.getSmtpPort());
+        props.put("mail.smtp.port",sender.getSmtpPort());
+        props.put("mail.smtp.from", email);
+        props.put("mail.user", email);
+        props.put("mail.password", sender.getPassword());
+        props.setProperty("mail.smtp.ssl.enable", "true");
+
+        // 构建授权信息，用于进行SMTP身份验证
+        Authenticator authenticator = new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                // 用户名、密码
+                String userName = props.getProperty("mail.user");
+                String password = props.getProperty("mail.password");
+                return new PasswordAuthentication(userName, password);
+            }
+        };
+        Session session = Session.getInstance(props, authenticator);
+
+        try {
+            // 连接到SMTP服务器
+            Transport transport = session.getTransport("smtp");
+            transport.connect(sender.getSmtpServer(), sender.getSmtpPort(), email, sender.getPassword());
+            transport.close();
+        } catch (AuthenticationFailedException e) {
+           throw new CusobException(ResultCodeEnum.PASSWORD_WRONG);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+
         sender.setUserId(AuthContext.getUserId());
         baseMapper.insert(sender);
 
