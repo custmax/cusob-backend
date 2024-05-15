@@ -88,8 +88,11 @@ public enum ResultCodeEnum {
     SUBJECT_IS_EMPTY(293, "The subject is empty"),
     CONTENT_IS_EMPTY(294, "The content is empty"),
     SEND_TIME_EMPTY(295, "The send time is empty"),
-    EMAIL_CATEGORY_NOEXIST(296,"The Email service provider does not support"),
-    WRONG_PASSWORD(297,"Password is incorrect"),
+
+    EMAIL_CATEGORY_NOEXIST(296,"The email service provider does not support"),
+    CONTACT_IS_EXISTED(297,"The contact has already existed in your contact list "),
+    TITLE_IS_EXISTED(298,"The title has already existed in your campaign list")
+
     ;
 
     private Integer code;

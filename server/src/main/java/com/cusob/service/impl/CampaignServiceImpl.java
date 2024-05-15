@@ -135,6 +135,9 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
         // Parameter validation
         this.paramVerify(campaignDto);
         Long campaignId;
+        if(campaignDto.getId()==0 && this.getCampaignByname(campaignDto.getCampaignName())!=null){
+            throw new CusobException(ResultCodeEnum.TITLE_IS_EXISTED);
+        }
         Campaign campaign = this.getCampaignById(campaignDto.getId());
         if (campaign != null){
             campaignId = campaign.getId();
@@ -158,8 +161,13 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
         rabbitTemplate.convertAndSend(MqConst.EXCHANGE_CAMPAIGN_DIRECT,
                 MqConst.ROUTING_CAMPAIGN_CONTACT, report);
         // Email contacts
-        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_MAIL_DIRECT,
-                MqConst.ROUTING_MASS_MAILING, campaign);
+//        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_MAIL_DIRECT,
+//                MqConst.ROUTING_MASS_MAILING, campaign);
+    }
+
+    @Override
+    public List<Contact> getSendList(Long groupId) {
+        return contactService.getListByGroupId(groupId);
     }
 
     /**
@@ -175,6 +183,8 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
      * Mass Mailing
      * @param campaign
      */
+
+
     @Override
     public void MassMailing(Campaign campaign) {
         Long senderId = campaign.getSenderId();
@@ -217,6 +227,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
 
     }
 
+
     /**
      * update Status
      */
@@ -227,6 +238,11 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
             campaign.setStatus(status);
             baseMapper.updateById(campaign);
         }
+    }
+
+    @Override
+    public Campaign getCampaignByname(String campaignName) {
+        return baseMapper.getCampaignByname(campaignName);
     }
 
 

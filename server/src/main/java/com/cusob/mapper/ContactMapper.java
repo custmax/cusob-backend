@@ -32,4 +32,8 @@ public interface ContactMapper extends BaseMapper<Contact> {
                                           @Param("companyId") Long companyId,
                                           @Param("keyword") String keyword,
                                           @Param("groupId") Long groupId);
+
+    ContactVo selectByEmail(@Param("email") String email,
+                            @Param("groupId") Long groupId
+                            );
 }
