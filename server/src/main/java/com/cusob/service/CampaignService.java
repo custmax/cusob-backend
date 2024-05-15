@@ -6,7 +6,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cusob.dto.CampaignDto;
 import com.cusob.dto.CampaignQueryDto;
 import com.cusob.entity.Campaign;
+import com.cusob.entity.Contact;
 import com.cusob.vo.CampaignListVo;
+
+import java.util.List;
 
 public interface CampaignService extends IService<Campaign> {
 
@@ -43,6 +46,9 @@ public interface CampaignService extends IService<Campaign> {
      */
     void sendEmail(CampaignDto campaignDto);
 
+    List<Contact> getSendList(Long groupId);
+
+
     /**
      * remove Campaign
      * @param id
@@ -59,4 +65,6 @@ public interface CampaignService extends IService<Campaign> {
      * update Status
      */
     void updateStatus(Long campaignId, Integer status);
+
+    Campaign getCampaignByname(String campaignName);
 }

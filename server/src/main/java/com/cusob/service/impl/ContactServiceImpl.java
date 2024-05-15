@@ -44,6 +44,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
     @Autowired
     private UserService userService;
 
+
     /**
      * add Contact
      * @param contactDto
@@ -80,9 +81,14 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
         }
 
         BeanUtils.copyProperties(contactDto, contact);
-        contact.setUserId(AuthContext.getUserId());
-        contact.setCompanyId(AuthContext.getCompanyId());
-        baseMapper.insert(contact);
+        if(baseMapper.selectByEmail(contact.getEmail(),contact.getGroupId())==null){
+            contact.setUserId(AuthContext.getUserId());
+            contact.setCompanyId(AuthContext.getCompanyId());
+            baseMapper.insert(contact);
+        }else {
+            throw new CusobException(ResultCodeEnum.CONTACT_IS_EXISTED);
+        }
+
     }
 
     private void paramVerify(ContactDto contactDto) {

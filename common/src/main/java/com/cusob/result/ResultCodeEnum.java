@@ -12,6 +12,7 @@ public enum ResultCodeEnum {
     DATA_ERROR(204, "数据异常"),
     ILLEGAL_REQUEST(205, "非法请求"),
     REPEAT_SUBMIT(206, "重复提交"),
+
     // TODO 待修改
     USER_IS_DISABLE(208, "During the internal test, you cannot log in temporarily"),
     NO_PERMISSION(209, "Free users don't have permissions"),
@@ -87,7 +88,11 @@ public enum ResultCodeEnum {
     SUBJECT_IS_EMPTY(293, "The subject is empty"),
     CONTENT_IS_EMPTY(294, "The content is empty"),
     SEND_TIME_EMPTY(295, "The send time is empty"),
-    EMAIL_CATEGORY_NOEXIST(296,"The Email service provider does not support"),
+
+    EMAIL_CATEGORY_NOEXIST(296,"The email service provider does not support"),
+    CONTACT_IS_EXISTED(297,"The contact has already existed in your contact list "),
+    TITLE_IS_EXISTED(298,"The title has already existed in your campaign list")
+
     ;
 
     private Integer code;

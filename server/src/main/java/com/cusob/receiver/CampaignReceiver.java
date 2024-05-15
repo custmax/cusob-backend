@@ -68,6 +68,7 @@ public class CampaignReceiver {
         channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
     }
 
+
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = MqConst.QUEUE_MASS_MAILING, durable = "true"),
             exchange = @Exchange(value = MqConst.EXCHANGE_MAIL_DIRECT),
@@ -100,5 +101,6 @@ public class CampaignReceiver {
         }
 
     }
+
 
 }

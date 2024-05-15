@@ -71,6 +71,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
     public Long saveCampaign(CampaignDto campaignDto, Integer status) {
         Campaign campaign = new Campaign();
         BeanUtils.copyProperties(campaignDto, campaign);
+
         campaign.setUserId(AuthContext.getUserId());
         campaign.setStatus(status);
         baseMapper.insert(campaign);
@@ -134,6 +135,9 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
         // Parameter validation
         this.paramVerify(campaignDto);
         Long campaignId;
+        if(campaignDto.getId()==0 && this.getCampaignByname(campaignDto.getCampaignName())!=null){
+            throw new CusobException(ResultCodeEnum.TITLE_IS_EXISTED);
+        }
         Campaign campaign = this.getCampaignById(campaignDto.getId());
         if (campaign != null){
             campaignId = campaign.getId();
@@ -161,6 +165,11 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                 MqConst.ROUTING_MASS_MAILING, campaign);
     }
 
+    @Override
+    public List<Contact> getSendList(Long groupId) {
+        return contactService.getListByGroupId(groupId);
+    }
+
     /**
      * remove Campaign
      * @param id
@@ -174,6 +183,8 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
      * Mass Mailing
      * @param campaign
      */
+
+
     @Override
     public void MassMailing(Campaign campaign) {
         Long senderId = campaign.getSenderId();
@@ -216,6 +227,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
 
     }
 
+
     /**
      * update Status
      */
@@ -226,6 +238,11 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
             campaign.setStatus(status);
             baseMapper.updateById(campaign);
         }
+    }
+
+    @Override
+    public Campaign getCampaignByname(String campaignName) {
+        return baseMapper.getCampaignByname(campaignName);
     }
 
 
