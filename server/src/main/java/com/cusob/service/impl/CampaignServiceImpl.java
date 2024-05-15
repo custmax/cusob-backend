@@ -182,47 +182,50 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
      * Mass Mailing
      * @param campaign
      */
-//    @Override
-//    public void MassMailing(Campaign campaign) {
-//        Long senderId = campaign.getSenderId();
-//        Sender sender = senderService.getById(senderId);
-//        String senderName = campaign.getSenderName();
-//        String subject = campaign.getSubject();
-//        String content = campaign.getContent();
-//        Long userId = campaign.getUserId();
-//        Long groupId = campaign.getToGroup();
-//        List<Contact> contactList = contactService.getListByUserIdAndGroupId(userId, groupId);
-//        List<String> emailList = unsubscribeService.selectEmailList();
-//        String unsubscribe = "\n If you do not want to receive such emails, " +
-//                "please click on the link below to unsubscribe: ";
-//
-//        Random random = new Random();
-//        long totalTime = 1;
-//        for (Contact contact : contactList) {
-//            String email = contact.getEmail();
-//            if (!emailList.contains(email)){
-//                String replace = content.replace("#{First Name}", contact.getFirstName())
-//                        .replace("#{Last Name}", contact.getLastName());
-//                String url = "<img style=\"display: none;\" src=\"" + baseUrl + "/read/count/"
-//                        + campaign.getId() + "/" + contact.getId() + "\">";
-//
-//                String encode = Base64.getEncoder().encodeToString(email.getBytes());
-//                String unsubscribeUrl = baseUrl + "/unsubscribe/campaign?email=" + URLEncoder.encode(encode);
-//                String emailContent = replace + unsubscribe + unsubscribeUrl + url;
-//
-////                ScheduledThreadPoolExecutor executor =
-////                        new ScheduledThreadPoolExecutor(2, new ThreadPoolExecutor.CallerRunsPolicy());
-////                executor.schedule(() -> {
-//                    mailService.sendEmail(sender, senderName, email, emailContent, subject);
-//                    campaignContactService.updateSendStatus(campaign.getId(), contact.getId());
-//                    reportService.updateDeliveredCount(campaign.getId());
-//                }, totalTime, TimeUnit.MILLISECONDS);
-//                executor.shutdown();
-//                totalTime += 1000*(random.nextInt(60) + 60);
-//            }
-//        }
-//
-//    }
+
+
+    @Override
+    public void MassMailing(Campaign campaign) {
+        Long senderId = campaign.getSenderId();
+        Sender sender = senderService.getById(senderId);
+        String senderName = campaign.getSenderName();
+        String subject = campaign.getSubject();
+        String content = campaign.getContent();
+        Long userId = campaign.getUserId();
+        Long groupId = campaign.getToGroup();
+        List<Contact> contactList = contactService.getListByUserIdAndGroupId(userId, groupId);
+        List<String> emailList = unsubscribeService.selectEmailList();
+        String unsubscribe = "\n If you do not want to receive such emails, " +
+                "please click on the link below to unsubscribe: ";
+
+        Random random = new Random();
+        long totalTime = 1;
+        for (Contact contact : contactList) {
+            String email = contact.getEmail();
+            if (!emailList.contains(email)){
+                String replace = content.replace("#{First Name}", contact.getFirstName())
+                        .replace("#{Last Name}", contact.getLastName());
+                String url = "<img style=\"display: none;\" src=\"" + baseUrl + "/read/count/"
+                        + campaign.getId() + "/" + contact.getId() + "\">";
+
+                String encode = Base64.getEncoder().encodeToString(email.getBytes());
+                String unsubscribeUrl = baseUrl + "/unsubscribe/campaign?email=" + URLEncoder.encode(encode);
+                String emailContent = replace + unsubscribe + unsubscribeUrl + url;
+
+                ScheduledThreadPoolExecutor executor =
+                        new ScheduledThreadPoolExecutor(2, new ThreadPoolExecutor.CallerRunsPolicy());
+                executor.schedule(() -> {
+                    mailService.sendEmail(sender, senderName, email, emailContent, subject);
+                    campaignContactService.updateSendStatus(campaign.getId(), contact.getId());
+                    reportService.updateDeliveredCount(campaign.getId());
+                }, totalTime, TimeUnit.MILLISECONDS);
+                executor.shutdown();
+                totalTime += 1000*(random.nextInt(10) + 10);
+            }
+        }
+
+    }
+
 
     /**
      * update Status

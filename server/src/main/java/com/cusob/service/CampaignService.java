@@ -59,7 +59,7 @@ public interface CampaignService extends IService<Campaign> {
      * Mass Mailing
      * @param campaign
      */
-//    void MassMailing(Campaign campaign);
+    void MassMailing(Campaign campaign);
 
     /**
      * update Status
