@@ -7,14 +7,14 @@ import com.cusob.dto.OrderInfoDto;
 import com.cusob.entity.OrderHistory;
 import com.cusob.entity.OrderInfo;
 import com.cusob.entity.PlanPrice;
+import com.cusob.entity.Price;
 import com.cusob.enums.PaypalPaymentIntent;
 import com.cusob.enums.PaypalPaymentMethod;
 import com.cusob.exception.CusobException;
 import com.cusob.mapper.OrderInfoMapper;
-import com.cusob.result.Result;
 import com.cusob.result.ResultCodeEnum;
 import com.cusob.service.OrderInfoService;
-import com.cusob.service.PlanPriceService;
+import com.cusob.service.PriceService;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo> implements OrderInfoService {
 
     @Autowired
-    private PlanPriceService planPriceService;
+    private PriceService priceService;
 
     @Autowired
     private PayPalService payPalService;
@@ -55,16 +55,16 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         BeanUtils.copyProperties(orderInfoDto, orderInfo);
         Long userId = AuthContext.getUserId();
         orderInfo.setUserId(userId);
-        PlanPrice plan = planPriceService.getPlanById(planId);
+        Price plan = priceService.getById(planId);
         orderInfo.setPaymentStatus(OrderInfo.UNPAID);
         orderInfo.setPlanId(planId);
         orderInfo.setPlanName(plan.getName());
         orderInfo.setContactCapacity(plan.getContactCapacity());
         orderInfo.setEmailCapacity(plan.getEmailCapacity());
-        orderInfo.setPrice(plan.getPrice());
+        orderInfo.setPrice(plan.getPriceUSD());
         orderInfo.setDiscounts(new BigDecimal(0)); // todo 待修改
         orderInfo.setTax(new BigDecimal(0));
-        orderInfo.setTotalAmount(plan.getPrice());
+        orderInfo.setTotalAmount(plan.getAmountUSD());
         baseMapper.insert(orderInfo);
 
         OrderHistory orderHistory = new OrderHistory();
@@ -95,9 +95,8 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     public String pay(Long planId) {
         String cancelUrl = baseUrl + "/pricing?type=cancelPay";
         String successUrl = baseUrl + "/dashboard";
-
-        PlanPrice plan = planPriceService.getPlanById(planId);
-        BigDecimal price = plan.getPrice();
+        Price plan = priceService.getById(planId);
+        BigDecimal price = plan.getAmountUSD();
         String currency = PlanPrice.USD;
         String desc = plan.getName() + "\n" + "Contacts: " +
                 plan.getContactCapacity() + " Sends: " +
