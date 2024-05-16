@@ -6,4 +6,5 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface ApiDomainMapper extends BaseMapper<ApiDomain> {
+   ApiDomain selectDomainByname(String domain,Long userId);
 }
