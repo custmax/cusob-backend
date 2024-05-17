@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> implements ContactService {
@@ -303,6 +304,18 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
                         .eq(Contact::getGroupId, groupId)
         );
         return contactList;
+    }
+
+    /**
+     * get All Contacts email By GroupId
+     * @param groupId
+     * @return
+     */
+    @Override
+    public List<String> getAllContactsByGroupId(Long groupId) {
+        List<Contact> contactList = this.getListByUserIdAndGroupId(AuthContext.getUserId(), groupId);
+        List<String> emailList = contactList.stream().map(Contact::getEmail).collect(Collectors.toList());
+        return emailList;
     }
 
 }

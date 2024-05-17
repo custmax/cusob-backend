@@ -92,4 +92,11 @@ public interface ContactService extends IService<Contact> {
      * @return
      */
     List<Contact> getListByUserIdAndGroupId(Long userId, Long groupId);
+
+    /**
+     * get All Contacts email By GroupId
+     * @param groupId
+     * @return
+     */
+    List<String> getAllContactsByGroupId(Long groupId);
 }
