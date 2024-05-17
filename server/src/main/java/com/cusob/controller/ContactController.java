@@ -88,4 +88,11 @@ public class ContactController {
         contactService.batchImport(file, groupName);
         return Result.ok();
     }
+
+    @ApiOperation("get All Contacts email By GroupId")
+    @GetMapping("getAll/{groupId}")
+    public Result getAllContactsByGroupId(@PathVariable Long groupId){
+        List<String> emailList = contactService.getAllContactsByGroupId(groupId);
+        return Result.ok(emailList);
+    }
 }
