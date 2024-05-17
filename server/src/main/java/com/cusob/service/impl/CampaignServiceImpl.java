@@ -233,19 +233,6 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
 
     }
 
-    public static void main(String[] args) {
-        String host = "http://localhost:3000";
-        String email = "m202373514@hust.edu.cn";
-        String encode = Base64.getEncoder().encodeToString(email.getBytes());
-        String unsubscribeUrl = host + "/unsubscribe?email=" + URLEncoder.encode(encode);
-        String btnUnsubscribe = "<a href=\"" + unsubscribeUrl +"\">\n" +
-                "    <div style=\"text-align: center; margin-top: 20px;\">\n" +
-                "        <button style=\"border-radius: 4px; height: 30px; color: white; border: none; background-color: #e7e7e7;\">Unsubscribe</button>\n" +
-                "    </div>\n" +
-                "</a>";
-        System.out.println(btnUnsubscribe);
-    }
-
 
     /**
      * update Status
