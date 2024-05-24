@@ -8,7 +8,7 @@ import lombok.Data;
 @TableName("dkim")
 public class Dkim extends BaseEntity{
 
-    public static final String PRIVATE_KEY = "privateKey";
+    public static final String PRIVATE_KEY = "dmarcValue";
     public static final String PUBLIC_KEY = "publicKey";
 
     @TableField("domain")
@@ -17,9 +17,9 @@ public class Dkim extends BaseEntity{
     @TableField("selector")
     private String selector;
 
-    @TableField("private_key")
-    private String privateKey;
-
     @TableField("public_key")
     private String publicKey;
+
+    @TableField("dmarc_value")
+    private String dmarcValue;
 }

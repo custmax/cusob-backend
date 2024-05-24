@@ -17,12 +17,6 @@ public class ApiDomain extends BaseEntity {
     @TableField("status")
     private Integer status;
 
-    @TableField("api_user")
-    private String apiUser;
-
-    @TableField("api_key")
-    private String apiKey;
-
     @TableField("spf_domain")
     private String spfDomain;
 

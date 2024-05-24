@@ -49,7 +49,6 @@ public class DkimServiceImpl extends ServiceImpl<DkimMapper, Dkim> implements Dk
                 new LambdaQueryWrapper<Dkim>()
                         .eq(Dkim::getDomain, domain)
         );
-        dkim.setPrivateKey(null);
         return dkim;
     }
 
@@ -96,13 +95,9 @@ public class DkimServiceImpl extends ServiceImpl<DkimMapper, Dkim> implements Dk
     public void generateAndSaveDkim(String domain) {
         Dkim dkim = new Dkim();
         Map<String, String> map = this.generateKey(domain);
-        String privateKey = map.get(Dkim.PRIVATE_KEY);
         String publicKey = map.get(Dkim.PUBLIC_KEY);
-        double num = (Math.random()*9 + 1)*10000;
-        String str = String.valueOf(Math.round(num));
-        dkim.setPrivateKey(privateKey);
         dkim.setPublicKey(dkimPrefix + publicKey);
-        dkim.setSelector(selectorPrefix + str);
+        dkim.setSelector(selectorPrefix);
         dkim.setDomain(domain);
         baseMapper.insert(dkim);
     }

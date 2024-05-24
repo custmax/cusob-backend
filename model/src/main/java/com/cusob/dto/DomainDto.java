@@ -1,13 +1,11 @@
 package com.cusob.dto;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
-public class ApiDomainDto implements Serializable {
+public class DomainDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String spfDomain;
@@ -31,5 +29,4 @@ public class ApiDomainDto implements Serializable {
     private String cnameDomain;
 
     private String cnameValue;
-
 }

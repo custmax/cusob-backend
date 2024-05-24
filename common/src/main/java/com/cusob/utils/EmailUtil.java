@@ -20,8 +20,8 @@ public class EmailUtil {
         InputStream inputStream = getFileInputStream(url);
 
         Email email = EmailBuilder.startingBlank()
-                .from("daybreak", "daybreak@chtrak.com")
-                .to("ming", "2218098884@qq.com")
+                .from("TL", "tim@chtrak.com")
+                .to("ming", "941563132@qq.com")
                 .withPlainText("Please view this email in a modern email client!")
                 .withSubject("Hello ming,nice to meet you!")
                 .signWithDomainKey(inputStream, domain, selector)

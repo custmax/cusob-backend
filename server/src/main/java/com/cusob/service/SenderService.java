@@ -14,6 +14,9 @@ public interface SenderService extends IService<Sender> {
      */
     void saveSender(SenderDto senderDto);
 
+    void saveDomainSender(String email,String password);
+
+    void createSender(String email,String password);
 
     /**
      * get Sender By UserId

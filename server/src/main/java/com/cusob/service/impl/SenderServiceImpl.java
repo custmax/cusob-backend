@@ -33,6 +33,10 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import javax.mail.*;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -53,6 +57,12 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
     @Value("${cusob.domain.dkim.prefix}")
     private String dkimPrefix;
 
+    @Value("${cusob.domain.smtp}")
+    private String smtp;
+
+    @Value("${cusob.domain.imap}")
+    private String imap;
+
     @Value("${cusob.domain.dkim.selector}")
     private String selectorPrefix;
 
@@ -61,6 +71,8 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
 
     @Autowired
     private EmailSettingsService emailSettingsService;
+
+
 
     /**
      * save Sender
@@ -86,8 +98,6 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
         }
         Sender sender = new Sender();
         BeanUtils.copyProperties(senderDto, sender);
-
-
         String suffix = sender.getEmail().split("@")[1];
         EmailSettings settings = emailSettingsService.getSettings(suffix);
         if(settings == null && sender.getSmtpServer()==null){
@@ -181,8 +191,69 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
             rabbitTemplate.convertAndSend(MqConst.EXCHANGE_DKIM_DIRECT,
                     MqConst.ROUTING_GENERATE_DKIM, domain);
         }
+    }
+
+    @Override
+    public void saveDomainSender(String email,String password) {
+        Sender senderSelect = baseMapper.selectOne(
+                new LambdaQueryWrapper<Sender>()
+                        .eq(Sender::getEmail, email)
+        );
+        if (senderSelect!=null ){
+            throw new CusobException(ResultCodeEnum.EMAIL_IS_BOUND);
+        }
+        Sender sender = new Sender();
+        sender.setEmail(email);
+        sender.setPassword(password);
+        sender.setPopPort(Ports.POP_SSL_PORT);
+        sender.setImapPort(Ports.IMAP_SSL_PORT);
+        sender.setSmtpPort(Ports.SMTP_SSL_PORT);
+        sender.setSmtpServer(smtp);
+        sender.setImapServer(imap);
+        sender.setUserId(AuthContext.getUserId());
+        sender.setServerType("IMAP");
+        sender.setImapEncryption("SSL");
+        sender.setSmtpEncryption("SSL");
+        baseMapper.insert(sender);
+    }
+
+    @Override
+    public void createSender(String email, String password) {
+        String urlString = "https://mail.email-marketing-hub.com/api/v1/user";
+        HttpURLConnection connection = null;
+        try {
+            URL url = new URL(urlString);
+
+            // 打开连接
+            connection = (HttpURLConnection) url.openConnection();
+
+            // 设置请求方法为 POST
+            connection.setRequestMethod("POST");
+
+            // 设置请求头
+            connection.setRequestProperty("Content-Type", "application/json; utf-8");
+            connection.setRequestProperty("Accept", "application/json");
+
+            // 启用输出流
+            connection.setDoOutput(true);
+
+            // 创建请求体
+            String jsonInputString = String.format("{\"email\": \"%s\", \"password\": \"%s\"}", email, password);
+
+            // 写入请求体
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+            int code = connection.getResponseCode();
+            System.out.println("Response Code: " + code);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
 
     }
+
 
     /**
      * get Sender By UserId

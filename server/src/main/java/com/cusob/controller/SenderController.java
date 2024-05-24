@@ -1,5 +1,6 @@
 package com.cusob.controller;
 
+import com.cusob.dto.DomainSenderDto;
 import com.cusob.dto.SenderDto;
 import com.cusob.entity.Sender;
 import com.cusob.result.Result;
@@ -23,6 +24,14 @@ public class SenderController {
         senderService.saveSender(senderDto);
         return Result.ok();
     }
+
+    @ApiOperation("save Sender by domainverify")
+    @PostMapping("savedomainsender")
+    public Result saveDomainSender(@RequestBody DomainSenderDto domainSenderDto){
+        senderService.saveDomainSender(domainSenderDto.getEmail(),domainSenderDto.getPassword());
+        return Result.ok();
+    }
+
 
 //    @ApiOperation("get Sender By UserId")
 //    @GetMapping("getByUserId")

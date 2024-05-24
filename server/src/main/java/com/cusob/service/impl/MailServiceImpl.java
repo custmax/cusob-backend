@@ -221,7 +221,7 @@ public class MailServiceImpl implements MailService {
         // 使用环境属性和授权信息，创建邮件会话
         Session mailSession = Session.getInstance(props, authenticator);
         final String messageIDValue = genMessageID(props.getProperty("mail.user"));
-        //创建邮件消息
+//        创建邮件消息
         MimeMessage message = new MimeMessage(mailSession) {
             @Override
             protected void updateMessageID() throws MessagingException {

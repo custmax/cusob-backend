@@ -30,6 +30,9 @@ public class DomainServiceImpl extends ServiceImpl<DomainMapper, Domain> impleme
     @Value("${cusob.domain.spf}")
     private String spf;
 
+    @Value("${cusob.domain.mx}")
+    private String mx;
+
     /**
      * domain Verify
      * @param domain
@@ -40,15 +43,23 @@ public class DomainServiceImpl extends ServiceImpl<DomainMapper, Domain> impleme
         if (!StringUtils.hasText(domain)){
             throw new CusobException(ResultCodeEnum.DOMAIN_IS_EMPTY);
         }
+        Domain domainSelect = this.getByDomain(domain);
         Map<String, Boolean> map = new HashMap<>();
         // todo 采用异步操作
         Boolean flagSpf = this.spfVerify(domain);
-        Boolean flagDkim = this.dkimVerify(domain);
+        Boolean flagDkim = this.dkimVerify(domain,domainSelect.getDkimValue());
+        Boolean flagMx = this.mxVerify(domain);
+        Boolean flagDmarc = this.dmarcVerify(domain);
         map.put("spf", flagSpf);
         map.put("dkim", flagDkim);
-        Domain domainSelect = this.getByDomain(domain);
-        domainSelect.setSpf(flagSpf);
-        domainSelect.setDkim(flagDkim);
+        map.put("mx",flagMx);
+        map.put("dmarc",flagDmarc);
+
+        domainSelect.setSpfVerify(flagSpf ? 1 :0);
+        domainSelect.setDkimVerify(flagDkim ? 1: 0);
+        domainSelect.setMxVerify(flagMx ? 1: 0);
+        domainSelect.setDmarcVerify(flagDmarc ? 1: 0);
+        domainSelect.setStatus(flagSpf && flagDkim ? 1:0);
         baseMapper.updateById(domainSelect);
         return map;
     }
@@ -81,13 +92,23 @@ public class DomainServiceImpl extends ServiceImpl<DomainMapper, Domain> impleme
         return domainSelect;
     }
 
-    private Boolean dkimVerify(String domain) {
+    private Boolean dkimVerify(String domain,String dkim) {
         Dkim dkimSelect = dkimService.getDkim(domain);
         String selector = dkimSelect.getSelector();
         List<String> dkimList = DnsUtil.checkDkim(selector ,domain);
 
-        String publicKey = dkimSelect.getPublicKey();
-        if (dkimList!=null && dkimList.contains(publicKey)){
+        if (dkimList!=null && dkimList.contains(dkim)){
+            return true;
+        }
+
+        return false;
+    }
+
+    private Boolean dmarcVerify(String domain) {
+        Dkim dkimSelect = dkimService.getDkim(domain);
+        String dmarcValue = dkimSelect.getDmarcValue();
+        List<String> dmarcList = DnsUtil.checkdmarc(domain);
+        if (dmarcList!=null && dmarcList.contains(dmarcValue)){
             return true;
         }
         return false;
@@ -100,6 +121,14 @@ public class DomainServiceImpl extends ServiceImpl<DomainMapper, Domain> impleme
     private Boolean spfVerify(String domain) {
         List<String> spfList = DnsUtil.checkSpf(domain);
         if (spfList!=null && spfList.contains(spf)){
+            return true;
+        }
+        return false;
+    }
+
+    private Boolean mxVerify(String domain) {
+        List<String> mxList = DnsUtil.checkmx(domain);
+        if (mxList!=null && mxList.contains(mx)){
             return true;
         }
         return false;
