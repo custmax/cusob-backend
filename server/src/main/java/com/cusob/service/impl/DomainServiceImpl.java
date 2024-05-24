@@ -33,6 +33,9 @@ public class DomainServiceImpl extends ServiceImpl<DomainMapper, Domain> impleme
     @Value("${cusob.domain.mx}")
     private String mx;
 
+    @Value("${cusob.domain.dkim.selector}")
+    private String selector;
+
     /**
      * domain Verify
      * @param domain
@@ -49,7 +52,7 @@ public class DomainServiceImpl extends ServiceImpl<DomainMapper, Domain> impleme
         Boolean flagSpf = this.spfVerify(domain);
         Boolean flagDkim = this.dkimVerify(domain,domainSelect.getDkimValue());
         Boolean flagMx = this.mxVerify(domain);
-        Boolean flagDmarc = this.dmarcVerify(domain);
+        Boolean flagDmarc = this.dmarcVerify(domain,domainSelect.getDmarcValue());
         map.put("spf", flagSpf);
         map.put("dkim", flagDkim);
         map.put("mx",flagMx);
@@ -93,9 +96,8 @@ public class DomainServiceImpl extends ServiceImpl<DomainMapper, Domain> impleme
     }
 
     private Boolean dkimVerify(String domain,String dkim) {
-        Dkim dkimSelect = dkimService.getDkim(domain);
-        String selector = dkimSelect.getSelector();
-        List<String> dkimList = DnsUtil.checkDkim(selector ,domain);
+
+        List<String> dkimList = DnsUtil.checkDkim(domain,selector);
 
         if (dkimList!=null && dkimList.contains(dkim)){
             return true;
@@ -104,9 +106,7 @@ public class DomainServiceImpl extends ServiceImpl<DomainMapper, Domain> impleme
         return false;
     }
 
-    private Boolean dmarcVerify(String domain) {
-        Dkim dkimSelect = dkimService.getDkim(domain);
-        String dmarcValue = dkimSelect.getDmarcValue();
+    private Boolean dmarcVerify(String domain,String dmarcValue) {
         List<String> dmarcList = DnsUtil.checkdmarc(domain);
         if (dmarcList!=null && dmarcList.contains(dmarcValue)){
             return true;

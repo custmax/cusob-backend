@@ -85,7 +85,7 @@ public class DnsUtil {
         }
     }
 
-    public static List<String> checkDkim(String selector, String domain){
+    public static List<String> checkDkim(String domain,String selector){
 
         try {
             // 构造DKIM记录的查询名称，通常是"<selector>._domainkey.<domain>"
