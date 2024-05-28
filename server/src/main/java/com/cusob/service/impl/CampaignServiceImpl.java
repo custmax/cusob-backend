@@ -205,8 +205,14 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
         for (Contact contact : contactList) {
             String email = contact.getEmail();
             if (!emailList.contains(email)){
-                String replace = content.replace("#{First Name}", contact.getFirstName())
-                        .replace("#{Last Name}", contact.getLastName());
+                String replace = content.replace("#{First Name}", contact.getFirstName()==null ? "#{First Name}":contact.getFirstName())
+                        .replace("#{Last Name}", contact.getLastName()==null ? "#{Last Name}":contact.getLastName())
+                        .replace("#{Company}",contact.getCompany()==null ? "#{Company}":contact.getCompany())
+                        .replace("#{Email}",contact.getEmail()==null ? "#{Email}":contact.getEmail())
+                        .replace("#{Title}",contact.getTitle()==null ? "#{Title}":contact.getTitle())
+                        .replace("#{BirthDate}",contact.getBirthDate()==null ? "#{BirthDate}":contact.getBirthDate().toString())
+                        //动态替换收件人信息
+                        ;
                 String img = "<img style=\"display: none;\" src=\"" + baseUrl + "/read/count/"
                         + campaign.getId() + "/" + contact.getId() + "\">";
 
