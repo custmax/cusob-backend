@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-//ceshi2
+//cesh
 @EnableTransactionManagement
 @SpringBootApplication
 @MapperScan("com.cusob.mapper")
