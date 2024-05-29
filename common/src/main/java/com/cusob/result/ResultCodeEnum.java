@@ -62,7 +62,7 @@ public enum ResultCodeEnum {
     EMAIL_IS_BOUND(248, "The email address has been bound"),
 
     VERIFY_CODE_EMPTY(250, "The verify code is empty"),
-    VERIFY_CODE_WRONG(251, "The verify code is wrong"),
+    VERIFY_CODE_WRONG(251, "Verification failed, please try again"),
     GENERATE_CAPTCHA_FAIL(252, "Failed to generate a verification code"),
 
     FILE_IS_Abnormal(255, "The file is abnormal"),

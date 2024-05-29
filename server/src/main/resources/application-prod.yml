@@ -50,6 +50,7 @@ cusob:
   url: https://www.cusob.com
   host: http://www.cusob.com:8080
   phone: 001 517 7606 888
+  cf-secret-key: 0x4AAAAAAAbYSzALmlAgdCCHu8ISaZVj_UA
   website: www.cusob.com
   jwt:
     # 设置jwt签名加密时使用的秘钥
