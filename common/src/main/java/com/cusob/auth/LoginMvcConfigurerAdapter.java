@@ -30,12 +30,14 @@ public class LoginMvcConfigurerAdapter extends WebMvcConfigurationSupport {
                 .excludePathPatterns("/user/forgetPassword")
                 .excludePathPatterns("/user/sendCodeForPassword")
                 .excludePathPatterns("/user/registerForInvited")
+                .excludePathPatterns("/user/checkUuid/**")
                 .excludePathPatterns("/plan/price/**")
                 .excludePathPatterns("/price/**")
                 .excludePathPatterns("/read/**")
                 .excludePathPatterns("/book/**")
                 .excludePathPatterns("/unsubscribe/**")
                 .excludePathPatterns("/captcha/**")
+
                 .excludePathPatterns(excludePatterns)
         ;
     }

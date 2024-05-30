@@ -36,6 +36,7 @@
         <simplejavamail>6.0.2</simplejavamail>
         <dkim-module>6.0.2</dkim-module>
         <javax.mail>1.6.2</javax.mail>
+        <dnsjava>3.5.2</dnsjava>
     </properties>
 
     <dependencyManagement>

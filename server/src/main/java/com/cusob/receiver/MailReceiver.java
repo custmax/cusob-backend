@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Component
 public class MailReceiver {
@@ -78,9 +79,11 @@ public class MailReceiver {
             exchange = @Exchange(value = MqConst.EXCHANGE_REGISTER_DIRECT),
             key = {MqConst.ROUTING_REGISTER_SUCCESS}
     ))
-    public void registerSuccess(Long userId, Message message, Channel channel) throws IOException {
-        if (userId!=null){
-            userService.sendEmailForRegisterSuccess(userId);
+    public void registerSuccess(Map<String,String> usermap , Message message, Channel channel) throws IOException {
+        String uuid = usermap.get("uuid");
+        String email = usermap.get("email");
+        if (uuid!=null){
+            userService.sendEmailForRegisterSuccess(uuid,email);
         }
         channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
     }
