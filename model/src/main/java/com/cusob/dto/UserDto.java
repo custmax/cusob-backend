@@ -17,7 +17,7 @@ public class UserDto implements Serializable {
 
     private String email;
 
-    private String verifyCode;
+    private String turnstileToken;
 
     private String phone;
 

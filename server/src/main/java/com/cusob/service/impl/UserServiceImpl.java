@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.net.URLDecoder;
@@ -50,11 +51,15 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
+    @Value("${cusob.cf-secret-key}")
+    private String turnstileSecretKey ;
+
     @Autowired
     private JwtProperties jwtProperties;
 
     @Autowired
     private MailService mailService;
+
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -70,6 +75,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Resource
     private RabbitTemplate rabbitTemplate;
+
+    private final RestTemplate restTemplate;
+
+    public UserServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     /**
      * add User(User Register)
@@ -105,16 +116,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     private void registerVerify(UserDto userDto) {
-        String verifyCode = userDto.getVerifyCode();
-        if (!StringUtils.hasText(verifyCode)){
+        String turnstileToken = userDto.getTurnstileToken();
+        if (!StringUtils.hasText(turnstileToken)){
             throw new CusobException(ResultCodeEnum.VERIFY_CODE_EMPTY);
         }
-        String email = userDto.getEmail();
-        String code = (String) redisTemplate.opsForValue().get(RedisConst.REGISTER_PREFIX + email);
-        if (!verifyCode.equals(code)){
+
+        String url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("secret", turnstileSecretKey);
+        requestBody.put("response", turnstileToken);
+
+        Map<String, Object> response = restTemplate.postForObject(url, requestBody, Map.class);
+        if (!(response != null && Boolean.TRUE.equals(response.get("success")))) {
             throw new CusobException(ResultCodeEnum.VERIFY_CODE_WRONG);
         }
 
+        String email = userDto.getEmail();
         User userDb = this.getUserByEmail(email);
         if (userDb != null){
             throw new CusobException(ResultCodeEnum.EMAIL_IS_REGISTERED);
@@ -376,7 +393,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String subject = "Welcome to Our Email Marketing Platform! New User Guide";
         // todo 待优化
         String content = ReadEmail.read("emails/email-registersuccess.html");
-        mailService.sendTextMailMessage(email, subject, content);
+        mailService.sendHtmlMailMessage(email, subject, content);
     }
 
     /**

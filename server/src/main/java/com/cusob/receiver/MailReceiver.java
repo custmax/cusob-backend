@@ -40,7 +40,7 @@ public class MailReceiver {
     public void sendVerifyCodeToRegister(Email mail, Message message, Channel channel) throws IOException {
         try {
             if (StringUtils.hasText(mail.getEmail())){
-                mailService.sendTextMailMessage(mail.getEmail(), mail.getSubject(), mail.getContent());
+                mailService.sendHtmlMailMessage(mail.getEmail(), mail.getSubject(), mail.getContent());
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -56,7 +56,7 @@ public class MailReceiver {
     ))
     public void inviteUser(Email mail, Message message, Channel channel) throws IOException {
         if (StringUtils.hasText(mail.getEmail())){
-            mailService.sendTextMailMessage(mail.getEmail(), mail.getSubject(), mail.getContent());
+            mailService.sendHtmlMailMessage(mail.getEmail(), mail.getSubject(), mail.getContent());
         }
         channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
     }
