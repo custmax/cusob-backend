@@ -53,7 +53,7 @@ public class MailServiceImpl implements MailService {
         if(StringUtils.isEmpty(to)){
             throw new CusobException(ResultCodeEnum.EMAIL_RECIPIENT_EMPTY);
         }
-        boolean flag = Pattern.matches("^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+", to);
+        boolean flag = Pattern.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", to);
         if (!flag){
             throw new CusobException(ResultCodeEnum.EMAIL_FORMAT_ERROR);
         }

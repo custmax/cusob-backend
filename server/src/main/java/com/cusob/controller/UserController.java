@@ -14,6 +14,7 @@ import com.cusob.service.UserService;
 import com.cusob.vo.UserLoginVo;
 import com.cusob.vo.UserVo;
 import io.swagger.annotations.ApiOperation;
+import org.simpleframework.xml.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +38,16 @@ public class UserController {
     public Result addUser(@RequestBody UserDto userDto){
         userService.addUser(userDto);
         return Result.ok();
+    }
+
+    @ApiOperation("add User(User Register)")
+    @GetMapping("checkUuid/{uuid}")
+    public Result checkUuid(@PathVariable String uuid){
+        boolean status = userService.checkUuid(uuid);
+        if(status){
+            return Result.ok();
+        }
+        return Result.fail("Link timed out");
     }
 
     @ApiOperation("Invite colleagues to join")

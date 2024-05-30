@@ -67,7 +67,9 @@ public interface UserService extends IService<User> {
     /**
      * send Email For Register Success
      */
-    void sendEmailForRegisterSuccess(Long userId);
+    void sendEmailForRegisterSuccess(String userId,String email);
+
+    boolean checkUuid(String uuid);
 
     /**
      * send Verify Code for signing up

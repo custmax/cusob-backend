@@ -11,10 +11,7 @@ import com.cusob.dto.ForgetPasswordDto;
 import com.cusob.dto.UpdatePasswordDto;
 import com.cusob.dto.UserDto;
 import com.cusob.dto.UserLoginDto;
-import com.cusob.entity.Company;
-import com.cusob.entity.Email;
-import com.cusob.entity.PlanPrice;
-import com.cusob.entity.User;
+import com.cusob.entity.*;
 import com.cusob.exception.CusobException;
 import com.cusob.mapper.UserMapper;
 import com.cusob.properties.JwtProperties;
@@ -31,6 +28,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,10 +39,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
@@ -100,19 +95,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setPassword(DigestUtils.md5DigestAsHex(password.getBytes()));
         user.setPermission(User.SUPER_ADMIN);
         user.setIsAvailable(User.AVAILABLE); // TODO 开启使用
-        baseMapper.insert(user);
+        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+        String uuid = UUID.randomUUID().toString()+System.currentTimeMillis();
+        hashOperations.put(uuid,"email",user.getEmail());
+        hashOperations.put(uuid,"password",user.getPassword());
+        redisTemplate.expire(uuid, 30, TimeUnit.MINUTES);
 
-        Company company = new Company();
-        company.setCompanyName(userDto.getCompany());
-        company.setAdminId(user.getId());
-        company.setPlanId(PlanPrice.FREE); // default free plan
-        companyService.saveCompany(company);
 
-        user.setCompanyId(company.getId());
-        baseMapper.updateById(user);
-
+        Map<String,String> usermap = new HashMap<>();
+        usermap.put("uuid",uuid);
+        usermap.put("email",user.getEmail());
         rabbitTemplate.convertAndSend(MqConst.EXCHANGE_REGISTER_DIRECT,
-                MqConst.ROUTING_REGISTER_SUCCESS, user.getId());
+                MqConst.ROUTING_REGISTER_SUCCESS, usermap);
     }
 
     private void registerVerify(UserDto userDto) {
@@ -136,6 +130,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (userDb != null){
             throw new CusobException(ResultCodeEnum.EMAIL_IS_REGISTERED);
         }
+
+
+
     }
 
     private void paramEmptyVerify(UserDto userDto) {
@@ -387,13 +384,49 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * send Email For Register Success
      */
     @Override
-    public void sendEmailForRegisterSuccess(Long userId) {
-        User user = baseMapper.selectById(userId);
-        String email = user.getEmail();
+    public void sendEmailForRegisterSuccess(String uuid,String email) {
+
         String subject = "Welcome to Our Email Marketing Platform! New User Guide";
         // todo 待优化
-        String content = ReadEmail.read("emails/email-registersuccess.html");
+        String content = ReadEmail.readwithcode("emails/activate.html",baseUrl+"/registerSuccess?uuid="+uuid);
         mailService.sendHtmlMailMessage(email, subject, content);
+    }
+
+    @Override
+    public boolean checkUuid(String uuid) {
+        if(uuid == null){
+            return false;
+        }
+        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+        Map<String, String> entries = hashOperations.entries(uuid);
+        if(!entries.isEmpty()){
+            User user = new User();
+            String email = entries.get("email");
+            String password = entries.get("password");
+            user.setCompanyId(0L); // default companyId=0
+            user.setEmail(email);
+            user.setPassword(DigestUtils.md5DigestAsHex(password.getBytes()));
+            user.setPermission(User.SUPER_ADMIN);
+            user.setIsAvailable(User.AVAILABLE); // TODO 开启使用
+
+            if(baseMapper.selectOne(
+                    new LambdaQueryWrapper<User>()
+                            .eq(User::getEmail, email)
+            ) ==null){  //如果已经存在该账号就不要再插入
+                baseMapper.insert(user);
+            }
+            Company company = new Company();
+            company.setCompanyName(user.getCompany());
+            company.setAdminId(user.getId());
+            company.setPlanId(PlanPrice.FREE); // default free plan
+            companyService.saveCompany(company);
+
+            user.setCompanyId(company.getId());
+            baseMapper.updateById(user);
+
+            return true;
+        }
+        return false;
     }
 
     /**
