@@ -28,6 +28,7 @@ public class ReadEmail {
         return before+url+after;
     }
 
+
     public static String read(String path){
         ClassLoader classLoader = UserServiceImpl.class.getClassLoader();
         String text= "";

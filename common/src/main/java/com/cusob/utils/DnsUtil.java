@@ -1,6 +1,7 @@
 package com.cusob.utils;
 
 import org.xbill.DNS.*;
+import org.xbill.DNS.Record;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;

@@ -76,6 +76,7 @@ public interface UserService extends IService<User> {
      */
     void sendVerifyCode(String email);
 
+
     /**
      * forget password
      * @param forgetPasswordDto
@@ -87,6 +88,8 @@ public interface UserService extends IService<User> {
      * @param email
      */
     void invite(String email);
+
+
 
     /**
      * Register For Invited
@@ -112,4 +115,9 @@ public interface UserService extends IService<User> {
      */
     void removeUser(Long userId);
 
+    /**
+     * send email for reset
+     * @param email
+     */
+    void sendEmailForResetPassword(String email);
 }
