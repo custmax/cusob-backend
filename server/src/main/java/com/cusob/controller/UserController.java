@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/user")
@@ -120,19 +122,30 @@ public class UserController {
         return Result.ok();
     }
 
-    @ApiOperation("forget password")
-    @PostMapping("forgetPassword")
-    public Result forgetPassword(@RequestBody ForgetPasswordDto forgetPasswordDto){
-        userService.forgetPassword(forgetPasswordDto);
+    @ApiOperation("send email for reset password")
+    @PostMapping("sendEmailForResetPassword")
+    public Result sendEmailForPassword(String email){
+        userService.sendEmailForResetPassword(email);
         return Result.ok();
     }
 
+    @ApiOperation("forget password")
+    @PostMapping("forgetPassword")
+    public Result forgetPassword(@RequestParam Map<String, String> params){
+        ForgetPasswordDto forgetPasswordDto = new ForgetPasswordDto();
+        forgetPasswordDto.setEmail(params.get("email"));
+        forgetPasswordDto.setPassword(params.get("password"));
+
+        userService.forgetPassword(forgetPasswordDto);
+        return Result.ok();
+    }
     @ApiOperation("send verify code for signing up")
     @PostMapping("sendVerifyCode")
     public Result sendVerifyCode(String email){
         userService.sendVerifyCode(email);
         return Result.ok();
     }
+
 
     @ApiOperation("add Admin")
     @PostMapping("addAdmin")

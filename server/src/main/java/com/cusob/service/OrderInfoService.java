@@ -18,6 +18,7 @@ public interface OrderInfoService extends IService<OrderInfo> {
      * @param id
      * @param status
      */
+
     void updateOrderStatus(Long id, Integer status);
 
     /**

@@ -142,6 +142,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if(!StringUtils.hasText(userDto.getPhone())){
             throw new CusobException(ResultCodeEnum.PHONE_IS_EMPTY);
         }
+        //todo 链接激活
+
+
+
     }
 
     /**
@@ -368,6 +372,41 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     /**
+     * send email for reset password
+     */
+    @Override
+    public void sendEmailForResetPassword(String email) {
+        // 获取用户信息
+        User user = this.getUserByEmail(email);
+        if (user == null) {
+            throw new CusobException(ResultCodeEnum.EMAIL_NOT_EXIST);
+        }
+
+        // 加密邮箱
+        String emailKey = DigestUtils.md5DigestAsHex(email.getBytes());
+
+        // 生成链接
+        String link = baseUrl+"/resetPassword?email=" +emailKey;
+        String subject = "Password Reset Instructions for Your Email Marketing Platform Account";
+        String content = ReadEmail.readwithcode("emails/reset.html", link);
+        content = content.replace("{EMAIL_PLACEHOLDER}", email);
+
+        // 将加密邮箱作为键，原始邮箱和验证码作为值存储在Redis中
+        String redisKey = RedisConst.PASSWORD_PREFIX + emailKey;
+        redisTemplate.opsForValue().set(redisKey, email , RedisConst.PASSWORD_TIMEOUT, TimeUnit.MINUTES);
+
+        // 准备邮件对象
+        Email mail = new Email();
+        mail.setEmail(email);
+        mail.setSubject(subject);
+        mail.setContent(content);
+
+        // 发送邮件
+        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_PASSWORD_DIRECT, MqConst.ROUTING_FORGET_PASSWORD, mail);
+    }
+
+
+    /**
      * get User By Email
      * @param email
      * @return
@@ -458,29 +497,33 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     public void forgetPassword(ForgetPasswordDto forgetPasswordDto) {
-        String email = forgetPasswordDto.getEmail();
-        if (!StringUtils.hasText(email)){
+        String encryptedEmail = forgetPasswordDto.getEmail(); // 这个是加密后的邮箱
+        if (!StringUtils.hasText(encryptedEmail)) {
             throw new CusobException(ResultCodeEnum.EMAIL_IS_EMPTY);
         }
-        String verifyCode = forgetPasswordDto.getVerifyCode();
-        if (!StringUtils.hasText(verifyCode)){
-            throw new CusobException(ResultCodeEnum.VERIFY_CODE_EMPTY);
-        }
+
         String password = forgetPasswordDto.getPassword();
-        if (!StringUtils.hasText(password)){
+        if (!StringUtils.hasText(password)) {
             throw new CusobException(ResultCodeEnum.PASSWORD_IS_EMPTY);
         }
-        String code = (String) redisTemplate.opsForValue().get(RedisConst.PASSWORD_PREFIX + email);
-        if (!verifyCode.equals(code)){
-            throw new CusobException(ResultCodeEnum.VERIFY_CODE_WRONG);
+
+        // Redis中根据加密后的邮箱查找存储的原始邮箱
+        String redisKey = RedisConst.PASSWORD_PREFIX + encryptedEmail;
+        String originalEmail = (String) redisTemplate.opsForValue().get(redisKey);
+        if (originalEmail == null) {
+            throw new CusobException(ResultCodeEnum.VERIFY_CODE_WRONG); // 错误码可以调整为更合适的
         }
-        User user = this.getUserByEmail(email);
-        if (user==null){
+
+        // 获取用户并更新密码
+        User user = this.getUserByEmail(originalEmail);
+        if (user == null) {
             throw new CusobException(ResultCodeEnum.EMAIL_NOT_EXIST);
         }
+
         user.setPassword(DigestUtils.md5DigestAsHex(password.getBytes()));
         baseMapper.updateById(user);
     }
+
 
     /**
      * Invite colleagues to join
