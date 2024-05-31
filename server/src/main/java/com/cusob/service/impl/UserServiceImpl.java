@@ -87,20 +87,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         this.paramEmptyVerify(userDto);
         this.registerVerify(userDto);
 
-        String password = userDto.getPassword();
         User user = new User();
         BeanUtils.copyProperties(userDto, user);
-        user.setCompanyId(0L); // default companyId=0
-        // Password encryption
-        user.setPassword(DigestUtils.md5DigestAsHex(password.getBytes()));
-        user.setPermission(User.SUPER_ADMIN);
-        user.setIsAvailable(User.AVAILABLE); // TODO 开启使用
+
         HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
         String uuid = UUID.randomUUID().toString()+System.currentTimeMillis();
         hashOperations.put(uuid,"email",user.getEmail());
         hashOperations.put(uuid,"password",user.getPassword());
         redisTemplate.expire(uuid, 30, TimeUnit.MINUTES);
-
 
         Map<String,String> usermap = new HashMap<>();
         usermap.put("uuid",uuid);
