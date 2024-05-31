@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.util.Scanner;
 
 public class ReadEmail {
-    public static String readwithcode(String path,String code){
+    public static String readwithcode(String path,String url){
         ClassLoader classLoader = UserServiceImpl.class.getClassLoader();
         String text= "";
         try {
@@ -23,9 +23,9 @@ public class ReadEmail {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        String before = text.substring(0, text.indexOf("---code---"));
-        String after = text.substring(text.indexOf("---code---") + "---code---".length());
-        return before+code+after;
+        String before = text.substring(0, text.indexOf("http://example.com"));
+        String after = text.substring(text.indexOf("http://example.com") + "http://example.com".length());
+        return before+url+after;
     }
 
     public static String read(String path){
