@@ -15,8 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements BookService {
@@ -32,6 +35,15 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
 
     @Value("${cusob.email.daybreak}")
     private String mailDaybreak;
+
+    @Value("${cusob.cf-secret-key}")
+    private String turnstileSecretKey ;
+
+    private final RestTemplate restTemplate;
+
+    public BookServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     /**
      * book a demo
@@ -73,6 +85,17 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         }
         if (!StringUtils.hasText(bookDto.getPhone())){
             throw new CusobException(ResultCodeEnum.PHONE_IS_EMPTY);
+        }
+
+        String turnstileToken = bookDto.getTurnstileToken();
+        String url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("secret", turnstileSecretKey);
+        requestBody.put("response", turnstileToken);
+
+        Map<String, Object> response = restTemplate.postForObject(url, requestBody, Map.class);
+        if (!(response != null && Boolean.TRUE.equals(response.get("success")))) {
+            throw new CusobException(ResultCodeEnum.VERIFY_CODE_WRONG);
         }
     }
 }

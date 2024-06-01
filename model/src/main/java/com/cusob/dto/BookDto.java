@@ -16,4 +16,6 @@ public class BookDto implements Serializable {
     private String phone;
 
     private String message;
+
+    private String turnstileToken;
 }

@@ -448,9 +448,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             ) ==null){  //如果已经存在该账号就不要再插入
                 baseMapper.insert(user);
             }
+             Long userId = baseMapper.selectOne(
+                    new LambdaQueryWrapper<User>()
+                            .eq(User::getEmail, email)
+             ).getId();
             Company company = new Company();
             company.setCompanyName(user.getCompany());
-            company.setAdminId(user.getId());
+            company.setAdminId(userId);
             company.setPlanId(PlanPrice.FREE); // default free plan
             companyService.saveCompany(company);
 
