@@ -127,15 +127,15 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         if (orderInfoDto.getPaymentMethod() == null){
             throw new CusobException(ResultCodeEnum.PAYMENT_METHOD_ERROR);
         }
-        if (!StringUtils.hasText(orderInfoDto.getAccountFirstName())){
-            throw new CusobException(ResultCodeEnum.FIRST_NAME_IS_EMPTY);
-        }
-        if (!StringUtils.hasText(orderInfoDto.getAccountLastName())){
-            throw new CusobException(ResultCodeEnum.LAST_NAME_IS_EMPTY);
-        }
-        if (!StringUtils.hasText(orderInfoDto.getAccountAddressLine1())){
-            throw new CusobException(ResultCodeEnum.ADDRESS_IS_EMPTY);
-        }
+//        if (!StringUtils.hasText(orderInfoDto.getAccountFirstName())){
+//            throw new CusobException(ResultCodeEnum.FIRST_NAME_IS_EMPTY);
+//        }
+//        if (!StringUtils.hasText(orderInfoDto.getAccountLastName())){
+//            throw new CusobException(ResultCodeEnum.LAST_NAME_IS_EMPTY);
+//        }
+//        if (!StringUtils.hasText(orderInfoDto.getAccountAddressLine1())){
+//            throw new CusobException(ResultCodeEnum.ADDRESS_IS_EMPTY);
+//        }
         // TODO 其他参数校验
     }
 }
