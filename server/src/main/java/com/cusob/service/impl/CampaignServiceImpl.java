@@ -205,12 +205,14 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
         for (Contact contact : contactList) {
             String email = contact.getEmail();
             if (!emailList.contains(email)){
-                String replace = content.replace("#{First Name}", contact.getFirstName()==null ? "#{First Name}":contact.getFirstName())
-                        .replace("#{Last Name}", contact.getLastName()==null ? "#{Last Name}":contact.getLastName())
-                        .replace("#{Company}",contact.getCompany()==null ? "#{Company}":contact.getCompany())
-                        .replace("#{Email}",contact.getEmail()==null ? "#{Email}":contact.getEmail())
-                        .replace("#{Title}",contact.getTitle()==null ? "#{Title}":contact.getTitle())
-                        .replace("#{BirthDate}",contact.getBirthDate()==null ? "#{BirthDate}":contact.getBirthDate().toString())
+                String replace = content.replace("#{FIRSTNAME}", contact.getFirstName()==null ? "#{FIRSTNAME}":contact.getFirstName())
+                        .replace("#{LASTNAME}", contact.getLastName()==null ? "#{LASTNAME}":contact.getLastName())
+                        .replace("#{COMPANY}",contact.getCompany()==null ? "#{COMPANY}":contact.getCompany())
+                        .replace("#{EMAIL}",contact.getEmail()==null ? "#{EMAIL}":contact.getEmail())
+                        .replace("#{TITLE}",contact.getTitle()==null ? "#{TITLE}":contact.getTitle())
+                        .replace("#{BIRTHDATE}",contact.getBirthDate()==null ? "#{BIRTHDATE}":contact.getBirthDate().toString())
+                        .replace("#{PHONE}",contact.getBirthDate()==null ? "#{PHONE}":contact.getPhone())
+                        .replace("#{DEPT}",contact.getBirthDate()==null ? "#{DEPT}":contact.getDept())
                         //动态替换收件人信息
                         ;
                 String img = "<img style=\"display: none;\" src=\"" + baseUrl + "/read/count/"
