@@ -16,6 +16,8 @@ public interface SenderService extends IService<Sender> {
 
     void saveDomainSender(String email,String password);
 
+    boolean checkEmail(String email);
+
     void createSender(String email,String password);
 
     /**

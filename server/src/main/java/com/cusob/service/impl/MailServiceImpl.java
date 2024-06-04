@@ -241,6 +241,7 @@ public class MailServiceImpl implements MailService {
 
             // 发送邮件
             Transport.send(message);
+            System.out.println(to);
             System.out.println("success");
 
         } catch (MessagingException | UnsupportedEncodingException e) {

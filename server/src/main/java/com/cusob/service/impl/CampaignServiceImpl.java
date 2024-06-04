@@ -226,7 +226,6 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                         "    </div>\n" +
                         "</a>";
                 String emailContent = replace + btnUnsubscribe + img;
-
                 ScheduledThreadPoolExecutor executor =
                         new ScheduledThreadPoolExecutor(2, new ThreadPoolExecutor.CallerRunsPolicy());
                 executor.schedule(() -> {

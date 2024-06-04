@@ -218,6 +218,12 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
     }
 
     @Override
+    public boolean checkEmail(String email) {
+        EmailSettings emailsettings = emailSettingsService.getSettings(email);
+        return emailsettings != null;
+    }
+
+    @Override
     public void createSender(String email, String password) {
         String urlString = "https://mail.email-marketing-hub.com/api/v1/user";
         HttpURLConnection connection = null;
