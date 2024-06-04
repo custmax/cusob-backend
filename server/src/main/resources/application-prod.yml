@@ -4,7 +4,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://192.168.180.247/cusob?characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
-    password: cusob
+    password: BcY36e4UkVL1vmfN
   redis:
     host: 69.164.202.126
     port: 6379

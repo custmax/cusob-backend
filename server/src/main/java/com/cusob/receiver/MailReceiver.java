@@ -44,7 +44,7 @@ public class MailReceiver {
                 mailService.sendHtmlMailMessage(mail.getEmail(), mail.getSubject(), mail.getContent());
             }
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         } finally {
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         }
@@ -56,10 +56,15 @@ public class MailReceiver {
             key = {MqConst.ROUTING_INVITE_USER}
     ))
     public void inviteUser(Email mail, Message message, Channel channel) throws IOException {
-        if (StringUtils.hasText(mail.getEmail())){
-            mailService.sendHtmlMailMessage(mail.getEmail(), mail.getSubject(), mail.getContent());
+        try {
+            if (StringUtils.hasText(mail.getEmail())){
+                mailService.sendHtmlMailMessage(mail.getEmail(), mail.getSubject(), mail.getContent());
+            }
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }finally {
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         }
-        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
     }
 
     @RabbitListener(bindings = @QueueBinding(
@@ -68,10 +73,15 @@ public class MailReceiver {
             key = {MqConst.ROUTING_FORGET_PASSWORD}
     ))
     public void forgetPassword(Email mail, Message message, Channel channel) throws IOException {
+        try{
         if (StringUtils.hasText(mail.getEmail())){
             mailService.sendTextMailMessage(mail.getEmail(), mail.getSubject(), mail.getContent());
         }
-        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }finally {
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        }
     }
 
     @RabbitListener(bindings = @QueueBinding(
@@ -82,10 +92,15 @@ public class MailReceiver {
     public void registerSuccess(Map<String,String> usermap , Message message, Channel channel) throws IOException {
         String uuid = usermap.get("uuid");
         String email = usermap.get("email");
-        if (uuid!=null){
-            userService.sendEmailForRegisterSuccess(uuid,email);
+        try {
+            if (uuid != null) {
+                userService.sendEmailForRegisterSuccess(uuid, email);
+            }
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }finally {
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         }
-        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
     }
 
     @RabbitListener(bindings = @QueueBinding(
@@ -94,10 +109,16 @@ public class MailReceiver {
             key = {MqConst.ROUTING_BOOK_DEMO}
     ))
     public void bookDemo(Book book, Message message, Channel channel) throws IOException {
-        if (book!=null){
-            bookService.emailNotify(book);
+        try {
+            if (book != null) {
+                bookService.emailNotify(book);
+            }
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }finally {
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         }
-        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+
     }
 
     @RabbitListener(bindings = @QueueBinding(
@@ -106,10 +127,15 @@ public class MailReceiver {
             key = {MqConst.ROUTING_BIND_SENDER}
     ))
     public void bindSender(Email mail, Message message, Channel channel) throws IOException {
-        if (StringUtils.hasText(mail.getEmail())){
-            mailService.sendTextMailMessage(mail.getEmail(), mail.getSubject(), mail.getContent());
+        try {
+            if (StringUtils.hasText(mail.getEmail())) {
+                mailService.sendTextMailMessage(mail.getEmail(), mail.getSubject(), mail.getContent());
+            }
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }finally {
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         }
-        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
     }
 
 

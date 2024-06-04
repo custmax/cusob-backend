@@ -3,7 +3,9 @@ package com.cusob.service.impl;
 import com.cusob.entity.Sender;
 import com.cusob.exception.CusobException;
 import com.cusob.result.ResultCodeEnum;
+import com.cusob.service.ContactService;
 import com.cusob.service.MailService;
+import com.sun.mail.smtp.SMTPSendFailedException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +32,9 @@ public class MailServiceImpl implements MailService {
      */
     @Autowired
     private JavaMailSender javaMailSender;
+
+    @Autowired
+    private ContactService contactService;
 
     @Value("${spring.mail.username}")
     private String mailSender;
@@ -152,15 +157,13 @@ public class MailServiceImpl implements MailService {
             message.setSubject(subject);
             message.setContent(content, "text/html");
             message.setRecipients(Message.RecipientType.TO, to);
-
             // 发送邮件
             Transport.send(message);
-            System.out.println("success");
-
         } catch (MessagingException | UnsupportedEncodingException e) {
             e.printStackTrace();
             throw new CusobException(ResultCodeEnum.EMAIL_SEND_FAIL);
         }
+        System.out.println("success");
     }
 
     protected String genMessageID(String mailFrom) {
@@ -242,12 +245,21 @@ public class MailServiceImpl implements MailService {
             // 发送邮件
             Transport.send(message);
             System.out.println(to);
-            System.out.println("success");
 
         } catch (MessagingException | UnsupportedEncodingException e) {
+            if (e instanceof SMTPSendFailedException) {
+                // 处理 SMTPSendFailedException 类型的异常
+                SMTPSendFailedException smtpSendFailedException = (SMTPSendFailedException) e;
+                int smtpErrorCode = ((SMTPSendFailedException) e).getReturnCode();
+                if(smtpErrorCode == 550){
+                    contactService.updateByEmail(to); //将该邮件valid设置为0
+                }
+                System.out.println("SMTPSendFailedException: " + smtpSendFailedException.getMessage());
+            }
             e.printStackTrace();
             throw new CusobException(ResultCodeEnum.EMAIL_SEND_FAIL);
         }
+        System.out.println("success");
     }
 
     /**

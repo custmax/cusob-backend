@@ -92,6 +92,15 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
 
     }
 
+    @Override
+    public void updateByEmail(String email) {
+        Contact contact = baseMapper.selectOne(new LambdaQueryWrapper<Contact>()
+                .eq(Contact::getEmail, email)
+        );
+        contact.setValid(0);
+        baseMapper.updateById(contact);
+    }
+
     private void paramVerify(ContactDto contactDto) {
         if (!StringUtils.hasText(contactDto.getFirstName())){
             throw new CusobException(ResultCodeEnum.FIRST_NAME_IS_EMPTY);

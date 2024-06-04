@@ -94,6 +94,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String uuid = UUID.randomUUID().toString()+System.currentTimeMillis();
         hashOperations.put(uuid,"email",user.getEmail());
         hashOperations.put(uuid,"password",user.getPassword());
+        hashOperations.put(uuid,"phone",user.getPhone());
         redisTemplate.expire(uuid, 30, TimeUnit.MINUTES);
 
         Map<String,String> usermap = new HashMap<>();
@@ -436,9 +437,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             User user = new User();
             String email = entries.get("email");
             String password = entries.get("password");
+            String phone = entries.get("phone");
             user.setCompanyId(0L); // default companyId=0
             user.setEmail(email);
             user.setPassword(DigestUtils.md5DigestAsHex(password.getBytes()));
+            user.setPhone(phone);
             user.setPermission(User.SUPER_ADMIN);
             user.setIsAvailable(User.AVAILABLE); // TODO 开启使用
 
