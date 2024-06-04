@@ -15,4 +15,5 @@ public class EmailSettingsServiceimpl extends ServiceImpl<EmailSettingsMapper, E
         return baseMapper.selectOne(new LambdaQueryWrapper<EmailSettings>()
                 .eq(EmailSettings::getNameSuffix, suffix));
     }
+
 }

@@ -33,8 +33,6 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
     @Value("${cusob.email.brooks}")
     private String mailBrooks;
 
-    @Value("${cusob.email.daybreak}")
-    private String mailDaybreak;
 
     @Value("${cusob.cf-secret-key}")
     private String turnstileSecretKey ;
@@ -72,7 +70,7 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         String phone = "phone: " + book.getPhone();
         String message = "message: " + book.getMessage();
         String content = name + "\n" + email + "\n" + phone + "\n" + message;
-        String mail = mailDaybreak + "," + mailBrooks;
+        String mail = mailBrooks;
         mailService.sendTextMailMessage(mail, subject, content);
     }
 

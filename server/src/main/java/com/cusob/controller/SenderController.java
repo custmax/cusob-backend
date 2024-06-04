@@ -32,6 +32,17 @@ public class SenderController {
         return Result.ok();
     }
 
+    @ApiOperation("check if the email is public")
+    @GetMapping("checkEmail/{email}")
+    public Result checkEmail(@PathVariable String email){
+        String suffix = email.split("@")[1];
+        boolean find = senderService.checkEmail(suffix);
+        if(find){
+            return Result.fail( suffix + " is a public email");
+        }
+        return Result.ok();
+    }
+
 
 //    @ApiOperation("get Sender By UserId")
 //    @GetMapping("getByUserId")

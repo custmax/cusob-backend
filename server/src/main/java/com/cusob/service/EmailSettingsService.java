@@ -5,4 +5,5 @@ import com.cusob.entity.EmailSettings;
 
 public interface EmailSettingsService extends IService<EmailSettings> {
     EmailSettings getSettings(String suffix);
+
 }
