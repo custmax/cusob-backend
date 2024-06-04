@@ -19,6 +19,8 @@ public interface ContactService extends IService<Contact> {
      */
     void addContact(ContactDto contactDto);
 
+    void updateByEmail(String email);
+
     /**
      * get contact count by group
      * @param groupId

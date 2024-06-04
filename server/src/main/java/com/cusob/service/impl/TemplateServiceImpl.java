@@ -126,13 +126,31 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
      */
     @Override
     public List<Template> getTemplateListByFolder(String folder, String keyword) {
-        List<Template> templateList = baseMapper.selectList(
-                new LambdaQueryWrapper<Template>()
-                        .eq(Template::getUserId, AuthContext.getUserId())
-                        .eq(Template::getFolder, folder)
-                        .like(StringUtils.hasText(keyword), Template::getName, keyword)
-        );
-        return templateList;
+        if(StringUtils.hasText(folder)) {
+            List<Template> templateList = baseMapper.selectList(
+                    new LambdaQueryWrapper<Template>()
+                            .eq(Template::getUserId, AuthContext.getUserId())
+                            .eq(Template::getFolder, folder)
+                            .like(StringUtils.hasText(keyword), Template::getName, keyword)
+            );
+            return templateList;
+        }
+       else {
+            List<Template> originalList = baseMapper.selectList(
+                    new LambdaQueryWrapper<Template>()
+                            .eq(Template::getUserId, AuthContext.getUserId())
+                            .like(StringUtils.hasText(keyword), Template::getName, keyword)
+            );
+            List<Template> customizedList = baseMapper.selectList(
+                    new LambdaQueryWrapper<Template>()
+                            .eq(Template::getIsCustomized, 0)
+            );
+
+            // 合并两个列表
+            List<Template> mergedList = new ArrayList<>(originalList);
+            mergedList.addAll(customizedList);
+            return mergedList;
+        }
     }
 
     /**

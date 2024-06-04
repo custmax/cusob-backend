@@ -21,6 +21,9 @@ public class Contact extends BaseEntity {
     @TableField("group_id")
     private Long groupId;
 
+    @TableField("valid")
+    private int valid;
+
     @ExcelProperty(index = 0)
     @TableField("first_name")
     private String firstName;
