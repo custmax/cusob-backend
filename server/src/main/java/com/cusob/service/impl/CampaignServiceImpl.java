@@ -61,6 +61,9 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
     private CampaignContactService campaignContactService;
 
     @Autowired
+    private AccountInfoService accountInfoService;
+
+    @Autowired
     private ReportService reportService;
 
     @Value("${cusob.url}")
@@ -215,6 +218,17 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                         .replace("#{DEPT}",contact.getBirthDate()==null ? "#{DEPT}":contact.getDept())
                         //动态替换收件人信息
                         ;
+                String addr = accountInfoService.getAddr(userId);
+                String style = "        <style>.footer {\n" +
+                        "            padding-top: 0; \n" +
+                        "            padding-bottom: 20px; \n" +
+                        "            text-align: center;\n" +
+                        "            font-size: 14px;\n" +
+                        "            color: #999;\n" +
+                        "        }\n" +
+                        "        .footer p {\n" +
+                        "            margin: 5px 0;\n" +
+                        "        }</style>";
                 String img = "<img style=\"display: none;\" src=\"" + baseUrl + "/read/count/"
                         + campaign.getId() + "/" + contact.getId() + "\">";
 
@@ -225,7 +239,11 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                         "        <button style=\"border-radius: 4px; height: 30px; color: white; border: none; background-color: #e7e7e7;\">Unsubscribe</button>\n" +
                         "    </div>\n" +
                         "</a>";
-                String emailContent = replace + btnUnsubscribe + img;
+
+                String address = "    <div class=\"footer\">\n" +
+                        "        <p>" + addr + "</p>\n" +
+                        "    </div>";
+                String emailContent = style + replace + btnUnsubscribe + address + img ;
                 ScheduledThreadPoolExecutor executor =
                         new ScheduledThreadPoolExecutor(2, new ThreadPoolExecutor.CallerRunsPolicy());
                 executor.schedule(() -> {
