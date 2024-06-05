@@ -251,7 +251,7 @@ public class MailServiceImpl implements MailService {
                 // 处理 SMTPSendFailedException 类型的异常
                 SMTPSendFailedException smtpSendFailedException = (SMTPSendFailedException) e;
                 int smtpErrorCode = ((SMTPSendFailedException) e).getReturnCode();
-                if(smtpErrorCode == 550){
+                if(smtpErrorCode == 550){  //如果为硬弹回
                     contactService.updateByEmail(to); //将该邮件valid设置为0
                 }
                 System.out.println("SMTPSendFailedException: " + smtpSendFailedException.getMessage());

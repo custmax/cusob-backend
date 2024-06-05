@@ -22,10 +22,12 @@ import com.cusob.service.SenderService;
 
 import com.cusob.utils.Ports;
 
+import com.cusob.utils.ReadEmail;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -40,6 +42,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -71,6 +74,12 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
 
     @Autowired
     private EmailSettingsService emailSettingsService;
+
+    @Value("${cusob.url}")
+    private String baseUrl;
+
+    @Autowired
+    private MailService mailService;
 
 
 
@@ -218,9 +227,17 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
     }
 
     @Override
-    public boolean checkEmail(String email) {
-        EmailSettings emailsettings = emailSettingsService.getSettings(email);
-        return emailsettings != null;
+    public void checkEmail(String email) {
+        String subject = "Welcome to Our Email Marketing Platform! Check your Email";
+        String uuid = UUID.randomUUID().toString()+System.currentTimeMillis();
+        redisTemplate.opsForValue().set(uuid,email);
+        String content = ReadEmail.readwithcode("emails/activate.html",baseUrl+"/domainCertify?uuid="+uuid);
+        mailService.sendHtmlMailMessage(email,subject,content);
+    }
+
+    @Override
+    public String check(String uuid) {
+        return redisTemplate.opsForValue().get(uuid).toString();
     }
 
     @Override

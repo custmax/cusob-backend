@@ -56,6 +56,17 @@ public class AccountInfoServiceImpl
         baseMapper.updateById(accountInfo);
     }
 
+    @Override
+    public String getAddr(Long userId) {
+        AccountInfo accountInfo = baseMapper.selectOne(new LambdaQueryWrapper<AccountInfo>()
+                .eq(AccountInfo::getUserId, userId
+                ));
+
+        String address = accountInfo.getAddressLine1() + " " + accountInfo.getAddressLine2();
+        if(StringUtils.hasText(address))return address;
+        return null;
+    }
+
     private void paramVerify(AccountInfoDto accountInfoDto) {
         if (!StringUtils.hasText(accountInfoDto.getLastName())){
             throw new CusobException(ResultCodeEnum.LAST_NAME_IS_EMPTY);

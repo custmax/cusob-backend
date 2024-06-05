@@ -1,5 +1,6 @@
 package com.cusob.controller;
 
+import com.cusob.auth.AuthContext;
 import com.cusob.dto.AccountInfoDto;
 import com.cusob.entity.AccountInfo;
 import com.cusob.result.Result;
@@ -28,6 +29,17 @@ public class AccountInfoController {
     public Result getAccountInfo(){
         AccountInfo accountInfo = accountInfoService.getAccountInfo();
         return Result.ok(accountInfo);
+    }
+
+    @ApiOperation("check if address is existed")
+    @GetMapping("getAddress")
+    public Result getAddr(){
+        Long userId = AuthContext.getUserId();
+        String addr = accountInfoService.getAddr(userId);
+        if(addr == null){
+            return Result.ok(false);
+        }
+        return Result.ok(true);
     }
 
     @ApiOperation("update account information")
