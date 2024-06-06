@@ -60,6 +60,7 @@ public enum ResultCodeEnum {
     PARAM_IS_EMPTY(246, "The parameter is empty"),
     DOMAIN_IS_EMPTY(247, "The domain is empty"),
     EMAIL_IS_BOUND(248, "The email address has been bound"),
+    EMAIL_IS_INVALID(249,"The email does not exist,please check your spelling"),
 
     VERIFY_CODE_EMPTY(250, "The verify code is empty"),
     VERIFY_CODE_WRONG(251, "Verification failed, please try again"),

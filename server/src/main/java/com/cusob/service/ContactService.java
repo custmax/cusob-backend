@@ -19,7 +19,7 @@ public interface ContactService extends IService<Contact> {
      */
     void addContact(ContactDto contactDto);
 
-    void updateByEmail(String email);
+    void updateByEmail(String email,int valid);
 
     /**
      * get contact count by group
@@ -46,6 +46,7 @@ public interface ContactService extends IService<Contact> {
      * @param contactDto
      */
     void updateContact(ContactDto contactDto);
+
 
     /**
      * Contact List Pagination condition query

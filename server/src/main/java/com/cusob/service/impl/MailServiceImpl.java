@@ -252,7 +252,7 @@ public class MailServiceImpl implements MailService {
                 SMTPSendFailedException smtpSendFailedException = (SMTPSendFailedException) e;
                 int smtpErrorCode = ((SMTPSendFailedException) e).getReturnCode();
                 if(smtpErrorCode == 550){  //如果为硬弹回
-                    contactService.updateByEmail(to); //将该邮件valid设置为0
+                    contactService.updateByEmail(to,0); //将该邮件valid设置为0
                 }
                 System.out.println("SMTPSendFailedException: " + smtpSendFailedException.getMessage());
             }

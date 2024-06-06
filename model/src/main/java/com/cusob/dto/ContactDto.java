@@ -32,6 +32,8 @@ public class ContactDto implements Serializable {
 
     private String avatar;
 
+    private int isAvailable;
+
     private Date birthDate;
 
     private String groupName;

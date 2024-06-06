@@ -196,7 +196,6 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
             domainSave.setDomain(domain);
             domainSave.setUserId(AuthContext.getUserId());
             domainService.save(domainSave);
-
             rabbitTemplate.convertAndSend(MqConst.EXCHANGE_DKIM_DIRECT,
                     MqConst.ROUTING_GENERATE_DKIM, domain);
         }

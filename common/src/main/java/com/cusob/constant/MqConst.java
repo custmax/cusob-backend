@@ -42,4 +42,8 @@ public class MqConst {
     public static final String QUEUE_GENERATE_DKIM = "cusob.generate.dkim";
     public static final String ROUTING_GENERATE_DKIM = "cusob.generate.dkim";
 
+    public static final String EXCHANGE_CHECK_DIRECT = "cusob.check.email";
+    public static final String QUEUE_CHECK_EMAIL = "cusob.check.email";
+    public static final String ROUTING_CHECK_EMAIL = "cusob.check.email";
+
 }
