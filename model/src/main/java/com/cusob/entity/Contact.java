@@ -24,6 +24,9 @@ public class Contact extends BaseEntity {
     @TableField("valid")
     private int valid;
 
+    @TableField("is_available")
+    private int isAvailable;
+
     @ExcelProperty(index = 0)
     @TableField("first_name")
     private String firstName;

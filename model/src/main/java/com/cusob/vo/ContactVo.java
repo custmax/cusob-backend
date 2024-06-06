@@ -11,6 +11,8 @@ public class ContactVo implements Serializable {
 
     private Long id;
 
+    private int isAvailable;
+
     private String firstName;
 
     private String lastName;

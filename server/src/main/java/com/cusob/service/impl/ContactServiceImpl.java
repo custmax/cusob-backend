@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cusob.auth.AuthContext;
+import com.cusob.constant.MqConst;
 import com.cusob.dto.ContactDto;
 import com.cusob.dto.ContactQueryDto;
 import com.cusob.dto.GroupDto;
@@ -16,19 +17,27 @@ import com.cusob.exception.CusobException;
 import com.cusob.mapper.ContactMapper;
 import com.cusob.result.ResultCodeEnum;
 import com.cusob.service.*;
+import com.cusob.utils.EmailUtil;
 import com.cusob.vo.ContactVo;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.xbill.DNS.Lookup;
+import org.xbill.DNS.MXRecord;
+import org.xbill.DNS.Record;
+import org.xbill.DNS.Type;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.Socket;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.cusob.utils.EmailUtil.readResponse;
+import static com.cusob.utils.EmailUtil.sendCommand;
 
 @Service
 public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> implements ContactService {
@@ -44,6 +53,9 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
 
     /**
@@ -61,10 +73,13 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
         if (count >= plan.getContactCapacity()){
             throw new CusobException(ResultCodeEnum.CONTACT_NUMBER_FULL);
         }
-
         // 参数校验
         this.paramVerify(contactDto);
         Contact contact = new Contact();
+
+        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_CHECK_DIRECT,
+                MqConst.ROUTING_CHECK_EMAIL, contact.getEmail());
+
         String groupName = contactDto.getGroupName();
         // The group name is not empty
         if (StringUtils.hasText(groupName)){
@@ -93,11 +108,11 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
     }
 
     @Override
-    public void updateByEmail(String email) {
+    public void updateByEmail(String email,int valid) {
         Contact contact = baseMapper.selectOne(new LambdaQueryWrapper<Contact>()
                 .eq(Contact::getEmail, email)
         );
-        contact.setValid(0);
+        contact.setValid(valid); //无效化
         baseMapper.updateById(contact);
     }
 
@@ -172,6 +187,10 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
         }
         this.paramVerify(contactDto);
 
+        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_CHECK_DIRECT,
+                MqConst.ROUTING_CHECK_EMAIL,
+                contactDto.getEmail());
+
         Group oldGroup = groupService.getGroupById(select.getGroupId());
         BeanUtils.copyProperties(contactDto, select);
         String newGroup = contactDto.getGroupName();
@@ -180,6 +199,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
         }
         baseMapper.updateById(select);
     }
+
 
     /**
      * Contact List Pagination condition query

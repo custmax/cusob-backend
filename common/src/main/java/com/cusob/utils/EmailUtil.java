@@ -6,8 +6,7 @@ import org.simplejavamail.api.mailer.config.TransportStrategy;
 import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.mailer.MailerBuilder;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -54,6 +53,17 @@ public class EmailUtil {
             System.out.println(e);
         }
         return null;
+    }
+
+    public static void sendCommand(PrintWriter writer, String command) throws IOException {
+        writer.println(command);
+        writer.flush();
+    }
+
+    public static String readResponse(BufferedReader reader) throws IOException {
+        String response = reader.readLine();
+        System.out.println("Server response: " + response);
+        return response;
     }
 
 

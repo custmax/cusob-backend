@@ -50,6 +50,8 @@ public interface TemplateService extends IService<Template> {
      */
     List<Template> getTemplateListByFolder(String folder, String keyword);
 
+    List<Template> getTemplateDefault(String folder);
+
     /**
      * remove Customized Template
      * @param id

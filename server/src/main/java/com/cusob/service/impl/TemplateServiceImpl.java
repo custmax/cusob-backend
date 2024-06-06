@@ -59,7 +59,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
         Company company = companyService.getById(AuthContext.getCompanyId());
         if (company.getPlanId().equals(PlanPrice.FREE)){
             if (isCustomized.equals(Template.SYSTEM)){
-                throw new CusobException(ResultCodeEnum.NO_PERMISSION);
+//                throw new CusobException(ResultCodeEnum.NO_PERMISSION);
             }
         }
         return template;
@@ -94,13 +94,13 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
         String folder = templateQueryDto.getFolder();
         Map<String, List<Template>> map = new HashMap<>();
         List<String> folderList = this.getFolderList();
-        if (StringUtils.hasText(folder)){
+        if (StringUtils.hasText(folder) || StringUtils.hasText(keyword)){
             List<Template> list = this.getTemplateListByFolder(folder, keyword);
             map.put(folder, list);
             return map;
         }
         for (String item : folderList) {
-            List<Template> list = this.getTemplateListByFolder(item, keyword);
+            List<Template> list = this.getTemplateDefault(item);
             if (list!=null && list.size()>0){
                 map.put(item, list);
             }
@@ -126,7 +126,6 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
      */
     @Override
     public List<Template> getTemplateListByFolder(String folder, String keyword) {
-        if(StringUtils.hasText(folder)) {
             List<Template> templateList = baseMapper.selectList(
                     new LambdaQueryWrapper<Template>()
                             .eq(Template::getUserId, AuthContext.getUserId())
@@ -134,23 +133,28 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
                             .like(StringUtils.hasText(keyword), Template::getName, keyword)
             );
             return templateList;
-        }
-       else {
-            List<Template> originalList = baseMapper.selectList(
-                    new LambdaQueryWrapper<Template>()
-                            .eq(Template::getUserId, AuthContext.getUserId())
-                            .like(StringUtils.hasText(keyword), Template::getName, keyword)
-            );
-            List<Template> customizedList = baseMapper.selectList(
-                    new LambdaQueryWrapper<Template>()
-                            .eq(Template::getIsCustomized, 0)
-            );
 
-            // 合并两个列表
-            List<Template> mergedList = new ArrayList<>(originalList);
-            mergedList.addAll(customizedList);
-            return mergedList;
+    }
+
+    @Override
+    public List<Template> getTemplateDefault(String folder) {
+        List<Template> originalList = baseMapper.selectList(
+                new LambdaQueryWrapper<Template>()
+                        .eq(Template::getUserId, AuthContext.getUserId())
+                        .eq(Template::getFolder, folder)
+        );
+        if(!folder.equals("public")) {
+            return originalList;
         }
+        List<Template> customizedList = baseMapper.selectList(
+                new LambdaQueryWrapper<Template>()
+                        .eq(Template::getIsCustomized, 0)
+        );
+
+        // 合并两个列表
+        List<Template> mergedList = new ArrayList<>(originalList);
+        mergedList.addAll(customizedList);
+        return mergedList;
     }
 
     /**

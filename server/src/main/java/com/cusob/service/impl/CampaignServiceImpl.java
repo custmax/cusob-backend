@@ -207,7 +207,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
         long totalTime = 1;
         for (Contact contact : contactList) {
             String email = contact.getEmail();
-            if (!emailList.contains(email)){
+            if (!emailList.contains(email) && contact.getValid() == 1 && contact.getIsAvailable() == 1){
                 String replace = content.replace("#{FIRSTNAME}", contact.getFirstName()==null ? "#{FIRSTNAME}":contact.getFirstName())
                         .replace("#{LASTNAME}", contact.getLastName()==null ? "#{LASTNAME}":contact.getLastName())
                         .replace("#{COMPANY}",contact.getCompany()==null ? "#{COMPANY}":contact.getCompany())
