@@ -19,7 +19,7 @@ public interface ContactService extends IService<Contact> {
      */
     void addContact(ContactDto contactDto);
 
-    void updateByEmail(String email,int valid);
+    void updateByEmail(String email,Long groupId,Long userId, int valid);
 
     /**
      * get contact count by group

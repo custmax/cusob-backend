@@ -189,7 +189,7 @@ public class MailServiceImpl implements MailService {
      * @param subject
      */
     @Override
-    public void sendEmail(Sender sender, String senderName, String to, String content, String subject,String unsubscribeUrl) {
+    public void sendEmail(Sender sender, String senderName, String to, String content, String subject,String unsubscribeUrl,Long groupId) {
         String email = sender.getEmail();
         String password = sender.getPassword();
         String smtpServer = sender.getSmtpServer();
@@ -241,6 +241,7 @@ public class MailServiceImpl implements MailService {
             message.setSubject(subject);
             message.setContent(content, "text/html;charset=UTF-8");
             message.setRecipients(Message.RecipientType.TO, to);
+            message.setHeader("List-Unsubscribe-Post","List-Unsubscribe=One-Click");
             message.setHeader("List-Unsubscribe", "<" + unsubscribeUrl + ">");
             // 发送邮件
             Transport.send(message);
@@ -252,7 +253,7 @@ public class MailServiceImpl implements MailService {
                 SMTPSendFailedException smtpSendFailedException = (SMTPSendFailedException) e;
                 int smtpErrorCode = ((SMTPSendFailedException) e).getReturnCode();
                 if(smtpErrorCode == 550){  //如果为硬弹回
-                    contactService.updateByEmail(to,0); //将该邮件valid设置为0
+                    contactService.updateByEmail(to,groupId,sender.getUserId(),0); //将该邮件valid设置为0
                 }
                 System.out.println("SMTPSendFailedException: " + smtpSendFailedException.getMessage());
             }

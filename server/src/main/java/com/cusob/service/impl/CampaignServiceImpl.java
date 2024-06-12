@@ -256,7 +256,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                 ScheduledThreadPoolExecutor executor =
                         new ScheduledThreadPoolExecutor(2, new ThreadPoolExecutor.CallerRunsPolicy());
                 executor.schedule(() -> {
-                    mailService.sendEmail(sender, senderName, email, emailContent, subject,unsubscribeUrl);
+                    mailService.sendEmail(sender, senderName, email, emailContent, subject,unsubscribeUrl,groupId);
                     campaignContactService.updateSendStatus(campaign.getId(), contact.getId());
                     reportService.updateDeliveredCount(campaign.getId());
                 }, totalTime, TimeUnit.MILLISECONDS);

@@ -33,7 +33,9 @@ import org.xbill.DNS.Type;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.cusob.utils.EmailUtil.readResponse;
@@ -108,9 +110,11 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
     }
 
     @Override
-    public void updateByEmail(String email,int valid) {
+    public void updateByEmail(String email,Long groupId ,Long userId, int valid) {
         Contact contact = baseMapper.selectOne(new LambdaQueryWrapper<Contact>()
                 .eq(Contact::getEmail, email)
+                .eq(Contact::getUserId,userId)
+                .eq(Contact::getGroupId,groupId)
         );
         contact.setValid(valid); //无效化
         baseMapper.updateById(contact);
@@ -186,10 +190,14 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
             throw new CusobException(ResultCodeEnum.UPDATE_CONTACT_FAIL);
         }
         this.paramVerify(contactDto);
-
+        Contact contact = new Contact();
+        BeanUtils.copyProperties(contactDto,contact);
+        Long groupId = groupService.getGroupByName(contactDto.getGroupName()).getId();
+        contact.setGroupId(groupId);
+        contact.setUserId(AuthContext.getUserId());
         rabbitTemplate.convertAndSend(MqConst.EXCHANGE_CHECK_DIRECT,
                 MqConst.ROUTING_CHECK_EMAIL,
-                contactDto.getEmail());
+                contact);
 
         Group oldGroup = groupService.getGroupById(select.getGroupId());
         BeanUtils.copyProperties(contactDto, select);
