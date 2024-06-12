@@ -1,5 +1,6 @@
 package com.cusob.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -193,6 +194,14 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
 
     @Override
     public void MassMailing(Campaign campaign) {
+        String campaignName = campaign.getCampaignName();
+        Campaign campaign1 = baseMapper.selectOne(new LambdaQueryWrapper<Campaign>()
+                .eq(Campaign::getUserId, AuthContext.getUserId())
+                .eq(Campaign::getCampaignName, campaignName)
+        );
+        if(campaign1 != null){
+            campaign.setCampaignName(campaignName + System.currentTimeMillis());
+        }
         Long senderId = campaign.getSenderId();
         Sender sender = senderService.getById(senderId);
         String senderName = campaign.getSenderName();
@@ -233,7 +242,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                         + campaign.getId() + "/" + contact.getId() + "\">";
 
                 String encode = Base64.getEncoder().encodeToString(email.getBytes());
-                String unsubscribeUrl = host + "/unsubscribe?email=" + URLEncoder.encode(encode);
+                String unsubscribeUrl = host + "/unsubscribe?email=" + email;
                 String btnUnsubscribe = "<a href=\"" + unsubscribeUrl +"\">\n" +
                         "    <div style=\"text-align: center; margin-top: 20px;\">\n" +
                         "        <button style=\"border-radius: 4px; height: 30px; color: white; border: none; background-color: #e7e7e7;\">Unsubscribe</button>\n" +
@@ -247,7 +256,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                 ScheduledThreadPoolExecutor executor =
                         new ScheduledThreadPoolExecutor(2, new ThreadPoolExecutor.CallerRunsPolicy());
                 executor.schedule(() -> {
-                    mailService.sendEmail(sender, senderName, email, emailContent, subject);
+                    mailService.sendEmail(sender, senderName, email, emailContent, subject,unsubscribeUrl);
                     campaignContactService.updateSendStatus(campaign.getId(), contact.getId());
                     reportService.updateDeliveredCount(campaign.getId());
                 }, totalTime, TimeUnit.MILLISECONDS);

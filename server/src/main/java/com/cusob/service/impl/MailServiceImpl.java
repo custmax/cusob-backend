@@ -189,7 +189,7 @@ public class MailServiceImpl implements MailService {
      * @param subject
      */
     @Override
-    public void sendEmail(Sender sender, String senderName, String to, String content, String subject) {
+    public void sendEmail(Sender sender, String senderName, String to, String content, String subject,String unsubscribeUrl) {
         String email = sender.getEmail();
         String password = sender.getPassword();
         String smtpServer = sender.getSmtpServer();
@@ -241,7 +241,7 @@ public class MailServiceImpl implements MailService {
             message.setSubject(subject);
             message.setContent(content, "text/html;charset=UTF-8");
             message.setRecipients(Message.RecipientType.TO, to);
-
+            message.setHeader("List-Unsubscribe", "<" + unsubscribeUrl + ">");
             // 发送邮件
             Transport.send(message);
             System.out.println(to);

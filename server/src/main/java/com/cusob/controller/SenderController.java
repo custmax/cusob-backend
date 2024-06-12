@@ -7,6 +7,7 @@ import com.cusob.result.Result;
 import com.cusob.service.SenderService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +36,10 @@ public class SenderController {
     @ApiOperation("check if the email is public")
     @GetMapping("checkEmail/{email}")
     public Result checkEmail(@PathVariable String email){
+        String uuid = senderService.selectByEmail(email);
+        if(StringUtils.hasText(uuid)){
+            return Result.ok(uuid);
+        }
         senderService.checkEmail(email);
         return Result.ok();
     }

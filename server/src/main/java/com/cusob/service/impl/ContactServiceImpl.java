@@ -78,7 +78,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
         Contact contact = new Contact();
 
         rabbitTemplate.convertAndSend(MqConst.EXCHANGE_CHECK_DIRECT,
-                MqConst.ROUTING_CHECK_EMAIL, contact.getEmail());
+                MqConst.ROUTING_CHECK_EMAIL, contactDto.getEmail());
 
         String groupName = contactDto.getGroupName();
         // The group name is not empty

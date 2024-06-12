@@ -49,4 +49,6 @@ public interface SenderService extends IService<Sender> {
      * @return
      */
     List<Sender> getSenderList();
+
+    String selectByEmail(String email);
 }
