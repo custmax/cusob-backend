@@ -1,9 +1,12 @@
 package com.cusob.receiver;
 
 import com.cusob.constant.MqConst;
+import com.cusob.dto.ContactDto;
+import com.cusob.entity.Contact;
 import com.cusob.exception.CusobException;
 import com.cusob.result.ResultCodeEnum;
 import com.cusob.service.ContactService;
+import com.cusob.service.GroupService;
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.Exchange;
@@ -23,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Map;
 
 import static com.cusob.utils.EmailUtil.readResponse;
 import static com.cusob.utils.EmailUtil.sendCommand;
@@ -38,7 +42,10 @@ public class ContactReceiver {
             exchange = @Exchange(value = MqConst.EXCHANGE_CHECK_DIRECT),
             key = {MqConst.ROUTING_CHECK_EMAIL}
     ))
-    public void checkEmail(String email, Message message, Channel channel) throws IOException {
+    public void checkEmail(Contact contact, Message message, Channel channel) throws IOException {
+
+        String email = contact.getEmail();
+        Long groupId = contact.getGroupId();
         String domain = email.split("@")[1];
         boolean check = true;
         try {
@@ -64,15 +71,16 @@ public class ContactReceiver {
                     // Check for 250 or 550 response code
                     if (response.startsWith("250")) {
                         sendCommand(writer, "QUIT");
+                        break;
                     } else if (response.startsWith("550")) {
                         sendCommand(writer, "QUIT");
                         check = false;
                     }
                 }
             }
-            contactService.updateByEmail(email,check ? 1 : 0);
+            contactService.updateByEmail(email, groupId,contact.getUserId(), check ? 1 : 0);
         } catch (Exception e) {
-            contactService.updateByEmail(email,0);
+            contactService.updateByEmail(email, groupId,contact.getUserId(),0);
         }finally {
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         }

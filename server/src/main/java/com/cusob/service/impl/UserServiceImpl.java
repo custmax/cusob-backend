@@ -89,7 +89,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         User user = new User();
         BeanUtils.copyProperties(userDto, user);
-
+        user.setIsAvailable(0);
+        baseMapper.insert(user);
         HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
         String uuid = UUID.randomUUID().toString()+System.currentTimeMillis();
         hashOperations.put(uuid,"email",user.getEmail());
@@ -434,27 +435,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
         Map<String, String> entries = hashOperations.entries(uuid);
         if(!entries.isEmpty()){
-            User user = new User();
-            String email = entries.get("email");
-            String password = entries.get("password");
-            String phone = entries.get("phone");
-            user.setCompanyId(0L); // default companyId=0
-            user.setEmail(email);
-            user.setPassword(DigestUtils.md5DigestAsHex(password.getBytes()));
-            user.setPhone(phone);
-            user.setPermission(User.SUPER_ADMIN);
-            user.setIsAvailable(User.AVAILABLE); // TODO 开启使用
 
-            if(baseMapper.selectOne(
+            String email = entries.get("email");
+
+            User user = baseMapper.selectOne(
                     new LambdaQueryWrapper<User>()
                             .eq(User::getEmail, email)
-            ) ==null){  //如果已经存在该账号就不要再插入
+            );
+            if(user.getIsAvailable() == 0){
+                user.setIsAvailable(User.AVAILABLE); // TODO 开启使用//如果已经存在该账号就不要再插入
                 baseMapper.insert(user);
             }
-             Long userId = baseMapper.selectOne(
-                    new LambdaQueryWrapper<User>()
-                            .eq(User::getEmail, email)
-             ).getId();
+            Long userId = user.getId();
             Company company = new Company();
             company.setCompanyName(user.getCompany());
             company.setAdminId(userId);
