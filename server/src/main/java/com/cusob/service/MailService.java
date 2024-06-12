@@ -30,7 +30,7 @@ public interface MailService {
      * @param content
      * @param subject
      */
-    void sendEmail(Sender sender, String senderName, String to, String content, String subject);
+    void sendEmail(Sender sender, String senderName, String to, String content, String subject,String unsubscribeUrl);
 
     /**
      * send email by simple-java-mail

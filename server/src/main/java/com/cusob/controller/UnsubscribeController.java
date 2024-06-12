@@ -19,9 +19,9 @@ public class UnsubscribeController {
     @ApiOperation("Unsubscribe")
     @GetMapping("campaign")
     public Result Unsubscribe(String email){
-        byte[] decode = Base64.getDecoder().decode(URLDecoder.decode(email));
-        String emailUnsubscribe = new String(decode);
-        unsubscribeService.saveEmail(emailUnsubscribe);
+//        byte[] decode = Base64.getDecoder().decode(URLDecoder.decode(email));
+//        String emailUnsubscribe = new String(decode);
+        unsubscribeService.saveEmail(email);
         return Result.ok();
     }
 }

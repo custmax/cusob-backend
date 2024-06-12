@@ -39,10 +39,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -229,6 +226,7 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
     public void checkEmail(String email) {
         String subject = "Welcome to Our Email Marketing Platform! Check your Email";
         String uuid = UUID.randomUUID().toString()+System.currentTimeMillis();
+        redisTemplate.opsForValue().set(email,uuid);
         redisTemplate.opsForValue().set(uuid,email);
         String content = ReadEmail.readwithcode("emails/activate.html",baseUrl+"/domainCertify?uuid="+uuid);
         mailService.sendHtmlMailMessage(email,subject,content);
@@ -355,6 +353,19 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
                         .eq(Sender::getUserId, AuthContext.getUserId())
         );
         return senderList;
+    }
+
+    @Override
+    public String selectByEmail(String email) {
+        Sender sender = baseMapper.selectOne(new LambdaQueryWrapper<Sender>()
+                .eq(Sender::getEmail, email)
+                .eq(Sender::getUserId, AuthContext.getUserId())
+        );
+        if(sender == null){
+            return null;
+        }else {
+            return Objects.requireNonNull(redisTemplate.opsForValue().get(email)).toString();
+        }
     }
 
 
