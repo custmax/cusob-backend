@@ -32,4 +32,13 @@ public class Report extends BaseEntity {
     @TableField("clicked")
     private Integer clicked;
 
+    @TableField("hard_bounce")
+    private Integer hardBounce;
+
+    @TableField("soft_bounce")
+    private Integer softBounce;
+
+    @TableField("unsubscribe")
+    private Integer unsubscribe;
+
 }

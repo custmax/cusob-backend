@@ -56,20 +56,24 @@ public class ContactReceiver {
             }else {
                 for (Record record : records) {
                     MXRecord mxRecord = (MXRecord)record;
+                    //连接
                     Socket socket = new Socket(mxRecord.getTarget().toString(), 25);
                     BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     PrintWriter writer = new PrintWriter(socket.getOutputStream(), true) ;
 
                     readResponse(reader);
+                    //握手
                     sendCommand(writer, "HELO " + domain);
                     readResponse(reader);
+                    //身份
                     sendCommand(writer, "MAIL FROM:<verify@" + domain + ">");
                     readResponse(reader);
+                    //验证
                     sendCommand(writer, "RCPT TO:<" + email + ">");
                     String response = readResponse(reader);
 
-                    // Check for 250 or 550 response code
-                    if (response.startsWith("250")) {
+                    // 断开
+                    if (response.startsWith("250") ) {
                         sendCommand(writer, "QUIT");
                         break;
                     } else if (response.startsWith("550")) {
@@ -80,7 +84,8 @@ public class ContactReceiver {
             }
             contactService.updateByEmail(email, groupId,contact.getUserId(), check ? 1 : 0);
         } catch (Exception e) {
-            contactService.updateByEmail(email, groupId,contact.getUserId(),0);
+            contactService.updateByEmail(email, groupId,contact.getUserId(),1);
+            //如果抛异常，可能是无法连接到相应的SMTP服务器，无法用这种方式判断存不存在，则先按存在处理
         }finally {
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         }

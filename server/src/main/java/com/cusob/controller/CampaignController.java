@@ -70,7 +70,6 @@ public class CampaignController {
     @ApiOperation("Get SenderName")
     @GetMapping("getSenderName/{campaignName}")
     public Result EmailList(@PathVariable String campaignName){
-        System.out.println("两个："+campaignService.getCampaignByname(campaignName));
         return Result.ok(campaignService.getCampaignByname(campaignName).getSenderName());
     }
 

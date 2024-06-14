@@ -79,9 +79,6 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
         this.paramVerify(contactDto);
         Contact contact = new Contact();
 
-        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_CHECK_DIRECT,
-                MqConst.ROUTING_CHECK_EMAIL, contactDto.getEmail());
-
         String groupName = contactDto.getGroupName();
         // The group name is not empty
         if (StringUtils.hasText(groupName)){
@@ -97,8 +94,11 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
                 contact.setGroupId(group.getId());
             }
         }
-
+        contact.setUserId(AuthContext.getUserId());
         BeanUtils.copyProperties(contactDto, contact);
+        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_CHECK_DIRECT,
+                MqConst.ROUTING_CHECK_EMAIL, contact);
+
         if(baseMapper.selectByEmail(contact.getEmail(),contact.getGroupId())==null){
             contact.setUserId(AuthContext.getUserId());
             contact.setCompanyId(AuthContext.getCompanyId());
@@ -190,21 +190,17 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
             throw new CusobException(ResultCodeEnum.UPDATE_CONTACT_FAIL);
         }
         this.paramVerify(contactDto);
-        Contact contact = new Contact();
-        BeanUtils.copyProperties(contactDto,contact);
-        Long groupId = groupService.getGroupByName(contactDto.getGroupName()).getId();
-        contact.setGroupId(groupId);
-        contact.setUserId(AuthContext.getUserId());
-        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_CHECK_DIRECT,
-                MqConst.ROUTING_CHECK_EMAIL,
-                contact);
 
         Group oldGroup = groupService.getGroupById(select.getGroupId());
         BeanUtils.copyProperties(contactDto, select);
+
         String newGroup = contactDto.getGroupName();
         if (!oldGroup.getGroupName().equals(newGroup)){
             select.setGroupId(groupService.getGroupIdByName(newGroup));
         }
+        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_CHECK_DIRECT,
+                MqConst.ROUTING_CHECK_EMAIL,
+                select);
         baseMapper.updateById(select);
     }
 

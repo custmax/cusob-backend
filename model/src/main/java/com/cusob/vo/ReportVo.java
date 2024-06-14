@@ -27,4 +27,10 @@ public class ReportVo implements Serializable {
     private Integer opened;
 
     private Integer clicked;
+
+    private Integer hardBounce;
+
+    private Integer softBounce;
+
+    private Integer unsubscribe;
 }
