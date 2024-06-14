@@ -80,4 +80,40 @@ public class ReportServiceImpl extends ServiceImpl<ReportMapper, Report> impleme
         }
     }
 
+    @Override
+    public void updateHardBounceCount(Long campaignId) {
+        Report report = baseMapper.selectOne(
+                new LambdaQueryWrapper<Report>()
+                        .eq(Report::getCampaignId, campaignId)
+        );
+        if (report!=null){
+            report.setHardBounce(report.getHardBounce() + 1);
+            baseMapper.updateById(report);
+        }
+    }
+
+    @Override
+    public void updateSoftBounceCount(Long campaignId) {
+        Report report = baseMapper.selectOne(
+                new LambdaQueryWrapper<Report>()
+                        .eq(Report::getCampaignId, campaignId)
+        );
+        if (report!=null){
+            report.setSoftBounce(report.getSoftBounce() + 1);
+            baseMapper.updateById(report);
+        }
+    }
+
+    @Override
+    public void updateUnsubscribeCount(Long campaignId) {
+        Report report = baseMapper.selectOne(
+                new LambdaQueryWrapper<Report>()
+                        .eq(Report::getCampaignId, campaignId)
+        );
+        if (report!=null){
+            report.setUnsubscribe(report.getUnsubscribe() + 1);
+            baseMapper.updateById(report);
+        }
+    }
+
 }

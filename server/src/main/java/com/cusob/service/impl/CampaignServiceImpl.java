@@ -241,7 +241,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                 String img = "<img style=\"display: none;\" src=\"" + baseUrl + "/read/count/"
                         + campaign.getId() + "/" + contact.getId() + "\">";
 
-                String encode = Base64.getEncoder().encodeToString(email.getBytes());
+//                String encode = Base64.getEncoder().encodeToString(email.getBytes());
                 String unsubscribeUrl = host + "/unsubscribe?email=" + email;
                 String btnUnsubscribe = "<a href=\"" + unsubscribeUrl +"\">\n" +
                         "    <div style=\"text-align: center; margin-top: 20px;\">\n" +
@@ -256,7 +256,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                 ScheduledThreadPoolExecutor executor =
                         new ScheduledThreadPoolExecutor(2, new ThreadPoolExecutor.CallerRunsPolicy());
                 executor.schedule(() -> {
-                    mailService.sendEmail(sender, senderName, email, emailContent, subject,unsubscribeUrl,groupId);
+                    mailService.sendEmail(sender, senderName, email, emailContent, subject,unsubscribeUrl,groupId,campaign.getId());
                     campaignContactService.updateSendStatus(campaign.getId(), contact.getId());
                     reportService.updateDeliveredCount(campaign.getId());
                 }, totalTime, TimeUnit.MILLISECONDS);

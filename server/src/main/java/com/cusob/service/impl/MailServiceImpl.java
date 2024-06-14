@@ -5,6 +5,7 @@ import com.cusob.exception.CusobException;
 import com.cusob.result.ResultCodeEnum;
 import com.cusob.service.ContactService;
 import com.cusob.service.MailService;
+import com.cusob.service.ReportService;
 import com.sun.mail.smtp.SMTPSendFailedException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class MailServiceImpl implements MailService {
 
     @Autowired
     private ContactService contactService;
+
+    @Autowired
+    private ReportService reportService;
 
     @Value("${spring.mail.username}")
     private String mailSender;
@@ -189,7 +193,8 @@ public class MailServiceImpl implements MailService {
      * @param subject
      */
     @Override
-    public void sendEmail(Sender sender, String senderName, String to, String content, String subject,String unsubscribeUrl,Long groupId) {
+    public void sendEmail(Sender sender, String senderName, String to, String content,
+                          String subject,String unsubscribeUrl,Long groupId,Long campaignId) {
         String email = sender.getEmail();
         String password = sender.getPassword();
         String smtpServer = sender.getSmtpServer();
@@ -210,6 +215,7 @@ public class MailServiceImpl implements MailService {
         props.put("mail.password", password);
         props.setProperty("mail.smtp.ssl.enable", "true");
 
+
         // 构建授权信息，用于进行SMTP进行身份验证
         Authenticator authenticator = new Authenticator() {
             @Override
@@ -223,6 +229,7 @@ public class MailServiceImpl implements MailService {
 
         // 使用环境属性和授权信息，创建邮件会话
         Session mailSession = Session.getInstance(props, authenticator);
+        mailSession.setDebug(true);
         final String messageIDValue = genMessageID(props.getProperty("mail.user"));
 //        创建邮件消息
         MimeMessage message = new MimeMessage(mailSession) {
@@ -241,6 +248,9 @@ public class MailServiceImpl implements MailService {
             message.setSubject(subject);
             message.setContent(content, "text/html;charset=UTF-8");
             message.setRecipients(Message.RecipientType.TO, to);
+//            message.setHeader("Return-Receipt-To", email);
+//            message.setHeader("Disposition-Notification-To", email);
+//            message.setHeader("X-Confirm-Reading-To", email);
             message.setHeader("List-Unsubscribe-Post","List-Unsubscribe=One-Click");
             message.setHeader("List-Unsubscribe", "<" + unsubscribeUrl + ">");
             // 发送邮件
@@ -253,6 +263,7 @@ public class MailServiceImpl implements MailService {
                 SMTPSendFailedException smtpSendFailedException = (SMTPSendFailedException) e;
                 int smtpErrorCode = ((SMTPSendFailedException) e).getReturnCode();
                 if(smtpErrorCode == 550){  //如果为硬弹回
+                    reportService.updateHardBounceCount(campaignId);
                     contactService.updateByEmail(to,groupId,sender.getUserId(),0); //将该邮件valid设置为0
                 }
                 System.out.println("SMTPSendFailedException: " + smtpSendFailedException.getMessage());

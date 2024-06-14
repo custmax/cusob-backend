@@ -33,4 +33,12 @@ public interface ReportService extends IService<Report> {
      * @param campaignId
      */
     void updateDeliveredCount(Long campaignId);
+
+    void updateHardBounceCount(Long campaignId);
+
+    void updateSoftBounceCount(Long campaignId);
+
+    void updateUnsubscribeCount(Long campaignId);
+
+
 }

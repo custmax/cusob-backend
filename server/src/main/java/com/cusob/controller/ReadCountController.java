@@ -16,11 +16,12 @@ public class ReadCountController {
     @Autowired
     private CampaignContactService campaignContactService;
 
-    @ApiOperation("Read Count")
+    @ApiOperation("Read Count of open")
     @GetMapping("count/{campaignId}/{contactId}")
     public Result ReadCount(@PathVariable Long campaignId,
                             @PathVariable Long contactId){
         campaignContactService.opened(campaignId, contactId);
         return Result.ok();
     }
+
 }
