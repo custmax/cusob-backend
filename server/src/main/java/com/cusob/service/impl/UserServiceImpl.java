@@ -89,8 +89,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         User user = new User();
         BeanUtils.copyProperties(userDto, user);
-        user.setIsAvailable(0);
+        String password = userDto.getPassword();
+        user.setCompanyId(0L); // default companyId=0
+        // Password encryption
+        user.setPassword(DigestUtils.md5DigestAsHex(password.getBytes()));
+        user.setPermission(User.USER);
+        user.setIsAvailable(User.DISABLE);
         baseMapper.insert(user);
+
+        Company company = new Company();
+        company.setCompanyName(userDto.getCompany());
+        company.setAdminId(user.getId());
+        company.setPlanId(PlanPrice.FREE); // default free plan
+        companyService.saveCompany(company);
+
+        user.setCompanyId(company.getId());
+        baseMapper.updateById(user);
+
         HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
         String uuid = UUID.randomUUID().toString()+System.currentTimeMillis();
         hashOperations.put(uuid,"email",user.getEmail());
