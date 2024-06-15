@@ -117,7 +117,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         usermap.put("uuid",uuid);
         usermap.put("email",user.getEmail());
         rabbitTemplate.convertAndSend(MqConst.EXCHANGE_REGISTER_DIRECT,
-                MqConst.ROUTING_REGISTER_SUCCESS, usermap);
+                MqConst.ROUTING_REGISTER_SUCCESS, usermap); //发送注册邮件
     }
 
     private void registerVerify(UserDto userDto) {
@@ -126,7 +126,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new CusobException(ResultCodeEnum.VERIFY_CODE_EMPTY);
         }
 
-        String url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+        String url = "https://challenges.cloudflare.com/turnstile/v0/siteverify"; //验证CF是否通过了验证
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("secret", turnstileSecretKey);
         requestBody.put("response", turnstileToken);
@@ -141,8 +141,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (userDb != null){
             throw new CusobException(ResultCodeEnum.EMAIL_IS_REGISTERED);
         }
-
-
 
     }
 
@@ -459,17 +457,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             );
             if(user.getIsAvailable() == 0){
                 user.setIsAvailable(User.AVAILABLE); // TODO 开启使用//如果已经存在该账号就不要再插入
-                baseMapper.insert(user);
+                baseMapper.updateById(user);
             }
-            Long userId = user.getId();
-            Company company = new Company();
-            company.setCompanyName(user.getCompany());
-            company.setAdminId(userId);
-            company.setPlanId(PlanPrice.FREE); // default free plan
-            companyService.saveCompany(company);
-
-            user.setCompanyId(company.getId());
-            baseMapper.updateById(user);
 
             return true;
         }

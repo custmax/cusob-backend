@@ -46,7 +46,7 @@ public class SenderController {
 
     @ApiOperation("check if the uuid is existed")
     @GetMapping("check/{uuid}")
-    public Result check(@PathVariable String uuid){
+    public Result check(@PathVariable String uuid){ //获取uuid所对应的email
         String email = senderService.check(uuid);
         return Result.ok(email);
     }

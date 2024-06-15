@@ -97,7 +97,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
         contact.setUserId(AuthContext.getUserId());
         BeanUtils.copyProperties(contactDto, contact);
         rabbitTemplate.convertAndSend(MqConst.EXCHANGE_CHECK_DIRECT,
-                MqConst.ROUTING_CHECK_EMAIL, contact);
+                MqConst.ROUTING_CHECK_EMAIL, contact); //验证该邮箱是否真实存在（充分条件）
 
         if(baseMapper.selectByEmail(contact.getEmail(),contact.getGroupId())==null){
             contact.setUserId(AuthContext.getUserId());
@@ -116,7 +116,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
                 .eq(Contact::getUserId,userId)
                 .eq(Contact::getGroupId,groupId)
         );
-        contact.setValid(valid); //无效化
+        contact.setValid(valid); //设置是否有效
         baseMapper.updateById(contact);
     }
 

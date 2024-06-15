@@ -81,7 +81,7 @@ public class CampaignReceiver {
                 Date now = new Date();
                 if (now.after(sendTime)){
                     campaignService.MassMailing(campaign);
-                    campaignService.updateStatus(campaign.getId(), Campaign.COMPLETED);
+                    campaignService.updateStatus(campaign.getId(), Campaign.COMPLETED); //更新发送状态
                 }else {
                     long delay = sendTime.getTime() - now.getTime();
                     ScheduledThreadPoolExecutor executor =

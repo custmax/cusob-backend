@@ -216,7 +216,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
         long totalTime = 1;
         for (Contact contact : contactList) {
             String email = contact.getEmail();
-            if (!emailList.contains(email) && contact.getValid() == 1 && contact.getIsAvailable() == 1){
+            if (!emailList.contains(email) && contact.getValid() == 1 && contact.getIsAvailable() == 1){ //进行通配符的替换
                 String replace = content.replace("#{FIRSTNAME}", contact.getFirstName()==null ? "#{FIRSTNAME}":contact.getFirstName())
                         .replace("#{LASTNAME}", contact.getLastName()==null ? "#{LASTNAME}":contact.getLastName())
                         .replace("#{COMPANY}",contact.getCompany()==null ? "#{COMPANY}":contact.getCompany())
@@ -239,7 +239,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                         "            margin: 5px 0;\n" +
                         "        }</style>";
                 String img = "<img style=\"display: none;\" src=\"" + baseUrl + "/read/count/"
-                        + campaign.getId() + "/" + contact.getId() + "\">";
+                        + campaign.getId() + "/" + contact.getId() + "\">"; //加入一个不可见图片用于追踪打开率
 
 //                String encode = Base64.getEncoder().encodeToString(email.getBytes());
                 String unsubscribeUrl = host + "/unsubscribe?email=" + email;
@@ -247,7 +247,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                         "    <div style=\"text-align: center; margin-top: 20px;\">\n" +
                         "        <button style=\"border-radius: 4px; height: 30px; color: white; border: none; background-color: #e7e7e7;\">Unsubscribe</button>\n" +
                         "    </div>\n" +
-                        "</a>";
+                        "</a>"; //加入退订链接
 
                 String address = "    <div class=\"footer\">\n" +
                         "        <p>" + addr + "</p>\n" +

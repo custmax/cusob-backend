@@ -21,7 +21,7 @@ public class DomainController {
     @Autowired
     private DomainService domainService;
 
-    @ApiOperation("verify domain")
+    @ApiOperation("verify domain") //验证域名有效性
     @PostMapping("verify")
     public Result verify(String domain){
         Map<String, Boolean> map = domainService.domainVerify(domain);

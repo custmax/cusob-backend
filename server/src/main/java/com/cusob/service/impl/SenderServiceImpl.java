@@ -229,6 +229,7 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
         redisTemplate.opsForValue().set(email,uuid);
         redisTemplate.opsForValue().set(uuid,email);
         String content = ReadEmail.readwithcode("emails/activate.html",baseUrl+"/domainCertify?uuid="+uuid);
+        //将模板替换为特定内容
         mailService.sendHtmlMailMessage(email,subject,content);
     }
 

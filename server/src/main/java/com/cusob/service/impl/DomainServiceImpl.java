@@ -48,7 +48,7 @@ public class DomainServiceImpl extends ServiceImpl<DomainMapper, Domain> impleme
         }
         Domain domainSelect = this.getByDomain(domain);
         Map<String, Boolean> map = new HashMap<>();
-        // todo 采用异步操作
+
         Boolean flagSpf = this.spfVerify(domain);
         Boolean flagDkim = this.dkimVerify(domain,domainSelect.getDkimValue());
         Boolean flagMx = this.mxVerify(domain);
