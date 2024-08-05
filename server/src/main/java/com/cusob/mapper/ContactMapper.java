@@ -18,20 +18,24 @@ public interface ContactMapper extends BaseMapper<Contact> {
     IPage<ContactVo> pageQuery(Page<Contact> pageParam,
                                @Param("userId") Long userId,
                                @Param("keyword") String keyword,
-                               @Param("groupId") Long GroupId);
+                               @Param("groupId") Long GroupId,
+                               @Param("subscriptionType") String subscriptionType);
 
     /**
      * page Query By Company id
+     *
      * @param pageParam
      * @param companyId
      * @param keyword
      * @param groupId
+     * @param subscriptionType
      * @return
      */
     IPage<ContactVo> pageQueryByCompanyId(Page<Contact> pageParam,
                                           @Param("companyId") Long companyId,
                                           @Param("keyword") String keyword,
-                                          @Param("groupId") Long groupId);
+                                          @Param("groupId") Long groupId,
+                                          @Param("subscriptionType") String subscriptionType);
 
     ContactVo selectByEmail(@Param("email") String email,
                             @Param("groupId") Long groupId

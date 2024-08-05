@@ -74,4 +74,8 @@ public class Contact extends BaseEntity {
     @ExcelProperty(index = 10)
     @TableField("note")
     private String note;
+
+    @ExcelProperty(index = 11)
+    @TableField("subscriptiontype")
+    private String subscriptionType;
 }

@@ -71,6 +71,7 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, Group> implements
         List<Group> groupList = baseMapper.selectList(
                 new LambdaQueryWrapper<Group>()
                         .eq(Group::getUserId, userId)
+                        //.ne(Group::getIsDeleted, 0)
         );
         return groupList;
     }

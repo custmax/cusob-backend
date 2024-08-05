@@ -59,7 +59,7 @@ public interface ContactService extends IService<Contact> {
      * batch import contacts
      * @param file
      */
-    void batchImport(MultipartFile file, String groupName);
+    void batchImport(MultipartFile file, String groupName,String subscriptionType);
 
     /**
      * get Contact Count By Group id

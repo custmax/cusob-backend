@@ -6,40 +6,47 @@
 
     <select id="pageQuery" resultType="com.cusob.vo.ContactVo">
         SELECT contact.id, contact.first_name, contact.last_name, contact.email,
-        contact.phone, contact.mobile, contact.company, contact_groups.group_name
+        contact.phone, contact.mobile, contact.company, contact_groups.group_name, contact.subscriptionType
         FROM contact JOIN contact_groups ON contact.group_id = contact_groups.id
         WHERE contact.user_id = #{userId} AND contact.is_deleted = 0
         <if test="groupId != null and groupId != 0">
-              and contact.group_id = #{groupId}
+            AND contact.group_id = #{groupId}
         </if>
         <if test="keyword != null and keyword != ''">
-            and contact.first_name like concat('%', #{keyword}, '%')
-            or contact.last_name like concat('%', #{keyword}, '%')
-            or contact.company like concat('%', #{keyword}, '%')
-            or contact.email like concat('%', #{keyword}, '%')
-            or contact.phone like concat('%', #{keyword}, '%')
+            AND (contact.first_name LIKE CONCAT('%', #{keyword}, '%')
+            OR contact.last_name LIKE CONCAT('%', #{keyword}, '%')
+            OR contact.company LIKE CONCAT('%', #{keyword}, '%')
+            OR contact.email LIKE CONCAT('%', #{keyword}, '%')
+            OR contact.phone LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="subscriptionType != null and subscriptionType != ''">
+            AND contact.subscriptionType = #{subscriptionType}
         </if>
     </select>
 
     <select id="pageQueryByCompanyId" resultType="com.cusob.vo.ContactVo">
         SELECT contact.id, contact.user_id, contact.first_name, contact.last_name, contact.email,
-        contact.phone, contact.mobile, contact.company, contact_groups.group_name
+        contact.phone, contact.mobile, contact.company, contact_groups.group_name, contact.subscriptionType
         FROM contact JOIN contact_groups ON contact.group_id = contact_groups.id
         WHERE contact.company_id = #{companyId} AND contact.is_deleted = 0
         <if test="groupId != null and groupId != 0">
-            and contact.group_id = #{groupId}
+            AND contact.group_id = #{groupId}
         </if>
         <if test="keyword != null and keyword != ''">
-            and contact.first_name like concat('%', #{keyword}, '%')
-            or contact.last_name like concat('%', #{keyword}, '%')
-            or contact.company like concat('%', #{keyword}, '%')
-            or contact.email like concat('%', #{keyword}, '%')
-            or contact.phone like concat('%', #{keyword}, '%')
+            AND (contact.first_name LIKE CONCAT('%', #{keyword}, '%')
+            OR contact.last_name LIKE CONCAT('%', #{keyword}, '%')
+            OR contact.company LIKE CONCAT('%', #{keyword}, '%')
+            OR contact.email LIKE CONCAT('%', #{keyword}, '%')
+            OR contact.phone LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="subscriptionType != null and subscriptionType != ''">
+            AND contact.subscriptionType = #{subscriptionType}
         </if>
     </select>
+
     <select id="selectByEmail" resultType="com.cusob.vo.ContactVo">
         SELECT contact.id, contact.user_id, contact.first_name, contact.last_name, contact.email,
-        contact.phone, contact.mobile, contact.company, contact_groups.group_name
+        contact.phone, contact.mobile, contact.company, contact_groups.group_name,contact.subscriptionType
         FROM contact JOIN contact_groups ON contact.group_id = contact_groups.id
         WHERE contact.email = #{email}  AND contact.is_deleted = 0
         <if test="groupId != null and groupId != 0">

@@ -14,7 +14,7 @@ public enum ResultCodeEnum {
     REPEAT_SUBMIT(206, "重复提交"),
 
     // TODO 待修改
-    USER_IS_DISABLE(208, "During the internal test, you cannot log in temporarily"),
+    USER_IS_DISABLE(208, "Your acount is not activated yet, Please check the email we resend you and click the link to activate your account."),
     NO_PERMISSION(209, "Free users don't have permissions"),
 
     OLD_PASSWORD_EMPTY(210, "Old password is empty"),

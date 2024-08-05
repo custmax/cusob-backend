@@ -313,6 +313,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         // todo User is Disable(During the internal test, you cannot log in temporarily)
         if (user.getIsAvailable().equals(User.DISABLE)){
+            HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+            String uuid = UUID.randomUUID().toString()+System.currentTimeMillis();
+            hashOperations.put(uuid,"email",user.getEmail());
+            hashOperations.put(uuid,"password",user.getPassword());
+            hashOperations.put(uuid,"phone",user.getPhone());
+            redisTemplate.expire(uuid, 30, TimeUnit.MINUTES);
+
+            Map<String,String> usermap = new HashMap<>();
+            usermap.put("uuid",uuid);
+            usermap.put("email",user.getEmail());
+            rabbitTemplate.convertAndSend(MqConst.EXCHANGE_REGISTER_DIRECT,
+                    MqConst.ROUTING_REGISTER_SUCCESS, usermap); //发送注册邮件
             throw new CusobException(ResultCodeEnum.USER_IS_DISABLE);
         }
 

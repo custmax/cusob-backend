@@ -25,4 +25,6 @@ public class ContactVo implements Serializable {
 
     private String groupName;
 
+    private String subscriptionType;
+
 }

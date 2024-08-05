@@ -14,6 +14,7 @@ import com.cusob.mapper.CampaignMapper;
 import com.cusob.result.ResultCodeEnum;
 import com.cusob.service.*;
 import com.cusob.vo.CampaignListVo;
+import io.swagger.models.auth.In;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +24,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.net.URLEncoder;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -262,6 +260,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                 }, totalTime, TimeUnit.MILLISECONDS);
                 executor.shutdown();
                 totalTime += 1000*(random.nextInt(10) + 10);
+
             }
         }
 

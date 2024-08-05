@@ -76,7 +76,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
             throw new CusobException(ResultCodeEnum.CONTACT_NUMBER_FULL);
         }
         // 参数校验
-        this.paramVerify(contactDto);
+        //this.paramVerify(contactDto);
         Contact contact = new Contact();
 
         String groupName = contactDto.getGroupName();
@@ -217,13 +217,14 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
         Long userId = AuthContext.getUserId();
         Long companyId = AuthContext.getCompanyId();
         User user = userService.getById(userId);
+        String SubscriptionType = contactQueryDto.getSubscriptionType();
         IPage<ContactVo> contactVoPage;
         if (user.getPermission().equals(User.USER)){
             // user
-            contactVoPage = baseMapper.pageQuery(pageParam, userId, keyword, groupId);
+            contactVoPage = baseMapper.pageQuery(pageParam, userId, keyword, groupId,SubscriptionType);
         }else {
             // admin
-            contactVoPage = baseMapper.pageQueryByCompanyId(pageParam, companyId, keyword, groupId);
+            contactVoPage = baseMapper.pageQueryByCompanyId(pageParam, companyId, keyword, groupId,SubscriptionType);
         }
         return contactVoPage;
     }
@@ -233,7 +234,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
      * @param file
      */
     @Override
-    public void batchImport(MultipartFile file, String groupName) {
+    public void batchImport(MultipartFile file, String groupName,String subscriptionType) {
         if (file==null){
             throw new CusobException(ResultCodeEnum.FILE_IS_EMPTY);
         }
@@ -255,6 +256,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
                     contact.setUserId(userId);
                     contact.setCompanyId(companyId);
                     contact.setGroupId(groupId);
+                    contact.setSubscriptionType(subscriptionType);
                     baseMapper.insert(contact);  // todo 待优化
                 }
             })).sheet().doRead();

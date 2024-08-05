@@ -39,4 +39,6 @@ public class ContactDto implements Serializable {
     private String groupName;
 
     private String note;
+
+    private String subscriptionType;
 }

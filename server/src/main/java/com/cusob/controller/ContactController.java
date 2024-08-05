@@ -84,8 +84,8 @@ public class ContactController {
 
     @ApiOperation("batch import contacts")
     @PostMapping("batchImport")
-    public Result batchImport(@RequestPart("file") MultipartFile file, String groupName){
-        contactService.batchImport(file, groupName);
+    public Result batchImport(@RequestPart("file") MultipartFile file, String groupName,String subscriptionType){
+        contactService.batchImport(file, groupName,subscriptionType);
         return Result.ok();
     }
 

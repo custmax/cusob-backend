@@ -21,5 +21,7 @@ public class AuthContext {
 
     public static void setCompanyId(Long _companyId){
         companyId.set(_companyId);
+
+
     }
 }
