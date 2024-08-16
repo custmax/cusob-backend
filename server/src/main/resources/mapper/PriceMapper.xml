@@ -6,4 +6,10 @@
     <select id="getContactList" resultType="java.lang.Integer">
         SELECT DISTINCT price.contact_capacity FROM `price`
     </select>
+    <select id="getPlanById" resultType="com.cusob.entity.Price">
+        SELECT * FROM `price` WHERE id = #{id}
+    </select>
+    <select id="getContactCapacityList" resultType="java.lang.Integer">
+    SELECT DISTINCT price.contact_capacity FROM `price`
+</select>
 </mapper>

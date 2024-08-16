@@ -102,4 +102,8 @@ public interface ContactService extends IService<Contact> {
      * @return
      */
     List<String> getAllContactsByGroupId(Long groupId);
+
+    List<Contact> getContactsByEmail(String email);
+
+    void saveUnsubsribedEmail(String email);
 }

@@ -8,7 +8,6 @@ import com.cusob.mapper.PriceMapper;
 import com.cusob.result.ResultCodeEnum;
 import com.cusob.service.PriceService;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -44,5 +43,15 @@ public class PriceServiceImpl extends ServiceImpl<PriceMapper, Price> implements
     public List<Integer> getContactList() {
         List<Integer> list = baseMapper.getContactList();
         return list;
+    }
+    @Override
+    public List<Integer> getContactCapacityList() {
+        List<Integer> res = baseMapper.getContactCapacityList();
+        return res;
+    }
+    @Override
+    public Price getPlanById(Long id) {
+        Price price = baseMapper.selectById(id);
+        return price;
     }
 }

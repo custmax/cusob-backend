@@ -18,7 +18,10 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Properties;
@@ -59,18 +62,18 @@ public class MailServiceImpl implements MailService {
      * @param text
      */
     private void checkMail(String to,String subject,String text){
-        if(StringUtils.isEmpty(to)){
-            throw new CusobException(ResultCodeEnum.EMAIL_RECIPIENT_EMPTY);
+        if(StringUtils.isEmpty(to)){//如果收件人为空
+            throw new CusobException(ResultCodeEnum.EMAIL_RECIPIENT_EMPTY);//收件人为空
         }
         boolean flag = Pattern.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", to);
         if (!flag){
-            throw new CusobException(ResultCodeEnum.EMAIL_FORMAT_ERROR);
+            throw new CusobException(ResultCodeEnum.EMAIL_FORMAT_ERROR);//邮箱格式错误
         }
         if(StringUtils.isEmpty(subject)){
-            throw new CusobException(ResultCodeEnum.EMAIL_SUBJECT_EMPTY);
+            throw new CusobException(ResultCodeEnum.EMAIL_SUBJECT_EMPTY);//邮件主题为空
         }
         if(StringUtils.isEmpty(text)){
-            throw new CusobException(ResultCodeEnum.EMAIL_CONTENT_EMPTY);
+            throw new CusobException(ResultCodeEnum.EMAIL_CONTENT_EMPTY);//邮件内容为空
         }
     }
 
@@ -112,7 +115,7 @@ public class MailServiceImpl implements MailService {
      * @param content
      */
     @Override
-    public void sendHtmlMailMessage(String to, String subject, String content) {
+    public void sendHtmlMailMessage(String to, String subject, String content) {//激活邮件
         this.checkMail(to, subject, content);
 
         // 配置发送邮件的环境属性
@@ -246,7 +249,16 @@ public class MailServiceImpl implements MailService {
             message.setSentDate(new Date()); // 设置时间
             //设置邮件标题
             message.setSubject(subject);
-            message.setContent(content, "text/html;charset=UTF-8");
+//            message.setContent(content, "text/html;charset=UTF-8");
+            MimeBodyPart mimeBodyPart = new MimeBodyPart();
+            mimeBodyPart.setContent(content, "text/html;charset=UTF-8");
+            mimeBodyPart.setHeader("Content-Transfer-Encoding", "7bit");
+
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(mimeBodyPart);
+
+            message.setContent(multipart);
+
             message.setRecipients(Message.RecipientType.TO, to);
 //            message.setHeader("Return-Receipt-To", email);
 //            message.setHeader("Disposition-Notification-To", email);
@@ -254,6 +266,7 @@ public class MailServiceImpl implements MailService {
             message.setHeader("List-Unsubscribe-Post","List-Unsubscribe=One-Click"); //添加一键退订的Header
             message.setHeader("List-Unsubscribe", "<" + unsubscribeUrl + ">");
             // 发送邮件
+            System.out.println(message.getContent());
             Transport.send(message);
             System.out.println(to);
 
@@ -270,6 +283,8 @@ public class MailServiceImpl implements MailService {
             }
             e.printStackTrace();
             throw new CusobException(ResultCodeEnum.EMAIL_SEND_FAIL);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         System.out.println("success");
     }

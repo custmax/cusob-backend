@@ -33,19 +33,26 @@ public class CampaignContactServiceImpl
      */
     @Transactional
     @Override
-    public void opened(Long campaignId, Long contactId) {
-        CampaignContact contact = baseMapper.selectOne(
+    public void opened(Long campaignId, Long contactId) {//8.15修改，现在是批量查询
+        List<CampaignContact> campaignContacts = baseMapper.selectList(//查询符合条件的记录
                 new LambdaQueryWrapper<CampaignContact>()
                         .eq(CampaignContact::getCampaignId, campaignId)
                         .eq(CampaignContact::getContactId, contactId)
         );
-        if (contact != null){
-            if (!contact.getIsOpened().equals(CampaignContact.OPENED)){
-                contact.setIsOpened(CampaignContact.OPENED);
-                baseMapper.updateById(contact);
-                reportService.opened(campaignId);
+        for (CampaignContact campaignContact : campaignContacts) {
+            if (!campaignContact.getIsOpened().equals(CampaignContact.OPENED)){//如果这个联系人的状态不是已打开
+                campaignContact.setIsOpened(CampaignContact.OPENED);//设置为已打开
+                baseMapper.updateById(campaignContact);//更新记录
+                reportService.opened(campaignId);//更新报告
             }
         }
+//        if (contact != null){
+//            if (!contact.getIsOpened().equals(CampaignContact.OPENED)){
+//                contact.setIsOpened(CampaignContact.OPENED);
+//                baseMapper.updateById(contact);
+//                reportService.opened(campaignId);
+//            }
+//        }
 
     }
 
@@ -56,15 +63,15 @@ public class CampaignContactServiceImpl
      */
     @Override
     public void batchSaveContact(Long userId, Long campaignId, Long groupId) {
-        List<Contact> contactList = contactService.getListByUserIdAndGroupId(userId, groupId);
-        List<CampaignContact> campaignContactList = new ArrayList<>();
+        List<Contact> contactList = contactService.getListByUserIdAndGroupId(userId, groupId);//根据当前用户id和组id获取这次发送邮件的联系人列表
+        List<CampaignContact> campaignContactList = new ArrayList<>();//创建一个空的CampaignContact列表
         for (Contact contact : contactList) {
-            CampaignContact campaignContact = new CampaignContact();
+            CampaignContact campaignContact = new CampaignContact();//这个表用于记录每个联系人的发送状态，以及campaign和contact的关联信息
             campaignContact.setCampaignId(campaignId);
             campaignContact.setContactId(contact.getId());
             campaignContactList.add(campaignContact);
         }
-        // todo 待优化
+        // todo 待优化，8.14由单个查询改为列表查询修改
         campaignContactList.forEach(campaignContact -> baseMapper.insert(campaignContact));
     }
 
@@ -74,15 +81,18 @@ public class CampaignContactServiceImpl
      * @param contactId
      */
     @Override
-    public void updateSendStatus(Long campaignId, Long contactId) {
-        CampaignContact campaignContact = baseMapper.selectOne(
+    public void updateSendStatus(Long campaignId, Long contactId) {//更新发送状态
+        // 查询所有符合条件的记录
+        List<CampaignContact> campaignContacts = baseMapper.selectList(
                 new LambdaQueryWrapper<CampaignContact>()
                         .eq(CampaignContact::getCampaignId, campaignId)
                         .eq(CampaignContact::getContactId, contactId)
         );
-        if (campaignContact != null){
-            campaignContact.setIsDelivered(CampaignContact.DELIVERED);
-            baseMapper.updateById(campaignContact);
+
+        // 遍历所有符合条件的记录，逐个更新
+        for (CampaignContact campaignContact : campaignContacts) {
+            campaignContact.setIsDelivered(CampaignContact.DELIVERED); // 设置为已发送
+            baseMapper.updateById(campaignContact); // 更新记录
         }
     }
 }

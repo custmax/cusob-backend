@@ -3,6 +3,7 @@ package com.cusob.controller;
 import com.cusob.entity.PlanPrice;
 import com.cusob.result.Result;
 import com.cusob.service.PlanPriceService;
+import com.cusob.service.PriceService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,11 +18,12 @@ public class PlanPriceController {
 
     @Autowired
     private PlanPriceService planPriceService;
-
+    @Autowired
+    private PriceService priceService;
     @ApiOperation("get Contact Capacity List")
     @GetMapping("getContactCapacityList")
     public Result getContactCapacityList(){
-        List<Integer> res = planPriceService.getContactCapacityList();
+        List<Integer> res = priceService.getContactCapacityList();
         return Result.ok(res);
     }
 

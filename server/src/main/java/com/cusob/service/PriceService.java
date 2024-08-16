@@ -22,4 +22,8 @@ public interface PriceService extends IService<Price> {
      */
     List<Integer> getContactList();
 
+    List<Integer> getContactCapacityList();
+
+    Price getPlanById(Long id);
+
 }

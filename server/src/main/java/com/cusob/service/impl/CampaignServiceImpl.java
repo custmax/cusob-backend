@@ -49,7 +49,8 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
 
     @Autowired
     private PlanPriceService planPriceService;
-
+    @Autowired
+    private PriceService priceService;
     @Resource
     private RabbitTemplate rabbitTemplate;
 
@@ -73,7 +74,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
      * @param campaignDto
      */
     @Override
-    public Long saveCampaign(CampaignDto campaignDto, Integer status) {
+    public Long saveCampaign(CampaignDto campaignDto, Integer status) {//保存活动
         Campaign campaign = new Campaign();
         BeanUtils.copyProperties(campaignDto, campaign);
 
@@ -128,31 +129,32 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
      * @param campaignDto
      */
     @Override
-    public void sendEmail(CampaignDto campaignDto) {
-        Company company = companyService.getById(AuthContext.getCompanyId());
-        PlanPrice plan = planPriceService.getPlanById(company.getPlanId());
+    public void sendEmail(CampaignDto campaignDto) {//发送邮件，重要功能
+        Company company = companyService.getById(AuthContext.getCompanyId());//获取公司信息
+        Price plan = priceService.getPlanById(company.getPlanId());//获取订阅计划信息
         Long groupId = campaignDto.getToGroup();
-        List<Contact> contactList = contactService.getListByGroupId(groupId);
+
+        List<Contact> contactList = contactService.getListByGroupId(groupId);//获取该campaign要发送的组的联系人列表
         // Whether the limit of e-mails that can be sent is exceeded
-        if (company.getEmails() + contactList.size() >= plan.getEmailCapacity()){
-            throw new CusobException(ResultCodeEnum.EMAIL_NUMBER_FULL);
+        if (company.getEmails() + contactList.size() >= plan.getEmailCapacity()){//超出发送数量
+            throw new CusobException(ResultCodeEnum.EMAIL_NUMBER_FULL);//邮件数量已满
         }
         // Parameter validation
-        this.paramVerify(campaignDto);
-        Long campaignId;
-        if(campaignDto.getId()==0 && this.getCampaignByname(campaignDto.getCampaignName())!=null){
-            throw new CusobException(ResultCodeEnum.TITLE_IS_EXISTED);
+        this.paramVerify(campaignDto);//参数验证
+        Long campaignId;//活动id
+        if(campaignDto.getId()==0 && this.getCampaignByname(campaignDto.getCampaignName())!=null){//判断活动名称是否存在
+            throw new CusobException(ResultCodeEnum.TITLE_IS_EXISTED);//标题已存在
         }
-        Campaign campaign = this.getCampaignById(campaignDto.getId());
-        if (campaign != null){
-            campaignId = campaign.getId();
-        }else {
-            campaignId = this.saveCampaign(campaignDto, Campaign.ONGOING);
-            campaign = this.getCampaignById(campaignId);
+        Campaign campaign = this.getCampaignById(campaignDto.getId());//获取活动
+        if (campaign != null){//活动存在
+            campaignId = campaign.getId();//获取活动id
+        }else {//活动不存在
+            campaignId = this.saveCampaign(campaignDto, Campaign.ONGOING);//保存活动
+            campaign = this.getCampaignById(campaignId);//获取活动
         }
 
-        Report report = new Report();
-        report.setUserId(AuthContext.getUserId());
+        Report report = new Report();//报告
+        report.setUserId(AuthContext.getUserId());//用户id
         report.setCompanyId(AuthContext.getCompanyId());
         report.setCampaignId(campaignId);
         report.setGroupId(groupId);
@@ -164,7 +166,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                 MqConst.ROUTING_SAVE_REPORT, report);
         // save campaign contact
         rabbitTemplate.convertAndSend(MqConst.EXCHANGE_CAMPAIGN_DIRECT,
-                MqConst.ROUTING_CAMPAIGN_CONTACT, report);
+                MqConst.ROUTING_CAMPAIGN_CONTACT, report);//
         // Email contacts
         rabbitTemplate.convertAndSend(MqConst.EXCHANGE_MAIL_DIRECT,
                 MqConst.ROUTING_MASS_MAILING, campaign);
@@ -191,7 +193,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
 
 
     @Override
-    public void MassMailing(Campaign campaign) {
+    public void MassMailing(Campaign campaign) {//正式批量发送邮件
         String campaignName = campaign.getCampaignName();
         Campaign campaign1 = baseMapper.selectOne(new LambdaQueryWrapper<Campaign>()
                 .eq(Campaign::getUserId, AuthContext.getUserId())
@@ -208,13 +210,13 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
         Long userId = campaign.getUserId();
         Long groupId = campaign.getToGroup();
         List<Contact> contactList = contactService.getListByUserIdAndGroupId(userId, groupId);
-        List<String> emailList = unsubscribeService.selectEmailList();
+        //List<String> emailList = unsubscribeService.selectEmailList();//获取退订列表
 
         Random random = new Random();
         long totalTime = 1;
         for (Contact contact : contactList) {
             String email = contact.getEmail();
-            if (!emailList.contains(email) && contact.getValid() == 1 && contact.getIsAvailable() == 1){ //进行通配符的替换
+            if (!contact.getSubscriptionType().equals("Unsubscribed") && contact.getValid() == 1 && contact.getIsAvailable() == 1){ //判断是否退订、邮箱是否有效、是否可用
                 String replace = content.replace("#{FIRSTNAME}", contact.getFirstName()==null ? "#{FIRSTNAME}":contact.getFirstName())
                         .replace("#{LASTNAME}", contact.getLastName()==null ? "#{LASTNAME}":contact.getLastName())
                         .replace("#{COMPANY}",contact.getCompany()==null ? "#{COMPANY}":contact.getCompany())
@@ -236,8 +238,27 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                         "        .footer p {\n" +
                         "            margin: 5px 0;\n" +
                         "        }</style>";
-                String img = "<img style=\"display: none;\" src=\"" + baseUrl + "/read/count/"
-                        + campaign.getId() + "/" + contact.getId() + "\">"; //加入一个不可见图片用于追踪打开率
+//                String img = "<img style=\"display: none;\" src=\"" + baseUrl + "/read/count/"
+//                        + campaign.getId() + "/" + contact.getId() + "\">"; //加入一个不可见图片用于追踪打开率
+//                String img = "<img style=\"width:1px;height:1px;background-color:#FF0000;\" src=\""
+//                        + baseUrl
+//                        + "/read/count/"
+//                        + campaign.getId()
+//                        + "/"
+//                        + contact.getId() + "\" alt=\"\">";
+// 使用 StringBuilder 来构建 img 标签内容
+                // 手动对特殊字符进行编码替换
+//                String img = "<img style=\"width:1px;height:1px;background-color:#FF0000;\" src=\""
+//                        + baseUrl.replace("=", "&#61;")
+//                        + "/read/count/"
+//                        + campaign.getId()
+//                        + "/"
+//                        + contact.getId()
+//                        + "\" alt=\"\">";
+                String url=baseUrl + "/read/count/" + campaign.getId() + "/" + contact.getId();
+                //String img = "<img  src=\""+ "https://gitee.com/jadeinrain/athena-blog-img/raw/f9e39c2309398832ea5083fd03274c8fa13d9552/athena.JPG\" "+ "alt=\"\">";
+                String img = "<img  src=\""+ url+ "\" alt=\"\">";
+                System.out.println("img: " + img);
 
 //                String encode = Base64.getEncoder().encodeToString(email.getBytes());
                 String unsubscribeUrl = host + "/unsubscribe?email=" + email;
@@ -253,15 +274,16 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                 String emailContent = style + replace + btnUnsubscribe + address + img ;
                 ScheduledThreadPoolExecutor executor =
                         new ScheduledThreadPoolExecutor(2, new ThreadPoolExecutor.CallerRunsPolicy());
-                executor.schedule(() -> {
+                executor.schedule(() -> {//定时发送邮件
                     mailService.sendEmail(sender, senderName, email, emailContent, subject,unsubscribeUrl,groupId,campaign.getId());
-                    campaignContactService.updateSendStatus(campaign.getId(), contact.getId());
-                    reportService.updateDeliveredCount(campaign.getId());
-                }, totalTime, TimeUnit.MILLISECONDS);
+                    campaignContactService.updateSendStatus(campaign.getId(), contact.getId());//更新campaign_contact表中发送状态,设置为已发送
+                    reportService.updateDeliveredCount(campaign.getId());//更新report表中发送数量
+                }, totalTime, TimeUnit.MILLISECONDS);//定时发送
                 executor.shutdown();
-                totalTime += 1000*(random.nextInt(10) + 10);
+                totalTime += 1000*(random.nextInt(10) + 10);//随机时间间隔
 
             }
+
         }
 
     }

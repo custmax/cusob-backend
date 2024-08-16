@@ -14,4 +14,13 @@ public interface PriceMapper extends BaseMapper<Price> {
      * @return
      */
     List<Integer> getContactList();
+
+    /**
+     * get Plan By id
+     * @param id
+     * @return
+     */
+    Price getPlanById(Long id);
+
+    List<Integer> getContactCapacityList();
 }
