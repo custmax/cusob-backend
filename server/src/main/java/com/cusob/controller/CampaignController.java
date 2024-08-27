@@ -10,6 +10,7 @@ import com.cusob.result.Result;
 import com.cusob.service.CampaignService;
 import com.cusob.vo.CampaignListVo;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,5 +80,10 @@ public class CampaignController {
         campaignService.removeCampaign(id);
         return Result.ok();
     }
-
+    @ApiOperation("get Campaign Id")
+    @GetMapping("getLastCampaignId")
+    public Result getLastCampaignId(){
+        Long lastCampaignId = campaignService.getLastCampaignId();
+        return Result.ok(lastCampaignId);
+    }
 }

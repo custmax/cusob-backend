@@ -1,6 +1,8 @@
 package com.cusob.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,6 +13,7 @@ import com.cusob.dto.CampaignQueryDto;
 import com.cusob.entity.*;
 import com.cusob.exception.CusobException;
 import com.cusob.mapper.CampaignMapper;
+import com.cusob.result.Result;
 import com.cusob.result.ResultCodeEnum;
 import com.cusob.service.*;
 import com.cusob.vo.CampaignListVo;
@@ -68,6 +71,11 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
 
     @Value("${cusob.url}")
     private String host;
+    //获取最新id
+    public Long getLastCampaignId(){
+        Long lastCampaignId = baseMapper.getLastCampaignId();
+        return lastCampaignId+1;
+    }
 
     /**
      * save Campaign Draft

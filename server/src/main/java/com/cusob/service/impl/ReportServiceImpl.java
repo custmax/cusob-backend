@@ -52,18 +52,24 @@ public class ReportServiceImpl extends ServiceImpl<ReportMapper, Report> impleme
         return page;
     }
 
+    @Override
+    public void clicked(Long campaignId) {
+        List<Report> reports = baseMapper.selectList(
+                new LambdaQueryWrapper<Report>()
+                        .eq(Report::getCampaignId, campaignId)
+        );
+        for(Report report : reports){
+            report.setClicked(report.getClicked() + 1);
+            baseMapper.updateById(report);
+        }
+    }
+
     /**
      * Read Count
      * @param campaignId
      */
     @Override
     public void opened(Long campaignId) {
-//        Report report = baseMapper.selectOne(
-//                new LambdaQueryWrapper<Report>()
-//                        .eq(Report::getCampaignId, campaignId)
-//        );
-//        report.setOpened(report.getOpened() + 1);
-//        baseMapper.updateById(report);
         List<Report> reports = baseMapper.selectList(
                 new LambdaQueryWrapper<Report>()
                         .eq(Report::getCampaignId, campaignId)

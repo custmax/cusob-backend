@@ -24,6 +24,8 @@ public class LoginMvcConfigurerAdapter extends WebMvcConfigurationSupport {
 
         registry.addInterceptor(userLoginInterceptor)
                 .addPathPatterns("/**")
+                //放行所有的统计
+                .excludePathPatterns("/report/**")
                 .excludePathPatterns("/user/login")
                 .excludePathPatterns("/index.html")
                 .excludePathPatterns("/user/register")

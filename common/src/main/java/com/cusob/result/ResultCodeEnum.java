@@ -96,6 +96,8 @@ public enum ResultCodeEnum {
 
     DOMAIN_IS_EXISTED(299,"The domain has already existed in your Domain list"),
 
+    REDRICT_SUCCESS(301, "REDRICT"),
+
     ;
 
     private Integer code;
