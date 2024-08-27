@@ -148,6 +148,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
         Campaign campaign = this.getCampaignById(campaignDto.getId());//获取活动
         if (campaign != null){//活动存在
             campaignId = campaign.getId();//获取活动id
+            this.saveCampaign(campaignDto, Campaign.ONGOING);//保存活动
         }else {//活动不存在
             campaignId = this.saveCampaign(campaignDto, Campaign.ONGOING);//保存活动
             campaign = this.getCampaignById(campaignId);//获取活动

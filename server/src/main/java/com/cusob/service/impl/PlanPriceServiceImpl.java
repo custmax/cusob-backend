@@ -27,14 +27,14 @@ public class PlanPriceServiceImpl extends ServiceImpl<PlanPriceMapper, PlanPrice
      * @param capacity
      * @return
      */
-    @Override
-    public List<PlanPrice> getPlanByContactCapacity(Integer capacity) {
-        List<PlanPrice> planPrices = baseMapper.selectList(
-                new LambdaQueryWrapper<PlanPrice>()
-                        .eq(PlanPrice::getContactCapacity, capacity)
-        );
-        return planPrices;
-    }
+//    @Override
+//    public List<PlanPrice> getPlanByContactCapacity(Integer capacity) {
+//        List<PlanPrice> planPrices = baseMapper.selectList(
+//                new LambdaQueryWrapper<PlanPrice>()
+//                        .eq(PlanPrice::getContactCapacity, capacity)
+//        );
+//        return planPrices;
+//    }
 
     /**
      * get Plan By id

@@ -97,13 +97,10 @@ public class StripeBackController {
     @Autowired
     private PriceService priceService;
 
-
-
-
-
     @ResponseBody
     @RequestMapping(value = {"/pay/stripe/stripe_events"}, method = RequestMethod.POST)
     public void stripe_events(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("request:"+request);
         System.out.println("------进入回调了------");
         InputStream inputStream = null;
         ByteArrayOutputStream output = null;
@@ -117,10 +114,11 @@ public class StripeBackController {
             }
             byte[] bytes = output.toByteArray();
             String eventPayload = new String(bytes, "UTF-8");
-            //System.out.println("获取请求体的参数：" + eventPayload);
+            System.out.println("获取请求体的参数：" + eventPayload);
+            System.out.println("获取请求头" + request);
             //获取请求头签名
             String sigHeader = request.getHeader("Stripe-Signature");
-            //System.out.println("获取请求头的签名：" + sigHeader);
+            System.out.println("获取请求头的签名：" + sigHeader);
             Event event=null;
             try {
                 event = Webhook.constructEvent(eventPayload,sigHeader,webhookSecret);  //调用webhook进行验签

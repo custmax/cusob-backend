@@ -37,6 +37,7 @@ public class LoginMvcConfigurerAdapter extends WebMvcConfigurationSupport {
                 .excludePathPatterns("/pay/**")
                 .excludePathPatterns("/api/**")
                 .excludePathPatterns("/success/**")
+                .excludePathPatterns("/stripe/**")
                 .excludePathPatterns("/cancel/**")
                 .excludePathPatterns("/dashboard/**")
                 .excludePathPatterns("/pricing/**")

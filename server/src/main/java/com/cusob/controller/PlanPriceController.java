@@ -1,6 +1,7 @@
 package com.cusob.controller;
 
 import com.cusob.entity.PlanPrice;
+import com.cusob.entity.Price;
 import com.cusob.result.Result;
 import com.cusob.service.PlanPriceService;
 import com.cusob.service.PriceService;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequestMapping("/plan/price")
 public class PlanPriceController {
 
+//    8.19将PlanPriceService改为PriceService
     @Autowired
     private PlanPriceService planPriceService;
     @Autowired
@@ -30,7 +32,7 @@ public class PlanPriceController {
     @ApiOperation("get Plan By ContactCapacity")
     @GetMapping("getPlanByContactCapacity")
     public Result getPlanByContactCapacity(Integer capacity){
-        List<PlanPrice> res = planPriceService.getPlanByContactCapacity(capacity);
+        List<Price> res = priceService.getPlanByContactCapacity(capacity);
         return Result.ok(res);
     }
 

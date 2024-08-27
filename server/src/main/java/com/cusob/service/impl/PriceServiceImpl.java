@@ -2,6 +2,7 @@ package com.cusob.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cusob.entity.PlanPrice;
 import com.cusob.entity.Price;
 import com.cusob.exception.CusobException;
 import com.cusob.mapper.PriceMapper;
@@ -53,5 +54,13 @@ public class PriceServiceImpl extends ServiceImpl<PriceMapper, Price> implements
     public Price getPlanById(Long id) {
         Price price = baseMapper.selectById(id);
         return price;
+    }
+    @Override
+    public List<Price> getPlanByContactCapacity(Integer capacity) {
+        List<Price> prices = baseMapper.selectList(
+                new LambdaQueryWrapper<Price>()
+                        .eq(Price::getContactCapacity, capacity)
+        );
+        return prices;
     }
 }

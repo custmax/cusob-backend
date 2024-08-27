@@ -41,6 +41,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 
 @Service
@@ -84,8 +85,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Transactional
     @Override
     public void addUser(UserDto userDto) {
-        this.paramEmptyVerify(userDto);
-        this.registerVerify(userDto);
+        this.paramEmptyVerify(userDto);//参数校验：检查邮箱和手机是否为空
+        boolean flag = Pattern.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", userDto.getEmail());
+        if (!flag){
+            throw new CusobException(ResultCodeEnum.EMAIL_FORMAT_ERROR);//邮箱格式错误
+        }
+        this.registerVerify(userDto);//检查是否通过cf验证及邮箱是否已经注册
 
         User user = new User();
         BeanUtils.copyProperties(userDto, user);
@@ -94,7 +99,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // Password encryption
         user.setPassword(DigestUtils.md5DigestAsHex(password.getBytes()));
         user.setPermission(User.USER);
-        user.setIsAvailable(User.DISABLE);
+        user.setIsAvailable(User.DISABLE);//默认不可用
         baseMapper.insert(user);
 
         Company company = new Company();
@@ -106,9 +111,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setCompanyId(company.getId());
         baseMapper.updateById(user);
 
-        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
-        String uuid = UUID.randomUUID().toString()+System.currentTimeMillis();
-        hashOperations.put(uuid,"email",user.getEmail());
+        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();//将用户信息存入redis
+        String uuid = UUID.randomUUID().toString()+System.currentTimeMillis();//生成uuid
+        hashOperations.put(uuid,"email",user.getEmail());//将用户信息存入redis
         hashOperations.put(uuid,"password",user.getPassword());
         hashOperations.put(uuid,"phone",user.getPhone());
         redisTemplate.expire(uuid, 30, TimeUnit.MINUTES);
@@ -131,8 +136,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         requestBody.put("secret", turnstileSecretKey);
         requestBody.put("response", turnstileToken);
 
-        Map<String, Object> response = restTemplate.postForObject(url, requestBody, Map.class);
-        if (!(response != null && Boolean.TRUE.equals(response.get("success")))) {
+        Map<String, Object> response = restTemplate.postForObject(url, requestBody, Map.class);//发送请求
+        if (!(response != null && Boolean.TRUE.equals(response.get("success")))) {//验证失败
             throw new CusobException(ResultCodeEnum.VERIFY_CODE_WRONG);
         }
 

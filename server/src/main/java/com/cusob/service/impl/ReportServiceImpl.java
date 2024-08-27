@@ -126,4 +126,13 @@ public class ReportServiceImpl extends ServiceImpl<ReportMapper, Report> impleme
         }
     }
 
+    @Override
+    public void removeReport(Long id) {
+//        baseMapper.delete(
+//                new LambdaQueryWrapper<Report>()
+//                        .eq(Report::getId, id)
+//        );
+        baseMapper.deleteById(id);
+    }
+
 }

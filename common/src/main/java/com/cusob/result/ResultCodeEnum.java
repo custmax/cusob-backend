@@ -63,7 +63,7 @@ public enum ResultCodeEnum {
     EMAIL_IS_INVALID(249,"The email does not exist,please check your spelling"),
 
     VERIFY_CODE_EMPTY(250, "The verify code is empty"),
-    VERIFY_CODE_WRONG(251, "Verification failed, please try again"),
+    VERIFY_CODE_WRONG(251, "Cloudflare verification failed, please try again"),
     GENERATE_CAPTCHA_FAIL(252, "Failed to generate a verification code"),
 
     FILE_IS_Abnormal(255, "The file is abnormal"),

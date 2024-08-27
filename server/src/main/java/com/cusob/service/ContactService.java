@@ -10,6 +10,7 @@ import com.cusob.vo.ContactVo;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ContactService extends IService<Contact> {
 
@@ -106,4 +107,6 @@ public interface ContactService extends IService<Contact> {
     List<Contact> getContactsByEmail(String email);
 
     void saveUnsubsribedEmail(String email);
+
+    Map<String, Object> parseFields(MultipartFile file);
 }

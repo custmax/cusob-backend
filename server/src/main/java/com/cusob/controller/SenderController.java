@@ -37,7 +37,7 @@ public class SenderController {
     @GetMapping("checkEmail/{email}")
     public Result checkEmail(@PathVariable String email){
         String uuid = senderService.selectByEmail(email);
-        if(StringUtils.hasText(uuid)){
+        if(StringUtils.hasText(uuid)){//如果uuid不为空，说明该email已经被绑定
             return Result.ok(uuid);
         }
         senderService.checkEmail(email);

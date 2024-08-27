@@ -75,8 +75,8 @@ public class StripeController {
         System.out.println("userId:"+userId);
         //OrderInfoDto orderInfoDto=new OrderInfoDto(); // 这个是前端传过来的数据
 
-//        BigDecimal randMoney = price1.getPriceUSD();
-        BigDecimal randMoney = BigDecimal.valueOf(0.50);
+        BigDecimal randMoney = price1.getPriceUSD();
+        //BigDecimal randMoney = BigDecimal.valueOf(0.50);//测试付款时取消注销
         int amountInCents = randMoney.multiply(new BigDecimal(100)).intValue();
 
         // 创建产品

@@ -41,4 +41,5 @@ public interface ReportService extends IService<Report> {
     void updateUnsubscribeCount(Long campaignId);
 
 
+    void removeReport(Long id);
 }

@@ -20,13 +20,15 @@ import com.cusob.vo.ContactVo;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -249,13 +251,14 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
 
         Long userId = AuthContext.getUserId();
         Long companyId = AuthContext.getCompanyId();
-        Integer count = this.selectCountByCompanyId(companyId);
+        Integer count = this.selectCountByCompanyId(companyId);//获取当前公司的联系人数量
         Long groupId = groupService.getGroupIdByName(groupName);
         Company company = companyService.getById(companyId);
         Price plan = priceService.getPlanById(company.getPlanId());
 
         try {
             InputStream inputStream = file.getInputStream();
+            //使用 EasyExcel 库读取文件中的数据。Contact.class 指定了数据模型，PageReadListener<Contact> 是批量处理的监听器
             EasyExcel.read(inputStream, Contact.class, new PageReadListener<Contact>(dataList ->{
                 if (count + dataList.size() >= plan.getContactCapacity()){
                     throw new CusobException(ResultCodeEnum.CONTACT_NUMBER_FULL);
@@ -282,6 +285,35 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    @Override
+    public Map<String, Object> parseFields(MultipartFile file) {
+        if (file==null){
+            throw new CusobException(ResultCodeEnum.FILE_IS_EMPTY);
+        }
+        Map<String, Object> response = new HashMap<>();
+        try (InputStream inputStream = file.getInputStream();
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+
+            // 使用 BufferedReader 读取 CSV 文件的第一行（头部行）
+            String headerLine = reader.readLine();
+            if (headerLine == null) {
+                throw new CusobException(ResultCodeEnum.FILE_IS_EMPTY);
+            }
+
+            // 将头部行拆分成字段列表
+            List<String> headers = Arrays.asList(headerLine.split(","));
+
+            // 返回字段列表
+            response.put("fields", headers);
+            System.out.println("fields: " + headers);
+            return response;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            response.put("error", "Failed to parse file");
+            return response;
         }
     }
 
@@ -391,5 +423,6 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
         }
 
     }
+
 
 }
