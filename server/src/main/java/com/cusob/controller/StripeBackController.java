@@ -99,7 +99,7 @@ public class StripeBackController {
 
     @ResponseBody
     @RequestMapping(value = {"/pay/stripe/stripe_events"}, method = RequestMethod.POST)
-    public void stripe_events(HttpServletRequest request, HttpServletResponse response) {
+    public Result stripe_events(HttpServletRequest request, HttpServletResponse response) {
         System.out.println("request:"+request);
         System.out.println("------进入回调了------");
         InputStream inputStream = null;
@@ -197,5 +197,6 @@ public class StripeBackController {
         } catch (Exception e) {
             System.out.println("stripe异步通知（webhook事件）"+e);
         }
+        return Result.ok();
     }
 }

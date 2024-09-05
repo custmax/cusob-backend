@@ -218,7 +218,6 @@ public class MailServiceImpl implements MailService {
         props.put("mail.password", password);
         props.setProperty("mail.smtp.ssl.enable", "true");
 
-
         // 构建授权信息，用于进行SMTP进行身份验证
         Authenticator authenticator = new Authenticator() {
             @Override
