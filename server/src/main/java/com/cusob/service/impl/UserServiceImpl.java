@@ -41,6 +41,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 
 @Service
@@ -84,16 +85,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Transactional
     @Override
     public void addUser(UserDto userDto) {
-        this.paramEmptyVerify(userDto);
-        this.registerVerify(userDto);
+        this.paramEmptyVerify(userDto);//参数校验：检查邮箱和手机是否为空
+        boolean flag = Pattern.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", userDto.getEmail());
+        if (!flag){
+            throw new CusobException(ResultCodeEnum.EMAIL_FORMAT_ERROR);//邮箱格式错误
+        }
+        this.registerVerify(userDto);//检查是否通过cf验证及邮箱是否已经注册
 
         User user = new User();
         BeanUtils.copyProperties(userDto, user);
-        user.setIsAvailable(0);
+        String password = userDto.getPassword();
+        user.setCompanyId(0L); // default companyId=0
+        // Password encryption
+        user.setPassword(DigestUtils.md5DigestAsHex(password.getBytes()));
+        user.setPermission(User.USER);
+        user.setIsAvailable(User.DISABLE);//默认不可用
         baseMapper.insert(user);
-        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
-        String uuid = UUID.randomUUID().toString()+System.currentTimeMillis();
-        hashOperations.put(uuid,"email",user.getEmail());
+
+        Company company = new Company();
+        company.setCompanyName(userDto.getCompany());
+        company.setAdminId(user.getId());
+        company.setPlanId(PlanPrice.FREE); // default free plan
+        companyService.saveCompany(company);
+
+        user.setCompanyId(company.getId());
+        baseMapper.updateById(user);
+
+        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();//将用户信息存入redis
+        String uuid = UUID.randomUUID().toString()+System.currentTimeMillis();//生成uuid
+        hashOperations.put(uuid,"email",user.getEmail());//将用户信息存入redis
         hashOperations.put(uuid,"password",user.getPassword());
         hashOperations.put(uuid,"phone",user.getPhone());
         redisTemplate.expire(uuid, 30, TimeUnit.MINUTES);
@@ -102,7 +122,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         usermap.put("uuid",uuid);
         usermap.put("email",user.getEmail());
         rabbitTemplate.convertAndSend(MqConst.EXCHANGE_REGISTER_DIRECT,
-                MqConst.ROUTING_REGISTER_SUCCESS, usermap);
+                MqConst.ROUTING_REGISTER_SUCCESS, usermap); //发送注册邮件
     }
 
     private void registerVerify(UserDto userDto) {
@@ -111,13 +131,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new CusobException(ResultCodeEnum.VERIFY_CODE_EMPTY);
         }
 
-        String url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+        String url = "https://challenges.cloudflare.com/turnstile/v0/siteverify"; //验证CF是否通过了验证
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("secret", turnstileSecretKey);
         requestBody.put("response", turnstileToken);
 
-        Map<String, Object> response = restTemplate.postForObject(url, requestBody, Map.class);
-        if (!(response != null && Boolean.TRUE.equals(response.get("success")))) {
+        Map<String, Object> response = restTemplate.postForObject(url, requestBody, Map.class);//发送请求
+        if (!(response != null && Boolean.TRUE.equals(response.get("success")))) {//验证失败
             throw new CusobException(ResultCodeEnum.VERIFY_CODE_WRONG);
         }
 
@@ -126,8 +146,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (userDb != null){
             throw new CusobException(ResultCodeEnum.EMAIL_IS_REGISTERED);
         }
-
-
 
     }
 
@@ -283,7 +301,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public UserLoginVo login(UserLoginDto userLoginDto) {
         String email = userLoginDto.getEmail();
         String password = userLoginDto.getPassword();
-
         // select user from table email
         User user = baseMapper.selectOne(
                 new LambdaQueryWrapper<User>()
@@ -300,6 +317,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         // todo User is Disable(During the internal test, you cannot log in temporarily)
         if (user.getIsAvailable().equals(User.DISABLE)){
+            HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+            String uuid = UUID.randomUUID().toString()+System.currentTimeMillis();
+            hashOperations.put(uuid,"email",user.getEmail());
+            hashOperations.put(uuid,"password",user.getPassword());
+            hashOperations.put(uuid,"phone",user.getPhone());
+            redisTemplate.expire(uuid, 30, TimeUnit.MINUTES);
+
+            Map<String,String> usermap = new HashMap<>();
+            usermap.put("uuid",uuid);
+            usermap.put("email",user.getEmail());
+            rabbitTemplate.convertAndSend(MqConst.EXCHANGE_REGISTER_DIRECT,
+                    MqConst.ROUTING_REGISTER_SUCCESS, usermap); //发送注册邮件
             throw new CusobException(ResultCodeEnum.USER_IS_DISABLE);
         }
 
@@ -444,17 +473,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             );
             if(user.getIsAvailable() == 0){
                 user.setIsAvailable(User.AVAILABLE); // TODO 开启使用//如果已经存在该账号就不要再插入
-                baseMapper.insert(user);
+                baseMapper.updateById(user);
             }
-            Long userId = user.getId();
-            Company company = new Company();
-            company.setCompanyName(user.getCompany());
-            company.setAdminId(userId);
-            company.setPlanId(PlanPrice.FREE); // default free plan
-            companyService.saveCompany(company);
-
-            user.setCompanyId(company.getId());
-            baseMapper.updateById(user);
 
             return true;
         }

@@ -14,6 +14,8 @@ import com.cusob.vo.ReportVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ReportServiceImpl extends ServiceImpl<ReportMapper, Report> implements ReportService {
 
@@ -50,18 +52,32 @@ public class ReportServiceImpl extends ServiceImpl<ReportMapper, Report> impleme
         return page;
     }
 
+    @Override
+    public void clicked(Long campaignId) {
+        List<Report> reports = baseMapper.selectList(
+                new LambdaQueryWrapper<Report>()
+                        .eq(Report::getCampaignId, campaignId)
+        );
+        for(Report report : reports){
+            report.setClicked(report.getClicked() + 1);
+            baseMapper.updateById(report);
+        }
+    }
+
     /**
      * Read Count
      * @param campaignId
      */
     @Override
     public void opened(Long campaignId) {
-        Report report = baseMapper.selectOne(
+        List<Report> reports = baseMapper.selectList(
                 new LambdaQueryWrapper<Report>()
                         .eq(Report::getCampaignId, campaignId)
         );
-        report.setOpened(report.getOpened() + 1);
-        baseMapper.updateById(report);
+        for(Report report : reports){
+            report.setOpened(report.getOpened() + 1);
+            baseMapper.updateById(report);
+        }
     }
 
     /**
@@ -70,11 +86,11 @@ public class ReportServiceImpl extends ServiceImpl<ReportMapper, Report> impleme
      */
     @Override
     public void updateDeliveredCount(Long campaignId) {
-        Report report = baseMapper.selectOne(
+        List<Report> reports = baseMapper.selectList(
                 new LambdaQueryWrapper<Report>()
                         .eq(Report::getCampaignId, campaignId)
         );
-        if (report!=null){
+        for(Report report : reports){
             report.setDelivered(report.getDelivered() + 1);
             baseMapper.updateById(report);
         }
@@ -114,6 +130,15 @@ public class ReportServiceImpl extends ServiceImpl<ReportMapper, Report> impleme
             report.setUnsubscribe(report.getUnsubscribe() + 1);
             baseMapper.updateById(report);
         }
+    }
+
+    @Override
+    public void removeReport(Long id) {
+//        baseMapper.delete(
+//                new LambdaQueryWrapper<Report>()
+//                        .eq(Report::getId, id)
+//        );
+        baseMapper.deleteById(id);
     }
 
 }

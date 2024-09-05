@@ -2,7 +2,6 @@ package com.cusob.service.impl;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.read.listener.PageReadListener;
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -17,29 +16,20 @@ import com.cusob.exception.CusobException;
 import com.cusob.mapper.ContactMapper;
 import com.cusob.result.ResultCodeEnum;
 import com.cusob.service.*;
-import com.cusob.utils.EmailUtil;
 import com.cusob.vo.ContactVo;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.xbill.DNS.Lookup;
-import org.xbill.DNS.MXRecord;
-import org.xbill.DNS.Record;
-import org.xbill.DNS.Type;
 
 import java.io.*;
-import java.net.Socket;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.cusob.utils.EmailUtil.readResponse;
-import static com.cusob.utils.EmailUtil.sendCommand;
 
 @Service
 public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> implements ContactService {
@@ -51,7 +41,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
     private CompanyService companyService;
 
     @Autowired
-    private PlanPriceService planPriceService;
+    private PriceService priceService;
 
     @Autowired
     private UserService userService;
@@ -68,36 +58,46 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
     @Transactional
     public void addContact(ContactDto contactDto) {
         // contacts count
-        Long companyId = AuthContext.getCompanyId();
-        Integer count = this.selectCountByCompanyId(companyId);
-        Company company = companyService.getById(companyId);
-        PlanPrice plan = planPriceService.getPlanById(company.getPlanId());
+        Long companyId = AuthContext.getCompanyId();//获取当前用户的公司id
+        Integer count = this.selectCountByCompanyId(companyId);//获取当前公司的联系人数量
+        Company company = companyService.getById(companyId);//获取当前公司
+        Price plan = priceService.getPlanById(company.getPlanId());//获取当前公司的套餐
         if (count >= plan.getContactCapacity()){
-            throw new CusobException(ResultCodeEnum.CONTACT_NUMBER_FULL);
+            throw new CusobException(ResultCodeEnum.CONTACT_NUMBER_FULL);//联系人数量已满
         }
         // 参数校验
-        this.paramVerify(contactDto);
-        Contact contact = new Contact();
+        //this.paramVerify(contactDto);
+        Contact contact = new Contact();//创建联系人对象
 
-        String groupName = contactDto.getGroupName();
+        String groupName = contactDto.getGroupName();//获取联系人的组名
         // The group name is not empty
-        if (StringUtils.hasText(groupName)){
-            Group group = groupService.getGroupByName(groupName);
+        if (StringUtils.hasText(groupName)){//如果组名不为空
+            Group group = groupService.getGroupByName(groupName);//获取组名
             // The group doesn't exist，create group
-            if (group==null){
+            if (group==null){//如果组名不存在
                 GroupDto groupDto = new GroupDto();
                 groupDto.setGroupName(groupName);
-                Long groupId = groupService.addGroup(groupDto);
-                contact.setGroupId(groupId);
+                Long groupId = groupService.addGroup(groupDto);//添加组
+                contact.setGroupId(groupId);//设置组id
             }else {
                 // The group already exists
                 contact.setGroupId(group.getId());
             }
         }
-        contact.setUserId(AuthContext.getUserId());
-        BeanUtils.copyProperties(contactDto, contact);
-        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_CHECK_DIRECT,
-                MqConst.ROUTING_CHECK_EMAIL, contact);
+        contact.setUserId(AuthContext.getUserId());//设置用户id
+        BeanUtils.copyProperties(contactDto, contact);//将contactDto的属性拷贝到contact中
+//        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_CHECK_DIRECT,//发送消息到交换机
+//                MqConst.ROUTING_CHECK_EMAIL, contact); //验证该邮箱是否真实存在（充分条件）
+        try {
+            rabbitTemplate.convertAndSend(MqConst.EXCHANGE_CHECK_DIRECT, // 发送消息到交换机
+                    MqConst.ROUTING_CHECK_EMAIL, contact); // 验证该邮箱是否真实存在（充分条件）
+        } catch (Exception e) {
+            // 记录异常信息或执行其他处理
+            System.err.println("Failed to send message to RabbitMQ: " + e.getMessage());
+            e.printStackTrace(); // 打印完整的堆栈跟踪信息
+            // 你可以选择重新抛出异常或者执行其他的异常处理逻辑
+            //throw new CusobException(e); // 自定义异常处理
+        }
 
         if(baseMapper.selectByEmail(contact.getEmail(),contact.getGroupId())==null){
             contact.setUserId(AuthContext.getUserId());
@@ -111,13 +111,23 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
 
     @Override
     public void updateByEmail(String email,Long groupId ,Long userId, int valid) {
-        Contact contact = baseMapper.selectOne(new LambdaQueryWrapper<Contact>()
+//        Contact contact = baseMapper.selectOne(new LambdaQueryWrapper<Contact>()
+//                .eq(Contact::getEmail, email)
+//                .eq(Contact::getUserId,userId)
+//                .eq(Contact::getGroupId,groupId)
+//        );
+//        contact.setValid(valid); //设置是否有效
+//        baseMapper.updateById(contact);
+        List<Contact> contacts = baseMapper.selectList(new LambdaQueryWrapper<Contact>()//查询多条联系人
                 .eq(Contact::getEmail, email)
-                .eq(Contact::getUserId,userId)
-                .eq(Contact::getGroupId,groupId)
+                .eq(Contact::getUserId, userId)
+                .eq(Contact::getGroupId, groupId)
         );
-        contact.setValid(valid); //无效化
-        baseMapper.updateById(contact);
+        for (Contact contact : contacts) {
+            contact.setValid(valid); //设置是否有效
+            baseMapper.updateById(contact);
+        }
+
     }
 
     private void paramVerify(ContactDto contactDto) {
@@ -217,13 +227,14 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
         Long userId = AuthContext.getUserId();
         Long companyId = AuthContext.getCompanyId();
         User user = userService.getById(userId);
+        String SubscriptionType = contactQueryDto.getSubscriptionType();
         IPage<ContactVo> contactVoPage;
         if (user.getPermission().equals(User.USER)){
             // user
-            contactVoPage = baseMapper.pageQuery(pageParam, userId, keyword, groupId);
+            contactVoPage = baseMapper.pageQuery(pageParam, userId, keyword, groupId,SubscriptionType);
         }else {
             // admin
-            contactVoPage = baseMapper.pageQueryByCompanyId(pageParam, companyId, keyword, groupId);
+            contactVoPage = baseMapper.pageQueryByCompanyId(pageParam, companyId, keyword, groupId,SubscriptionType);
         }
         return contactVoPage;
     }
@@ -233,20 +244,21 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
      * @param file
      */
     @Override
-    public void batchImport(MultipartFile file, String groupName) {
+    public void batchImport(MultipartFile file, String groupName,String subscriptionType) {
         if (file==null){
             throw new CusobException(ResultCodeEnum.FILE_IS_EMPTY);
         }
 
         Long userId = AuthContext.getUserId();
         Long companyId = AuthContext.getCompanyId();
-        Integer count = this.selectCountByCompanyId(companyId);
+        Integer count = this.selectCountByCompanyId(companyId);//获取当前公司的联系人数量
         Long groupId = groupService.getGroupIdByName(groupName);
         Company company = companyService.getById(companyId);
-        PlanPrice plan = planPriceService.getPlanById(company.getPlanId());
+        Price plan = priceService.getPlanById(company.getPlanId());
 
         try {
             InputStream inputStream = file.getInputStream();
+            //使用 EasyExcel 库读取文件中的数据。Contact.class 指定了数据模型，PageReadListener<Contact> 是批量处理的监听器
             EasyExcel.read(inputStream, Contact.class, new PageReadListener<Contact>(dataList ->{
                 if (count + dataList.size() >= plan.getContactCapacity()){
                     throw new CusobException(ResultCodeEnum.CONTACT_NUMBER_FULL);
@@ -255,12 +267,53 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
                     contact.setUserId(userId);
                     contact.setCompanyId(companyId);
                     contact.setGroupId(groupId);
+                    contact.setSubscriptionType(subscriptionType);
+                    contact.setIsAvailable(1);
+                    try {
+                        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_CHECK_DIRECT, // 发送消息到交换机
+                                MqConst.ROUTING_CHECK_EMAIL, contact); // 验证该邮箱是否真实存在（充分条件）
+                    } catch (Exception e) {
+                        // 记录异常信息或执行其他处理
+                        System.err.println("Failed to send message to RabbitMQ: " + e.getMessage());
+                        e.printStackTrace(); // 打印完整的堆栈跟踪信息
+                        // 你可以选择重新抛出异常或者执行其他的异常处理逻辑
+                        //throw new CusobException(e); // 自定义异常处理
+                    }
                     baseMapper.insert(contact);  // todo 待优化
                 }
             })).sheet().doRead();
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    @Override
+    public Map<String, Object> parseFields(MultipartFile file) {
+        if (file==null){
+            throw new CusobException(ResultCodeEnum.FILE_IS_EMPTY);
+        }
+        Map<String, Object> response = new HashMap<>();
+        try (InputStream inputStream = file.getInputStream();
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+
+            // 使用 BufferedReader 读取 CSV 文件的第一行（头部行）
+            String headerLine = reader.readLine();
+            if (headerLine == null) {
+                throw new CusobException(ResultCodeEnum.FILE_IS_EMPTY);
+            }
+
+            // 将头部行拆分成字段列表
+            List<String> headers = Arrays.asList(headerLine.split(","));
+
+            // 返回字段列表
+            response.put("fields", headers);
+            System.out.println("fields: " + headers);
+            return response;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            response.put("error", "Failed to parse file");
+            return response;
         }
     }
 
@@ -350,5 +403,26 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
         List<String> emailList = contactList.stream().map(Contact::getEmail).collect(Collectors.toList());
         return emailList;
     }
+
+    @Override
+    public List<Contact> getContactsByEmail(String email) {
+        List<Contact> contacts = baseMapper.selectList(new LambdaQueryWrapper<Contact>()
+                .eq(Contact::getEmail, email)
+        );
+        return contacts;
+    }
+
+    @Override
+    public void saveUnsubsribedEmail(String email) {
+        List<Contact> contacts = baseMapper.selectList(new LambdaQueryWrapper<Contact>()
+                .eq(Contact::getEmail, email)
+        );
+        for(Contact contact : contacts){
+            contact.setSubscriptionType("Unsubscribed");
+            baseMapper.updateById(contact);
+        }
+
+    }
+
 
 }

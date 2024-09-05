@@ -1,6 +1,6 @@
 
 target/
-
+server/src/main/resources
 .idea/
 
 *.iml

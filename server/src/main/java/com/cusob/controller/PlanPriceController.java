@@ -1,8 +1,10 @@
 package com.cusob.controller;
 
 import com.cusob.entity.PlanPrice;
+import com.cusob.entity.Price;
 import com.cusob.result.Result;
 import com.cusob.service.PlanPriceService;
+import com.cusob.service.PriceService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,20 +17,22 @@ import java.util.List;
 @RequestMapping("/plan/price")
 public class PlanPriceController {
 
+//    8.19将PlanPriceService改为PriceService
     @Autowired
     private PlanPriceService planPriceService;
-
+    @Autowired
+    private PriceService priceService;
     @ApiOperation("get Contact Capacity List")
     @GetMapping("getContactCapacityList")
     public Result getContactCapacityList(){
-        List<Integer> res = planPriceService.getContactCapacityList();
+        List<Integer> res = priceService.getContactCapacityList();
         return Result.ok(res);
     }
 
     @ApiOperation("get Plan By ContactCapacity")
     @GetMapping("getPlanByContactCapacity")
     public Result getPlanByContactCapacity(Integer capacity){
-        List<PlanPrice> res = planPriceService.getPlanByContactCapacity(capacity);
+        List<Price> res = priceService.getPlanByContactCapacity(capacity);
         return Result.ok(res);
     }
 

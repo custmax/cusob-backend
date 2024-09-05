@@ -52,6 +52,9 @@ public class Campaign extends BaseEntity {
     @TableField("send_time")
     private Date sendTime;
 
+    @TableField("time_zone")
+    private String timeZone;
+
     @TableField("track_opens")
     private Boolean trackOpens;
 

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cusob.auth.AuthContext;
 import com.cusob.entity.Company;
 import com.cusob.entity.PlanPrice;
+import com.cusob.entity.Price;
 import com.cusob.entity.User;
 import com.cusob.mapper.CompanyMapper;
 import com.cusob.service.*;
@@ -20,6 +21,8 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
 
     @Autowired
     private ContactService contactService;
+    @Autowired
+    private PriceService priceService;
 
     /**
      * save Company
@@ -51,7 +54,8 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
     @Override
     public PlanDetailVo getPlanDetail() {
         Company company = baseMapper.selectById(AuthContext.getCompanyId());
-        PlanPrice plan = planService.getPlanById(company.getPlanId());
+        Price plan = priceService.getPlanById(company.getPlanId());
+        //PlanPrice plan = planService.getPlanById(company.getPlanId());
         PlanDetailVo planDetailVo = new PlanDetailVo();
 
         planDetailVo.setPlanName(plan.getName());
@@ -71,7 +75,7 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
     @Override
     public void updateEmails(Long companyId, int count) {
         Company company = baseMapper.selectById(companyId);
-        company.setEmails(company.getEmails() + count);
+        company.setEmails(company.getEmails() + count);//更新用户所在公司已发送的邮件数量
         baseMapper.updateById(company);
     }
 

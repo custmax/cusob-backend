@@ -24,7 +24,10 @@ public class LoginMvcConfigurerAdapter extends WebMvcConfigurationSupport {
 
         registry.addInterceptor(userLoginInterceptor)
                 .addPathPatterns("/**")
+                //放行所有的统计
+                .excludePathPatterns("/report/**")
                 .excludePathPatterns("/user/login")
+                .excludePathPatterns("/index.html")
                 .excludePathPatterns("/user/register")
                 .excludePathPatterns("/user/sendVerifyCode")
                 .excludePathPatterns("/user/forgetPassword")
@@ -33,6 +36,13 @@ public class LoginMvcConfigurerAdapter extends WebMvcConfigurationSupport {
                 .excludePathPatterns("/user/checkUuid/**")
                 .excludePathPatterns("/plan/price/**")
                 .excludePathPatterns("/price/**")
+                .excludePathPatterns("/pay/**")
+                .excludePathPatterns("/api/**")
+                .excludePathPatterns("/success/**")
+                .excludePathPatterns("/stripe/**")
+                .excludePathPatterns("/cancel/**")
+                .excludePathPatterns("/dashboard/**")
+                .excludePathPatterns("/pricing/**")
                 .excludePathPatterns("/read/**")
                 .excludePathPatterns("/book/**")
                 .excludePathPatterns("/unsubscribe/**")
@@ -48,8 +58,11 @@ public class LoginMvcConfigurerAdapter extends WebMvcConfigurationSupport {
      * @param registry
      */
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+
         registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/doc.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
+
+
 }

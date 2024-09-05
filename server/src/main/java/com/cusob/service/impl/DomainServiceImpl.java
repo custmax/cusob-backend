@@ -42,13 +42,14 @@ public class DomainServiceImpl extends ServiceImpl<DomainMapper, Domain> impleme
      * @return
      */
     @Override
-    public Map<String, Boolean> domainVerify(String domain) {
+    public Map<String, Boolean> domainVerify(String domain) {//对应前端的verify方法
         if (!StringUtils.hasText(domain)){
             throw new CusobException(ResultCodeEnum.DOMAIN_IS_EMPTY);
         }
         Domain domainSelect = this.getByDomain(domain);
         Map<String, Boolean> map = new HashMap<>();
-        // todo 采用异步操作
+
+        //验证四个状态
         Boolean flagSpf = this.spfVerify(domain);
         Boolean flagDkim = this.dkimVerify(domain,domainSelect.getDkimValue());
         Boolean flagMx = this.mxVerify(domain);
@@ -62,7 +63,7 @@ public class DomainServiceImpl extends ServiceImpl<DomainMapper, Domain> impleme
         domainSelect.setDkimVerify(flagDkim ? 1: 0);
         domainSelect.setMxVerify(flagMx ? 1: 0);
         domainSelect.setDmarcVerify(flagDmarc ? 1: 0);
-        domainSelect.setStatus(flagSpf && flagDkim ? 1:0);
+        domainSelect.setStatus(flagSpf && flagDkim ? 1:0);//SPF和DKIM验证通过才算通过
         baseMapper.updateById(domainSelect);
         return map;
     }

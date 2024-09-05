@@ -28,9 +28,10 @@ spring:
   mail:
     host: smtp.larksuite.com
     # 发送者邮箱
-    username: noreply@cusob.com
+    username: hello@cusob.com
     # 配置密码,注意不是真正的密码，而是刚刚申请到的授权码
-    password: euyv1dm6DzK50hGC
+#    password: euyv1dm6DzK50hGC
+    password: qzng7UpB7A90kd8K
     # 端口号465或587
     port: 465
     # 默认的邮件编码为UTF-8
@@ -76,3 +77,9 @@ paypal:
     app: ATfZAHiAmOaGFAoGhgP9vjkhSuR60qUB_t5rjRcvmQJfwAFcC3KCreNQkyJmxp1-oGyyAa5bNq7fpxB7
     secret: EDtUDY5hGm_iCBY6xuCERBCfvVhx7PhkLqnm0PxkmIgwKkkWg8udmHKcZhAhS7hgJNkyScT-60pKwwOi
   mode: live
+stripe:
+  publicKey: pk_live_51OdpO2AoVkBuwi1lxxL6CuBbFFyXn5QTqKpERTq3igbuHkHcZLeOUlz4k3qFEapfDUvJnSM7CAZKBEYQRXTeMX2X00IlbZqyYi
+  apiKey: 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
+  webhookSecret: whsec_FuD0OPbceU0WUGxirhJzbzyGHMFuYiqK
+  successUrl: https://www.cusob.com/dashboard
+  cancelUrl: https://www.cusob.com/pricing

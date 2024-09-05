@@ -28,6 +28,8 @@ public interface ReportService extends IService<Report> {
      */
     void opened(Long campaignId);
 
+    void clicked(Long campaignId);
+
     /**
      * update DeliveredCount
      * @param campaignId
@@ -40,5 +42,5 @@ public interface ReportService extends IService<Report> {
 
     void updateUnsubscribeCount(Long campaignId);
 
-
+    void removeReport(Long id);
 }

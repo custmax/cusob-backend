@@ -14,6 +14,14 @@ import java.util.List;
 public interface CampaignService extends IService<Campaign> {
 
     /**
+     * getLastCampaignId
+     * @param
+     * @return Long
+     */
+
+    public Long getLastCampaignId();
+
+    /**
      * save Campaign
      * @param campaignDto
      */

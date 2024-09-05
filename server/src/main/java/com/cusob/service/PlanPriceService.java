@@ -13,17 +13,17 @@ public interface PlanPriceService extends IService<PlanPrice> {
      */
     List<Integer> getContactCapacityList();
 
-    /**
-     * get Plan By ContactCapacity
-     * @param capacity
-     * @return
-     */
-    List<PlanPrice> getPlanByContactCapacity(Integer capacity);
-
-    /**
-     * get Plan By id
-     * @param id
-     * @return
-     */
+//    /**
+//     * get Plan By ContactCapacity
+//     * @param capacity
+//     * @return
+//     */
+//    List<PlanPrice> getPlanByContactCapacity(Integer capacity);
+//
+//    /**
+//     * get Plan By id
+//     * @param id
+//     * @return
+//     */
     PlanPrice getPlanById(Long id);
 }

@@ -91,6 +91,8 @@ public class DnsUtil {
         try {
             // 构造DKIM记录的查询名称，通常是"<selector>._domainkey.<domain>"
             String dkimRecordName = selector + "."  + "_domainkey."+ domain;
+            /*
+            * 接收查询域名和类型参数*/
             Lookup lookup = new Lookup(dkimRecordName, Type.TXT);
             lookup.setResolver(new SimpleResolver("1.1.1.1")); // 使用Cloudflare的公共DNS服务器
             Record[] records = lookup.run();

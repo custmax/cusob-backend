@@ -102,6 +102,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
                 plan.getContactCapacity() + " Sends: " +
                 plan.getEmailCapacity();
         try {
+            System.out.println("支付开始lalalallalal");
             //调用交易方法
             Payment payment = payPalService.createPayment(
                     price,

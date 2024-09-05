@@ -14,7 +14,7 @@ public enum ResultCodeEnum {
     REPEAT_SUBMIT(206, "重复提交"),
 
     // TODO 待修改
-    USER_IS_DISABLE(208, "During the internal test, you cannot log in temporarily"),
+    USER_IS_DISABLE(208, "Your acount is not activated yet, Please check the email we resend you and click the link to activate your account."),
     NO_PERMISSION(209, "Free users don't have permissions"),
 
     OLD_PASSWORD_EMPTY(210, "Old password is empty"),
@@ -63,7 +63,7 @@ public enum ResultCodeEnum {
     EMAIL_IS_INVALID(249,"The email does not exist,please check your spelling"),
 
     VERIFY_CODE_EMPTY(250, "The verify code is empty"),
-    VERIFY_CODE_WRONG(251, "Verification failed, please try again"),
+    VERIFY_CODE_WRONG(251, "Cloudflare verification failed, please try again"),
     GENERATE_CAPTCHA_FAIL(252, "Failed to generate a verification code"),
 
     FILE_IS_Abnormal(255, "The file is abnormal"),
@@ -89,12 +89,14 @@ public enum ResultCodeEnum {
     SUBJECT_IS_EMPTY(293, "The subject is empty"),
     CONTENT_IS_EMPTY(294, "The content is empty"),
     SEND_TIME_EMPTY(295, "The send time is empty"),
-
     EMAIL_CATEGORY_NOEXIST(296,"The email service provider does not support"),
     CONTACT_IS_EXISTED(297,"The contact has already existed in your contact list "),
     TITLE_IS_EXISTED(298,"The title has already existed in your campaign list"),
-
     DOMAIN_IS_EXISTED(299,"The domain has already existed in your Domain list"),
+
+    FOLDER_IS_EMPTY(2991,"FOLDER_IS_EMPTY"),
+    REDRICT_SUCCESS(301, "REDRICT"),
+
 
     ;
 

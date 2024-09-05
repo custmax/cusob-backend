@@ -10,6 +10,7 @@ import com.cusob.vo.ContactVo;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ContactService extends IService<Contact> {
 
@@ -59,7 +60,7 @@ public interface ContactService extends IService<Contact> {
      * batch import contacts
      * @param file
      */
-    void batchImport(MultipartFile file, String groupName);
+    void batchImport(MultipartFile file, String groupName,String subscriptionType);
 
     /**
      * get Contact Count By Group id
@@ -102,4 +103,10 @@ public interface ContactService extends IService<Contact> {
      * @return
      */
     List<String> getAllContactsByGroupId(Long groupId);
+
+    List<Contact> getContactsByEmail(String email);
+
+    void saveUnsubsribedEmail(String email);
+
+    Map<String, Object> parseFields(MultipartFile file);
 }

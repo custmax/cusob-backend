@@ -28,7 +28,7 @@ public class UnsubscribeServiceImpl extends ServiceImpl<UnsubscribeMapper, Unsub
      * @return
      */
     @Override
-    public List<String> selectEmailList() {
+    public List<String> selectEmailList() {//已过时，现在contact有subscriptionType字段
         List<Unsubscribe> unsubscribeList = baseMapper.selectList(null);
         List<String> emailList = unsubscribeList.stream().
                 map(Unsubscribe::getEmail).collect(Collectors.toList());

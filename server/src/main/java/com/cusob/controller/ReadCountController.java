@@ -17,7 +17,7 @@ public class ReadCountController {
     private CampaignContactService campaignContactService;
 
     @ApiOperation("Read Count of open")
-    @GetMapping("count/{campaignId}/{contactId}")
+    @GetMapping("count/{campaignId}/{contactId}") //用于邮件统计环节中统计open的数量
     public Result ReadCount(@PathVariable Long campaignId,
                             @PathVariable Long contactId){
         campaignContactService.opened(campaignId, contactId);

@@ -12,6 +12,8 @@ public class OrderHistory extends BaseEntity {
 
     public static final Integer PAYPAL = 0;
     public static final Integer VISA = 1;
+    public static final Integer WECHAT = 2;
+    public static final Integer ALIPAY = 3;
 
     @TableField("order_id")
     private Long orderId;

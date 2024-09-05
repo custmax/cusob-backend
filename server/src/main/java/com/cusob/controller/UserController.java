@@ -2,6 +2,7 @@ package com.cusob.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cusob.auth.AuthContext;
 import com.cusob.dto.ForgetPasswordDto;
 import com.cusob.dto.UpdatePasswordDto;
 import com.cusob.dto.UserDto;
@@ -35,6 +36,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+//    @ApiOperation("add User(User Register)")
+//    @GetMapping("get")
+//    public Result getUser(){
+//        Long userId = AuthContext.getUserId();
+//
+//        return Result.ok(userId);
+//    }
     @ApiOperation("add User(User Register)")
     @PostMapping("register")
     public Result addUser(@RequestBody UserDto userDto){

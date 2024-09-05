@@ -70,11 +70,12 @@ public class PaymentController {
     @GetMapping("pay/success")
     public Result successPay(@RequestParam("paymentId") String paymentId, @RequestParam("PayerID") String payerId){
         try {
+            System.out.println("支付开始");
             Payment payment = payPalService.executePayment(paymentId, payerId);
             if(payment.getState().equals("approved")){
-                Long userId = AuthContext.getUserId();
-                String key = RedisConst.ORDER_PREFIX + userId;
-                OrderHistory orderHistory = (OrderHistory) redisTemplate.opsForValue().get(key);
+                Long userId = AuthContext.getUserId();//从AuthContext中获取当前用户的ID。
+                String key = RedisConst.ORDER_PREFIX + userId;//生成一个Redis的键，用于获取订单历史记录。
+                OrderHistory orderHistory = (OrderHistory) redisTemplate.opsForValue().get(key);//从Redis缓存中获取订单历史记录。
                 if (orderHistory==null){
                     throw new CusobException(ResultCodeEnum.ORDER_PAYMENT_ABNORMAL);
                 }

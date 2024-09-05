@@ -228,7 +228,9 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
         String uuid = UUID.randomUUID().toString()+System.currentTimeMillis();
         redisTemplate.opsForValue().set(email,uuid);
         redisTemplate.opsForValue().set(uuid,email);
+        //发送注册激活邮件格式的激活邮件
         String content = ReadEmail.readwithcode("emails/activate.html",baseUrl+"/domainCertify?uuid="+uuid);
+        //将模板替换为特定内容
         mailService.sendHtmlMailMessage(email,subject,content);
     }
 
@@ -364,7 +366,7 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
         if(sender == null){
             return null;
         }else {
-            return Objects.requireNonNull(redisTemplate.opsForValue().get(email)).toString();
+            return Objects.requireNonNull(redisTemplate.opsForValue().get(email)).toString();//返回uuid
         }
     }
 

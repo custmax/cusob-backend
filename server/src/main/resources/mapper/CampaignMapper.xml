@@ -26,4 +26,10 @@
         where campaign.campaign_name = #{campaignName}
     </select>
 
+    <select id="getLastCampaignId" resultType="java.lang.Long">
+        select max(campaign.id)
+        from campaign
+    </select>
+
+
 </mapper>
