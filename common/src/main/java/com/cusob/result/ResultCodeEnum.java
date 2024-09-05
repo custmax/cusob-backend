@@ -89,14 +89,14 @@ public enum ResultCodeEnum {
     SUBJECT_IS_EMPTY(293, "The subject is empty"),
     CONTENT_IS_EMPTY(294, "The content is empty"),
     SEND_TIME_EMPTY(295, "The send time is empty"),
-
     EMAIL_CATEGORY_NOEXIST(296,"The email service provider does not support"),
     CONTACT_IS_EXISTED(297,"The contact has already existed in your contact list "),
     TITLE_IS_EXISTED(298,"The title has already existed in your campaign list"),
-
     DOMAIN_IS_EXISTED(299,"The domain has already existed in your Domain list"),
 
+    FOLDER_IS_EMPTY(2991,"FOLDER_IS_EMPTY"),
     REDRICT_SUCCESS(301, "REDRICT"),
+
 
     ;
 

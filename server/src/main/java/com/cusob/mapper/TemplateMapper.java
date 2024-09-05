@@ -16,4 +16,6 @@ public interface TemplateMapper extends BaseMapper<Template> {
      * @return
      */
     List<String> getFolderList();
+    List<String> getPrivateFolderList(Long user_id);
+    List<String> getPublicFolderList();
 }

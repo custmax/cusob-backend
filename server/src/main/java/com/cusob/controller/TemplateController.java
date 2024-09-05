@@ -1,11 +1,15 @@
 package com.cusob.controller;
 
 import com.cusob.dto.TemplateDto;
+import com.cusob.dto.TemplateMoveFolderDto;
 import com.cusob.dto.TemplateQueryDto;
+import com.cusob.dto.TemplateRenameDto;
 import com.cusob.entity.Template;
 import com.cusob.result.Result;
+import com.cusob.result.ResultCodeEnum;
 import com.cusob.service.TemplateService;
 import io.swagger.annotations.ApiOperation;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +22,61 @@ public class TemplateController {
 
     @Autowired
     private TemplateService templateService;
+
+    @ApiOperation("get LastTwoWeeks")
+    @GetMapping("/getLastTwoWeeks")
+    public Result getLastTwoWeeks(){
+        Map<String, List<Template>> lastTwoWeeks = templateService.getLastTwoWeeks();
+        return Result.ok(lastTwoWeeks);
+    }
+
+    @ApiOperation("Can it be renamed")
+    @GetMapping("/ifRename/{name}")
+    public Result ifRename(@PathVariable String name){
+        boolean b = templateService.ifRename(name);
+        if (b){
+            return Result.ok();
+        }
+        return Result.fail("forbid");
+    }
+    @ApiOperation("Get Public Folder")
+    @GetMapping("/getPublicFolder")
+    public Result getPublicFolderList(){
+        List<String> publicFolderList = templateService.getPublicFolderList();
+        return Result.ok(publicFolderList);
+    }
+
+    @ApiOperation("Get Private Folder")
+    @GetMapping("/getPrivateFolder")
+    public Result getPrivateFolderList(){
+        List<String> privateFolderList = templateService.getPrivateFolderList();
+        return Result.ok(privateFolderList);
+    }
+
+
+    @ApiOperation("Move to Folder")
+    @PostMapping("/moveToFolder")
+    public Result moveToFolder(@RequestBody TemplateMoveFolderDto templateMoveFolderDto){
+        System.out.println(templateMoveFolderDto);
+        templateService.moveTemplateToFolder(templateMoveFolderDto);
+        return Result.ok();
+    }
+
+    @ApiOperation("Delete Template list")
+    @DeleteMapping("/batchRemove")
+    public Result deleteTemplateList(@RequestBody List<Long> idlist) {
+        templateService.deleteSelectTemplate(idlist);
+        System.out.println(idlist);
+        return Result.ok();
+    }
+
+    @ApiOperation("Rename Template Folder")
+    @PostMapping("/rename")
+    public Result renameTemplateFolder(@RequestBody TemplateRenameDto templateRenameDto){
+        templateService.renameTemplateFloder(templateRenameDto);
+        return Result.ok();
+    }
+
 
     @ApiOperation("save customized Template")
     @PostMapping("save/customized")
@@ -67,4 +126,6 @@ public class TemplateController {
         templateService.removeCustomizedTemplate(id);
         return Result.ok();
     }
+
+
 }

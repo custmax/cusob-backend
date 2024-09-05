@@ -301,7 +301,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public UserLoginVo login(UserLoginDto userLoginDto) {
         String email = userLoginDto.getEmail();
         String password = userLoginDto.getPassword();
-
         // select user from table email
         User user = baseMapper.selectOne(
                 new LambdaQueryWrapper<User>()

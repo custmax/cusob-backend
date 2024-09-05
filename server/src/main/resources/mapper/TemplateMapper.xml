@@ -7,4 +7,16 @@
     <select id="getFolderList" resultType="java.lang.String">
         SELECT DISTINCT template.folder from template
     </select>
+
+    <select id="getPrivateFolderList" resultType="java.lang.String">
+        SELECT DISTINCT template.folder from template where ( user_id = #{user_id} )
+    </select>
+
+    <select id="getPublicFolderList" resultType="java.lang.String">
+        SELECT DISTINCT template.folder from template where ( is_customized = 0 )
+    </select>
+
+
+
+
 </mapper>
