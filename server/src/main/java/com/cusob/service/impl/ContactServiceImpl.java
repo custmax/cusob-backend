@@ -276,7 +276,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
                         }
                         saveExcelImport(groupName,contactArrayList,repeatImportList,finalImportList);
                         int sizeRepeat = repeatImportList.size();
-                        successImport +=(sizeContact-sizeRepeat);
+                        successImport +=sizeContact;
                         repeatImport +=sizeRepeat;
                         contactArrayList.clear();
                     }
@@ -295,7 +295,7 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
                         }
                         saveExcelImport(groupName,contactArrayList,repeatImportList,finalImportList);
                         int sizeRepeat = repeatImportList.size();
-                        successImport +=(sizeContact-sizeRepeat);
+                        successImport +=sizeContact;
                         repeatImport +=sizeRepeat;
                         contactImportVo.setSuccessImport(successImport);
                         contactImportVo.setFailImport(failImport);
