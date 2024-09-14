@@ -27,55 +27,56 @@ public class Contact extends BaseEntity {
     @TableField("is_available")
     private int isAvailable;
 
-    @ExcelProperty(index = 0)
+    @ExcelProperty("First Name")
     @TableField("first_name")
     private String firstName;
 
-    @ExcelProperty(index = 1)
+    @ExcelProperty("Last Name")
     @TableField("last_name")
     private String lastName;
 
-    @ExcelProperty(index = 2)
+    @ExcelProperty("Email")
     @TableField("email")
     private String email;
 
-    @ExcelProperty(index = 3)
+    @ExcelProperty("Mobile")
     @TableField("mobile")
     private String mobile;
 
-    @ExcelProperty(index = 4)
+    @ExcelProperty("Phone")
     @TableField("phone")
     private String phone;
 
-    @ExcelProperty(index = 5)
+    @ExcelProperty("Country")
     @TableField("country")
     private String country;
 
-    @ExcelProperty(index = 6)
+    @ExcelProperty("Company Name")
     @TableField("company")
     private String company;
 
-    @ExcelProperty(index = 7)
+    @ExcelProperty("Department")
     @TableField("dept")
     private String dept;
 
-    @ExcelProperty(index = 8)
+    @ExcelProperty("Title")
     @TableField("title")
     private String title;
 
     @TableField("avatar")
     private String avatar;
 
-    @ExcelProperty(index = 9)
+    @ExcelProperty("Birthdate")
     @JsonFormat(pattern = "yyyy-MM-dd")
     @TableField("birthdate")
     private Date birthDate;
 
-    @ExcelProperty(index = 10)
+    @ExcelProperty("Note")
     @TableField("note")
     private String note;
 
-    @ExcelProperty(index = 11)
+    @ExcelProperty("subscriptiontype")
     @TableField("subscriptiontype")
     private String subscriptionType;
+
 }

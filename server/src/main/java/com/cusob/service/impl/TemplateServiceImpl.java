@@ -15,6 +15,7 @@ import com.cusob.mapper.TemplateMapper;
 import com.cusob.result.ResultCodeEnum;
 import com.cusob.service.CompanyService;
 import com.cusob.service.TemplateService;
+import com.cusob.utils.ClientRedis;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,11 +25,13 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static com.cusob.constant.RedisConst.GET_TEMPLATE_PUBLIC;
+import static com.cusob.constant.RedisConst.GET_TEMPLATE_PUBLIC_TIMEOUT;
 
 @Service
 public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> implements TemplateService {
@@ -37,7 +40,8 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
     private CompanyService companyService;
     @Autowired
     private TemplateService templateService;
-
+    @Autowired
+    private ClientRedis clientRedis;
 
     @Override
     public Map<String, List<Template>> getLastTwoWeeks() {
@@ -223,8 +227,10 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
     public List<String> getFolderList() {
         List<String> privateFolderList = getPrivateFolderList();
         List<String> publicFolderList = getPublicFolderList();
-        List<String> mergedList = new ArrayList<>(privateFolderList);
-        mergedList.addAll(publicFolderList);
+        List<String> mergedList = new ArrayList<>(publicFolderList);
+        if (privateFolderList!=null){
+            mergedList.addAll(privateFolderList);
+        }
         return mergedList;
     }
 
@@ -233,7 +239,8 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
         long user_id = AuthContext.getUserId();
         List<String> privateFolderList = baseMapper.getPrivateFolderList(user_id);
         if (privateFolderList == null || privateFolderList.size() <= 0) {
-            throw new CusobException(ResultCodeEnum.FOLDER_IS_EMPTY);
+//            throw new CusobException(ResultCodeEnum.FOLDER_IS_EMPTY);
+            return null;
         }
         return privateFolderList;
     }
@@ -297,11 +304,14 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
 
     @Override
     public List<Template> getTemplatePublic(String folder) {
-        List<Template> originalList = baseMapper.selectList(
-                new LambdaQueryWrapper<Template>()
-                        .eq(Template::getIsCustomized, 0)
-                        .eq(Template::getFolder, folder)
-        );
+        LambdaQueryWrapper<Template> eq = new LambdaQueryWrapper<Template>()
+                .eq(Template::getIsCustomized, 0)
+                .eq(Template::getFolder, folder);
+        List<Template> originalList;
+//        originalList = clientRedis.queryWithLogicalExpire(GET_TEMPLATE_PUBLIC,folder,List.class,eq
+//                ,baseMapper::selectList,GET_TEMPLATE_PUBLIC_TIMEOUT, TimeUnit.MINUTES);
+        originalList = baseMapper.selectList(eq);
+//        clientRedis.setLogicalExpireTime(GET_TEMPLATE_PUBLIC+folder,originalList,GET_TEMPLATE_PUBLIC_TIMEOUT,TimeUnit.MINUTES);
         return originalList;
     }
 
@@ -330,8 +340,8 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
         LambdaQueryWrapper<Template> eq = new LambdaQueryWrapper<Template>()
                 .eq(Template::getIsCustomized, 0)
                 .eq(Template::getFolder, folder);
-        Template one = templateService.getOne(eq);
-        if (one != null) {
+        int count = templateService.count(eq);
+        if (count >0) {
             return false;
         }
         return true;

@@ -46,7 +46,7 @@ public class SubscriptionServiceImpl extends ServiceImpl<ContactMapper, Contact>
                         .eq(Contact::getSubscriptionType, "Non-subscribed")
         );
         map.put("Non-subscribed", nonSubscribedCount);
-        System.out.println("SDFHAJHFSDAJKFHSKAJHFJKL");
+//        System.out.println("SDFHAJHFSDAJKFHSKAJHFJKL");
         // 返回结果Map
         return map;
     }

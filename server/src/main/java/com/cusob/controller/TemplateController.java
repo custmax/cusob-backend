@@ -6,10 +6,8 @@ import com.cusob.dto.TemplateQueryDto;
 import com.cusob.dto.TemplateRenameDto;
 import com.cusob.entity.Template;
 import com.cusob.result.Result;
-import com.cusob.result.ResultCodeEnum;
 import com.cusob.service.TemplateService;
 import io.swagger.annotations.ApiOperation;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +37,7 @@ public class TemplateController {
         }
         return Result.fail("forbid");
     }
+
     @ApiOperation("Get Public Folder")
     @GetMapping("/getPublicFolder")
     public Result getPublicFolderList(){
@@ -50,6 +49,9 @@ public class TemplateController {
     @GetMapping("/getPrivateFolder")
     public Result getPrivateFolderList(){
         List<String> privateFolderList = templateService.getPrivateFolderList();
+        if (privateFolderList==null){
+            return Result.fail(privateFolderList);
+        }
         return Result.ok(privateFolderList);
     }
 
@@ -126,6 +128,5 @@ public class TemplateController {
         templateService.removeCustomizedTemplate(id);
         return Result.ok();
     }
-
 
 }

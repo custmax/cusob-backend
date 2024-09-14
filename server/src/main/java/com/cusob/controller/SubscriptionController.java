@@ -23,7 +23,7 @@ public class SubscriptionController {
     @ApiOperation("get subscription Count")
     @GetMapping("getSubscriptionCount")
     public Result getGroupsAndContactCount(){
-        System.out.println("SDFHAJHFSDAJKFHSKAJHFJKL");
+//        System.out.println("SDFHAJHFSDAJKFHSKAJHFJKL");
         Map<String, Integer> map = subscriptionService.getSubscriptionCount();
         return Result.ok(map);
     }

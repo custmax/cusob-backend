@@ -1,10 +1,7 @@
 package com.cusob.dto;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
-
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 @Data
 public class TemplateDto implements Serializable {

@@ -22,4 +22,12 @@ public class RedisConst {
 
     public static final long ORDER_TIMEOUT = 15;
 
+    public static final String GET_TEMPLATE_PUBLIC ="cusob:template:getpublic:";
+
+    public static final long GET_TEMPLATE_PUBLIC_TIMEOUT = 30;
+
+    public static final String GET_CONTACT_IMPORT_SUCESS ="cusob:contact:getsucessimport:";
+
+    public static final long GET_CONTACT_IMPORT_SUCESS_TIMEOUT = 30;
+
 }

@@ -95,6 +95,8 @@ public enum ResultCodeEnum {
     DOMAIN_IS_EXISTED(299,"The domain has already existed in your Domain list"),
 
     FOLDER_IS_EMPTY(2991,"FOLDER_IS_EMPTY"),
+    REDIS_IS_ERROR(20001,"REDIS_IS_ERROR"),
+    EMAIL_IS_ERROR(20101,"EMAIL_IS_ERROR"),
     REDRICT_SUCCESS(301, "REDRICT"),
 
 
