@@ -63,7 +63,6 @@ public interface TemplateService extends IService<Template> {
     List<Template> getTemplatePrivate(String folder);
     List<Template> getTemplatePublic(String folder);
 
-
     /**
      * remove Customized Template
      * @param id

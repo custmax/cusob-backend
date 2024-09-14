@@ -1,5 +1,4 @@
 package com.cusob.service;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -8,7 +7,7 @@ import com.cusob.dto.ContactQueryDto;
 import com.cusob.entity.Contact;
 import com.cusob.vo.ContactVo;
 import org.springframework.web.multipart.MultipartFile;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -109,4 +108,6 @@ public interface ContactService extends IService<Contact> {
     void saveUnsubsribedEmail(String email);
 
     Map<String, Object> parseFields(MultipartFile file);
+
+    boolean saveExcelImport(String groupName, ArrayList<Contact> contactArrayList, ArrayList<Contact> repeatImportList,ArrayList<Contact> finalImportList);
 }

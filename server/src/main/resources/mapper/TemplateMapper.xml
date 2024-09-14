@@ -9,11 +9,11 @@
     </select>
 
     <select id="getPrivateFolderList" resultType="java.lang.String">
-        SELECT DISTINCT template.folder from template where ( user_id = #{user_id} )
+        SELECT DISTINCT template.folder from template where ( user_id = #{user_id} AND is_deleted = 0)
     </select>
 
     <select id="getPublicFolderList" resultType="java.lang.String">
-        SELECT DISTINCT template.folder from template where ( is_customized = 0 )
+        SELECT DISTINCT template.folder from template where ( is_customized = 0 AND is_deleted = 0)
     </select>
 
 

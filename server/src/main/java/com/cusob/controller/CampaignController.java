@@ -80,10 +80,12 @@ public class CampaignController {
         campaignService.removeCampaign(id);
         return Result.ok();
     }
+
     @ApiOperation("get Campaign Id")
     @GetMapping("getLastCampaignId")
     public Result getLastCampaignId(){
         Long lastCampaignId = campaignService.getLastCampaignId();
         return Result.ok(lastCampaignId);
     }
+
 }

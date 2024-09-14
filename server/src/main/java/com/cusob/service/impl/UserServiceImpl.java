@@ -158,8 +158,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         //todo 链接激活
 
-
-
     }
 
     /**
@@ -345,7 +343,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .avatar(user.getAvatar())
                 .token(token)
                 .build();
-
         return userLoginVo;
     }
 

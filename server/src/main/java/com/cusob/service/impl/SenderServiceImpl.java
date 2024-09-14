@@ -185,7 +185,6 @@ public class SenderServiceImpl extends ServiceImpl<SenderMapper, Sender> impleme
 
         sender.setUserId(AuthContext.getUserId());
         baseMapper.insert(sender);
-
         String domain = email.substring(email.lastIndexOf('@') + 1);
         Domain domainSelect = domainService.getByDomain(domain);
         if (domainSelect == null){

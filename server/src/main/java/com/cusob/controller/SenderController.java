@@ -51,12 +51,6 @@ public class SenderController {
         return Result.ok(email);
     }
 
-//    @ApiOperation("get Sender By UserId")
-//    @GetMapping("getByUserId")
-//    public Result getSenderByUserId(){
-//        Sender sender = senderService.getSenderByUserId();
-//        return Result.ok(sender);
-//    }
 
     @ApiOperation("update Sender")
     @PostMapping("update")
