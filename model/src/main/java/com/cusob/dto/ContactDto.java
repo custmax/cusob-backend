@@ -41,4 +41,11 @@ public class ContactDto implements Serializable {
     private String note;
 
     private String subscriptionType;
+    public void setSubscriptionType(String subscriptionType) {
+        this.subscriptionType = (subscriptionType == null) ? "未设置" : subscriptionType;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = (phone == null) ? "未填写" : phone;
+    }
 }

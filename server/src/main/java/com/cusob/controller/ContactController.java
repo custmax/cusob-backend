@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cusob.auth.AuthContext;
 import com.cusob.constant.RedisConst;
 import com.cusob.dto.ContactDto;
+import com.cusob.dto.ContactInfoDto;
 import com.cusob.dto.ContactQueryDto;
 import com.cusob.entity.Contact;
 import com.cusob.entity.Minio;
@@ -12,6 +13,7 @@ import com.cusob.result.Result;
 import com.cusob.service.ContactService;
 import com.cusob.service.MinioService;
 import com.cusob.utils.ClientRedis;
+import com.cusob.vo.ContactGroupVo;
 import com.cusob.vo.ContactImportVo;
 import com.cusob.vo.ContactVo;
 import io.swagger.annotations.ApiOperation;
@@ -45,6 +47,47 @@ public class ContactController {
         cleanCache("contact_*");
         return Result.ok();
     }
+
+    @ApiOperation("getGroups")
+    @PostMapping("getGroup")
+    public Result getGroup(@RequestBody ContactInfoDto information){
+        System.out.println(information.getSelectOption());
+        System.out.println(information.getSelectType());
+        List<ContactGroupVo> groups = contactService.getGroup(information.getSelectType(), information.getSelectOption());
+        cleanCache("contact_*");
+        return Result.ok(groups);
+    }
+
+    @ApiOperation("deleteGroups")
+    @DeleteMapping("deleteGroup")
+    public Result deleteGroups(@RequestBody Integer[] information){
+        for (Integer integer : information) {
+            System.out.println(integer);
+        }
+        contactService.deleteGroups(information);
+        cleanCache("contact_*");
+        return Result.ok();
+    }
+
+    @ApiOperation("getAllContact")
+    @PostMapping("getAllContact")
+    public Result getAllContacts(@RequestBody String searchInfo){
+        List<ContactVo> contacts = contactService.getAllContact(searchInfo.substring(1, searchInfo.length() - 1));
+        cleanCache("contact_*");
+        return Result.ok(contacts);
+    }
+
+    @ApiOperation("deleteContacts")
+    @DeleteMapping("deleteContact")
+    public Result deleteContacts(@RequestBody Integer[] information){
+        for (Integer integer : information) {
+            System.out.println(integer);
+        }
+        contactService.deleteContacts(information);
+        cleanCache("contact_*");
+        return Result.ok();
+    }
+
     @PostMapping("/parseFields")
     public Result<Map<String, Object>> parseFields(@RequestParam("file") MultipartFile file) {
         Map<String, Object> stringObjectMap = contactService.parseFields(file);
@@ -81,44 +124,44 @@ public class ContactController {
         return Result.ok();
     }
 
-    @ApiOperation("Contact List Pagination condition query")
-    @GetMapping("getList/{page}/{limit}")
-    public Result getContactList(@PathVariable Long page,
-                                 @PathVariable Long limit,
-                                 ContactQueryDto contactQueryDto){
-        String rekey = "contact_list_" + page + "_" + limit + "_" + contactQueryDto.hashCode();
-        String countKey=rekey+"_totalCount";
-        BoundZSetOperations<String, Object> boundZSetOps = redisTemplate.boundZSetOps(rekey);
-        Integer totalCount = (Integer) redisTemplate.opsForValue().get(countKey);
-        if (totalCount == null || totalCount == 0)
-        {
-            Page<Contact> pageParam = new Page<>(page, limit);
-            IPage<ContactVo> contactVoPage = contactService.getContactList(pageParam, contactQueryDto);
-            totalCount = (int) contactVoPage.getTotal();
-            // 将查询结果缓存到Redis中，并设置过期时间
-            redisTemplate.opsForValue().set(countKey,totalCount);
-            List<ContactVo> EventsList = contactVoPage.getRecords();
-            for (int i = 0; i < EventsList.size(); i++)
-            {
-                boundZSetOps.add(EventsList.get(i), i);
-            }
-//            设置两个key的过期时间
-            redisTemplate.expire(rekey, 5, TimeUnit.MINUTES);
-            redisTemplate.expire(countKey, 5, TimeUnit.MINUTES);
-            return Result.ok(contactVoPage);
-        }
-        else
-        {
-            Set<Object> eventSet = boundZSetOps.range(0, limit);
-            List<Object> eventsList = new ArrayList<>(eventSet.size());
-            for (Object event1 : eventSet)
-            {
-                eventsList.add((Object) event1);
-            }
-            return Result.ok(new Page(page, limit, totalCount).setRecords(eventsList));
-        }
-
-    }
+//    @ApiOperation("Contact List Pagination condition query")
+//    @GetMapping("getList/{page}/{limit}")
+//    public Result getContactList(@PathVariable Long page,
+//                                 @PathVariable Long limit,
+//                                 ContactQueryDto contactQueryDto){
+//        String rekey = "contact_list_" + page + "_" + limit + "_" + contactQueryDto.hashCode();
+//        String countKey=rekey+"_totalCount";
+//        BoundZSetOperations<String, Object> boundZSetOps = redisTemplate.boundZSetOps(rekey);
+//        Integer totalCount = (Integer) redisTemplate.opsForValue().get(countKey);
+//        if (totalCount == null || totalCount == 0)
+//        {
+//            Page<Contact> pageParam = new Page<>(page, limit);
+//            IPage<ContactVo> contactVoPage = contactService.getContactList(pageParam, contactQueryDto);
+//            totalCount = (int) contactVoPage.getTotal();
+//            // 将查询结果缓存到Redis中，并设置过期时间
+//            redisTemplate.opsForValue().set(countKey,totalCount);
+//            List<ContactVo> EventsList = contactVoPage.getRecords();
+//            for (int i = 0; i < EventsList.size(); i++)
+//            {
+//                boundZSetOps.add(EventsList.get(i), i);
+//            }
+////            设置两个key的过期时间
+//            redisTemplate.expire(rekey, 5, TimeUnit.MINUTES);
+//            redisTemplate.expire(countKey, 5, TimeUnit.MINUTES);
+//            return Result.ok(contactVoPage);
+//        }
+//        else
+//        {
+//            Set<Object> eventSet = boundZSetOps.range(0, limit);
+//            List<Object> eventsList = new ArrayList<>(eventSet.size());
+//            for (Object event1 : eventSet)
+//            {
+//                eventsList.add((Object) event1);
+//            }
+//            return Result.ok(new Page(page, limit, totalCount).setRecords(eventsList));
+//        }
+//
+//    }
 
     @ApiOperation("upload Avatar")
     @PostMapping("uploadAvatar")
