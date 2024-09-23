@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.cusob.dto.ContactDto;
 import com.cusob.dto.ContactQueryDto;
 import com.cusob.entity.Contact;
+import com.cusob.vo.ContactGroupVo;
 import com.cusob.vo.ContactVo;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
@@ -110,4 +111,13 @@ public interface ContactService extends IService<Contact> {
     Map<String, Object> parseFields(MultipartFile file);
 
     boolean saveExcelImport(String groupName, ArrayList<Contact> contactArrayList, ArrayList<Contact> repeatImportList,ArrayList<Contact> finalImportList);
+
+    List<ContactGroupVo> getGroup(String selectType, String selectOption);
+
+    void deleteGroups(Integer[] indexs);
+
+    List<ContactVo> getAllContact(String searchInfo);
+
+    void deleteContacts(Integer[] indexs);
+
 }

@@ -13,6 +13,7 @@ import com.cusob.auth.AuthContext;
 import com.cusob.constant.MqConst;
 import com.cusob.constant.RedisConst;
 import com.cusob.dto.ContactDto;
+import com.cusob.dto.ContactGroupDto;
 import com.cusob.dto.ContactQueryDto;
 import com.cusob.dto.GroupDto;
 import com.cusob.entity.*;
@@ -21,6 +22,7 @@ import com.cusob.mapper.ContactMapper;
 import com.cusob.result.ResultCodeEnum;
 import com.cusob.service.*;
 import com.cusob.utils.ClientRedis;
+import com.cusob.vo.ContactGroupVo;
 import com.cusob.vo.ContactImportVo;
 import com.cusob.vo.ContactVo;
 import com.github.xiaoymin.knife4j.core.util.StrUtil;
@@ -507,4 +509,41 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
         boolean b = saveBatch(contactArrayList);
         return b;
     }
+    @Override
+    public List<ContactGroupVo> getGroup(String selectType, String selectOption) {
+        Long userId = AuthContext.getUserId();
+        List<ContactGroupDto> contactGroupDtos = baseMapper.selectGroups(userId, selectType, selectOption);
+        ArrayList<ContactGroupVo> contactGroupVos = new ArrayList<>();
+        for(ContactGroupDto one : contactGroupDtos) {
+            contactGroupVos.add(new ContactGroupVo(one));
+        }
+        return contactGroupVos;
+    }
+
+    @Override
+    public void deleteGroups(Integer[] indexs) {
+        Long userId = AuthContext.getUserId();
+        baseMapper.deleteGroupsFromContact(indexs, userId);
+        baseMapper.deleteGroupsFromContactGroups(indexs, userId);
+        baseMapper.deleteGroupsFromReport(indexs, userId);
+    }
+
+    @Override
+    public List<ContactVo> getAllContact(String searchInfo) {
+        Long userId = AuthContext.getUserId();
+        List<ContactDto> contactContactDtos = baseMapper.selectContacts(userId,"%" +  searchInfo + "%");
+        ArrayList<ContactVo> contactContactVos = new ArrayList<>();
+        for(ContactDto one : contactContactDtos) {
+            one.setSubscriptionType(one.getSubscriptionType());
+            contactContactVos.add(new ContactVo(one));
+        }
+        return contactContactVos;
+    }
+
+    @Override
+    public void deleteContacts(Integer[] indexs) {
+        Long userId = AuthContext.getUserId();
+        baseMapper.deleteContactsFromContact(indexs, userId);
+    }
+
 }
