@@ -29,7 +29,11 @@ public class AIController {
     public Result generateByGroup(@RequestBody PromptDto promptDto){
         //aiService.generateByGroup(promptDto);
         //campaignService.saveCampaign(campaignDto, Campaign.DRAFT);
-        return Result.ok(aiService.generateByGroup(promptDto));
+        return Result.ok(aiService.generateByPerson(promptDto));
+    }
+
+    public Result generateByPerson(@RequestBody PromptDto promptDto){
+        return Result.ok(aiService.generateByPerson(promptDto));
     }
 //    @ApiOperation("save Campaign Draft")
 //    @PostMapping("saveDraft")

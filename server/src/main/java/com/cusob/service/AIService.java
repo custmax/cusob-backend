@@ -6,4 +6,6 @@ public interface AIService{
 
 
     String generateByGroup(PromptDto promptDto);
+
+    String generateByPerson(PromptDto promptDto);
 }
