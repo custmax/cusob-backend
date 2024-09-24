@@ -27,6 +27,9 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.net.URLEncoder;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -46,6 +49,9 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
 
     @Autowired
     private CompanyService companyService;
+
+    @Autowired
+    private ContactGroupsService contactGroupsService;
 
     @Value("${cusob.host}")
     private String baseUrl;
@@ -168,6 +174,15 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
         report.setCampaignId(campaignId);
         report.setGroupId(groupId);
         report.setDeliverCount(contactList.size());
+        LocalDate localDate = LocalDate.now();  // 获取当前的LocalDate
+        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault())  // 设置为当天的开始时间
+                .toInstant());  // 转换为Instant后转换为Date
+        report.setUpdateTime(date);
+
+        ContactGroups groups = contactGroupsService.getById(groupId);
+        groups.setUpdateTime(date);
+        contactGroupsService.updateById(groups);
+
         // Generate reports
         reportService.saveReport(report);
 

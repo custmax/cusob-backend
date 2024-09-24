@@ -61,9 +61,6 @@ public class ContactController {
     @ApiOperation("deleteGroups")
     @DeleteMapping("deleteGroup")
     public Result deleteGroups(@RequestBody Integer[] information){
-        for (Integer integer : information) {
-            System.out.println(integer);
-        }
         contactService.deleteGroups(information);
         cleanCache("contact_*");
         return Result.ok();

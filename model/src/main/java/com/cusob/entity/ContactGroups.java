@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @TableName("contact_groups")
 @Data
-public class Contact_groups extends BaseEntity{
+public class ContactGroups extends BaseEntity{
     @TableField("user_id")
     private Long userId;
 
