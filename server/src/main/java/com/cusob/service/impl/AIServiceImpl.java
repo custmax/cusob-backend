@@ -18,12 +18,12 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -109,16 +109,15 @@ public class AIServiceImpl extends ServiceImpl<GroupMapper, Group> implements AI
     }
 
 
-    public String generateByPerson(PromptDto promptDto) {
+    public Map<Long, String> generateByPerson(Long groupId) {
         HashMap<Long, String> personalScheme = new HashMap<>();
-        Long groupId = Long.parseLong(promptDto.getGroupId());
-        String content = promptDto.getContent();
+
         Group group = baseMapper.selectById(groupId);
         List<Contact> contactList=contactService.getListByGroupId(groupId);
 
         if(control == "yes"){
             List<CompletableFuture<String>> futures = contactList.stream()
-                    .map(contact -> CompletableFuture.supplyAsync(() -> sendPersonalizedEmail(contact, content), customThreadPool))
+                    .map(contact -> CompletableFuture.supplyAsync(() -> sendPersonalizedEmail(contact), customThreadPool))
                     .toList();
 
             // 等待所有任务完成
@@ -130,14 +129,20 @@ public class AIServiceImpl extends ServiceImpl<GroupMapper, Group> implements AI
                 // 收集所有结果并拼接
                 StringBuilder resultBuilder = new StringBuilder();
                 for (CompletableFuture<String> future : futures) {
+
                     String result = future.get(); // 获取每个 CompletableFuture 的结果
-                    resultBuilder.append(result).append("\n"); // 添加到结果中并换行
+                    String[] parts = result.split("\n\nContact ID: ");
+                    long contactId = Long.parseLong(parts[1]);
+                    String personcontent = parts[0];
+
+                    personalScheme.put(contactId, personcontent);
                 }
 
-                return resultBuilder.toString(); // 返回拼接后的字符串
+
+                return personalScheme; // 返回拼接后的字符串
             } catch (Exception e) {
                 e.printStackTrace();
-                return "Error: " + e.getMessage();
+
             }
         }
 
@@ -145,7 +150,7 @@ public class AIServiceImpl extends ServiceImpl<GroupMapper, Group> implements AI
             // 使用CompletableFuture异步发送每封邮件
             List<CompletableFuture<Void>> futures = contactList.stream()
                     .map(contact -> CompletableFuture.runAsync(() -> {
-                        String result = sendPersonalizedEmail(contact, content);
+                        String result = sendPersonalizedEmail(contact);
                         synchronized (personalScheme) { // 确保线程安全
                             personalScheme.put(contact.getId(), result); // 将结果保存到 Map 中
                         }
@@ -158,20 +163,21 @@ public class AIServiceImpl extends ServiceImpl<GroupMapper, Group> implements AI
             try {
                 // 阻塞等待所有任务完成
                 allOf.get();
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return null;
-        }
 
+        }
+        return null;
 
     }
 
-    private String sendPersonalizedEmail(Contact contact, String content) {
+    private String sendPersonalizedEmail(Contact contact) {
         String recipientName = contact.getFirstName() + " " + contact.getLastName();
         String title = contact.getTitle();
         String recipientCompany = contact.getCompany();
-        String personalizedContent = String.format(content, recipientName, recipientCompany, title);
+        String personalizedContent = String.format(recipientName, recipientCompany, title);
 
         String prompt = String.format(
                 "请生成一封个性化邮件为本公司的产品推广，这封邮件的目的是让客户回复邮件或拨打电话。我们的产品介绍是：%s，邮件的接收方是%s，所在公司为%s，请根据他们的业务需求生成个性化邮件。",
@@ -207,7 +213,9 @@ public class AIServiceImpl extends ServiceImpl<GroupMapper, Group> implements AI
                 JsonNode messageNode = firstChoice.path("message");
                 System.out.println("Generated email for " + recipientName + ": " + messageNode.path("content").asText());
 
-                return messageNode.path("content").asText();
+                String generatedEmail =  messageNode.path("content").asText();
+                String contactId = contact.getId().toString(); // 替换为实际的 Contact ID
+                return generatedEmail + "\n\nContact ID: " + contactId;
             }
             return "Error: null";
 

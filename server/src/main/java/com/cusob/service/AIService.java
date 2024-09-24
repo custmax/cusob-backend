@@ -2,10 +2,12 @@ package com.cusob.service;
 
 import com.cusob.dto.PromptDto;
 
+import java.util.Map;
+
 public interface AIService{
 
 
     String generateByGroup(PromptDto promptDto);
 
-    String generateByPerson(PromptDto promptDto);
+    Map<Long, String> generateByPerson(Long groupId);
 }
