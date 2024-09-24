@@ -13,6 +13,8 @@ import java.util.List;
 
 public interface CampaignService extends IService<Campaign> {
 
+    public List<Contact> getContactByGroup(long groupId ) ;
+
     /**
      * getLastCampaignId
      * @param

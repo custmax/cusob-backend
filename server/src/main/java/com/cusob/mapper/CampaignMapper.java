@@ -5,9 +5,12 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cusob.entity.Campaign;
+import com.cusob.entity.Contact;
 import com.cusob.vo.CampaignListVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface CampaignMapper extends BaseMapper<Campaign> {
@@ -26,5 +29,7 @@ public interface CampaignMapper extends BaseMapper<Campaign> {
     Campaign getCampaignByname(String campaignName);
 
     Long getLastCampaignId();
+
+    List<Contact> getContactByGroup(long userId, long groupId);
 
 }

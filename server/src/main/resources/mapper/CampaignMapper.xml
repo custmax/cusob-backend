@@ -30,6 +30,13 @@
         select max(campaign.id)
         from campaign
     </select>
+    <select id="getContactByGroup" resultType="com.cusob.entity.Contact">
+        select *
+        from contact
+        where user_id = #{userId} and group_id = #{groupId}
+    </select>
+
+
 
 
 </mapper>
