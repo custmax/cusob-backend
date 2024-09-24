@@ -36,6 +36,7 @@ public class AIServiceImpl extends ServiceImpl<GroupMapper, Group> implements AI
 //    private static final String API_KEY = "sk-uGf3I1jxki3aTCZ5C43fE77c6dA0428089843b1166Ce81B2";
     private final ObjectMapper objectMapper = new ObjectMapper();//Jackson库的ObjectMapper类，作用是将Java对象转换成JSON格式或者反过来
 
+    private String control = "yes";
     @Autowired
     private ContactService contactService;
 
@@ -109,36 +110,61 @@ public class AIServiceImpl extends ServiceImpl<GroupMapper, Group> implements AI
 
 
     public String generateByPerson(PromptDto promptDto) {
-        HashMap<> personalScheme = new HashMap<>();
+        HashMap<Long, String> personalScheme = new HashMap<>();
         Long groupId = Long.parseLong(promptDto.getGroupId());
         String content = promptDto.getContent();
         Group group = baseMapper.selectById(groupId);
         List<Contact> contactList=contactService.getListByGroupId(groupId);
 
-        // 使用CompletableFuture异步发送每封邮件
-        List<CompletableFuture<String>> futures = contactList.stream()
-                .map(contact -> CompletableFuture.supplyAsync(() -> sendPersonalizedEmail(contact, content), customThreadPool))
-                .toList();
+        if(control == "yes"){
+            List<CompletableFuture<String>> futures = contactList.stream()
+                    .map(contact -> CompletableFuture.supplyAsync(() -> sendPersonalizedEmail(contact, content), customThreadPool))
+                    .toList();
 
-        // 等待所有任务完成
-        CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+            // 等待所有任务完成
+            CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
 
+            try {
+                // 阻塞等待所有任务完成
+                allOf.get();
+                // 收集所有结果并拼接
+                StringBuilder resultBuilder = new StringBuilder();
+                for (CompletableFuture<String> future : futures) {
+                    String result = future.get(); // 获取每个 CompletableFuture 的结果
+                    resultBuilder.append(result).append("\n"); // 添加到结果中并换行
+                }
 
-        try {
-            // 阻塞等待所有任务完成
-            allOf.get();
-            // 收集所有结果并拼接
-            StringBuilder resultBuilder = new StringBuilder();
-            for (CompletableFuture<String> future : futures) {
-                String result = future.get(); // 获取每个 CompletableFuture 的结果
-                resultBuilder.append(result).append("\n"); // 添加到结果中并换行
+                return resultBuilder.toString(); // 返回拼接后的字符串
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "Error: " + e.getMessage();
             }
-
-            return resultBuilder.toString(); // 返回拼接后的字符串
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Error: " + e.getMessage();
         }
+
+        else {
+            // 使用CompletableFuture异步发送每封邮件
+            List<CompletableFuture<Void>> futures = contactList.stream()
+                    .map(contact -> CompletableFuture.runAsync(() -> {
+                        String result = sendPersonalizedEmail(contact, content);
+                        synchronized (personalScheme) { // 确保线程安全
+                            personalScheme.put(contact.getId(), result); // 将结果保存到 Map 中
+                        }
+                    }, customThreadPool))
+                    .toList();
+
+            // 等待所有任务完成
+            CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+
+            try {
+                // 阻塞等待所有任务完成
+                allOf.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+
     }
 
     private String sendPersonalizedEmail(Contact contact, String content) {

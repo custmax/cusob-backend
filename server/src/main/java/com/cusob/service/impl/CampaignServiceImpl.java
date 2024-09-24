@@ -69,8 +69,20 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
     @Autowired
     private ReportService reportService;
 
+
+
     @Value("${cusob.url}")
     private String host;
+
+    @Override
+    public List<Contact> getContactByGroup(long groupId) {
+        long userId = AuthContext.getUserId();
+        List<Contact> contactByGroup = baseMapper.getContactByGroup(userId, groupId);
+        return contactByGroup;
+
+
+    }
+
     //获取最新id
     public Long getLastCampaignId(){
         Long lastCampaignId = baseMapper.getLastCampaignId();

@@ -12,6 +12,7 @@ import java.util.Date;
 @Data
 public class Contact extends BaseEntity {
 
+
     @TableField("user_id")
     private Long userId;
 
