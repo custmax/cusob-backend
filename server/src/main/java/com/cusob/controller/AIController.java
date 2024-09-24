@@ -1,21 +1,11 @@
 package com.cusob.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cusob.dto.CampaignDto;
-import com.cusob.dto.CampaignQueryDto;
 import com.cusob.dto.PromptDto;
-import com.cusob.entity.Campaign;
-import com.cusob.entity.Contact;
 import com.cusob.result.Result;
 import com.cusob.service.AIService;
-import com.cusob.service.CampaignService;
-import com.cusob.vo.CampaignListVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/generate")
@@ -29,11 +19,12 @@ public class AIController {
     public Result generateByGroup(@RequestBody PromptDto promptDto){
         //aiService.generateByGroup(promptDto);
         //campaignService.saveCampaign(campaignDto, Campaign.DRAFT);
-        return Result.ok(aiService.generateByPerson(promptDto));
+        return Result.ok(aiService.generateByGroup(promptDto));
     }
-
-    public Result generateByPerson(@RequestBody PromptDto promptDto){
-        return Result.ok(aiService.generateByPerson(promptDto));
+    @ApiOperation("generate by group and description")
+    @PostMapping("generateByPerson")
+    public Result generateByPerson(@RequestParam Long groupId){
+        return Result.ok(aiService.generateByPerson(groupId));
     }
 //    @ApiOperation("save Campaign Draft")
 //    @PostMapping("saveDraft")
