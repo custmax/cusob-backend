@@ -32,7 +32,7 @@ public class AIServiceImpl extends ServiceImpl<GroupMapper, Group> implements AI
 
     private static final String API_URL = "https://api.lmtchina.com/v1/chat/completions";
     private static final String API_KEY = "sk-s4m3t5mPXE6FRbvr487f6dC27e5343029120819e52C500E9";
-//    private static final String API_URL = "https://new.xi-ai.cn/v1/chat/completions";
+    //    private static final String API_URL = "https://new.xi-ai.cn/v1/chat/completions";
 //    private static final String API_KEY = "sk-uGf3I1jxki3aTCZ5C43fE77c6dA0428089843b1166Ce81B2";
     private final ObjectMapper objectMapper = new ObjectMapper();//Jackson库的ObjectMapper类，作用是将Java对象转换成JSON格式或者反过来
 
@@ -44,16 +44,15 @@ public class AIServiceImpl extends ServiceImpl<GroupMapper, Group> implements AI
     private ThreadPoolTaskExecutor customThreadPool;
 
 
-
     @Override
     public String generateByGroup(PromptDto promptDto) {
         Long groupId = Long.parseLong(promptDto.getGroupId());
         String content = promptDto.getContent();
         Group group = baseMapper.selectById(groupId);
-        List<Contact> contactList=contactService.getListByGroupId(groupId);
+        List<Contact> contactList = contactService.getListByGroupId(groupId);
         String groupName = group.getGroupName();
         String businessInfo = concatenateNotes(contactList);//将联系人的note字段连接成一个字符串
-        System.out.println("bbbbbbbb:"+businessInfo);
+        System.out.println("bbbbbbbb:" + businessInfo);
 
         String prompt = String.format(
                 "请生成一封接地气和地道的邮件为本公司的产品推广,这封邮件的目的是让客户回复本邮件或拨打邮件中的电话。我们公司的产品介绍和独特卖点是：%s, 给客户一个不得不选择我们的理由，邮件的接收方是我们的目标客户以及潜在客户，请精准挖掘他们的需求，同时保证邮件内容对于他们每个人是个性化且有吸引力的。",
@@ -76,7 +75,7 @@ public class AIServiceImpl extends ServiceImpl<GroupMapper, Group> implements AI
             // 请求体
             JSONObject json = new JSONObject();
             json.put("model", "gpt-3.5-turbo");
-            json.put("messages", new JSONObject[]{ new JSONObject().put("role", "user").put("content", prompt) });
+            json.put("messages", new JSONObject[]{new JSONObject().put("role", "user").put("content", prompt)});
 
             StringEntity entity = new StringEntity(json.toString(), "UTF-8");
             request.setEntity(entity);
@@ -113,23 +112,21 @@ public class AIServiceImpl extends ServiceImpl<GroupMapper, Group> implements AI
         HashMap<Long, String> personalScheme = new HashMap<>();
 
         Group group = baseMapper.selectById(groupId);
-        List<Contact> contactList=contactService.getListByGroupId(groupId);
+        List<Contact> contactList = contactService.getListByGroupId(groupId);
 
-        if(control == "yes"){
+        if (control == "yes") {
             List<CompletableFuture<String>> futures = contactList.stream()
                     .map(contact -> CompletableFuture.supplyAsync(() -> sendPersonalizedEmail(contact), customThreadPool))
                     .toList();
 
             // 等待所有任务完成
             CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
-
             try {
                 // 阻塞等待所有任务完成
                 allOf.get();
                 // 收集所有结果并拼接
                 StringBuilder resultBuilder = new StringBuilder();
                 for (CompletableFuture<String> future : futures) {
-
                     String result = future.get(); // 获取每个 CompletableFuture 的结果
                     String[] parts = result.split("\n\nContact ID: ");
                     long contactId = Long.parseLong(parts[1]);
@@ -137,16 +134,11 @@ public class AIServiceImpl extends ServiceImpl<GroupMapper, Group> implements AI
 
                     personalScheme.put(contactId, personcontent);
                 }
-
-
                 return personalScheme; // 返回拼接后的字符串
             } catch (Exception e) {
                 e.printStackTrace();
-
             }
-        }
-
-        else {
+        } else {
             // 使用CompletableFuture异步发送每封邮件
             List<CompletableFuture<Void>> futures = contactList.stream()
                     .map(contact -> CompletableFuture.runAsync(() -> {
@@ -196,7 +188,7 @@ public class AIServiceImpl extends ServiceImpl<GroupMapper, Group> implements AI
             // 设置请求体
             JSONObject json = new JSONObject();
             json.put("model", "gpt-3.5-turbo");
-            json.put("messages", new JSONObject[]{ new JSONObject().put("role", "user").put("content", prompt) });
+            json.put("messages", new JSONObject[]{new JSONObject().put("role", "user").put("content", prompt)});
 
             StringEntity entity = new StringEntity(json.toString(), "UTF-8");
             request.setEntity(entity);
@@ -213,7 +205,7 @@ public class AIServiceImpl extends ServiceImpl<GroupMapper, Group> implements AI
                 JsonNode messageNode = firstChoice.path("message");
                 System.out.println("Generated email for " + recipientName + ": " + messageNode.path("content").asText());
 
-                String generatedEmail =  messageNode.path("content").asText();
+                String generatedEmail = messageNode.path("content").asText();
                 String contactId = contact.getId().toString(); // 替换为实际的 Contact ID
                 return generatedEmail + "\n\nContact ID: " + contactId;
             }
@@ -231,6 +223,7 @@ public class AIServiceImpl extends ServiceImpl<GroupMapper, Group> implements AI
                 .put("业务介绍", businessInfo != null ? businessInfo : "默认业务介绍")
                 .toString();
     }
+
     public String concatenateNotes(List<Contact> contactList) {
         // 使用Stream API提取每个联系人的note并连接成一个字符串
         return contactList.stream()
