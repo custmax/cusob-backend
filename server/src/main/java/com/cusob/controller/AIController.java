@@ -23,7 +23,7 @@ public class AIController {
     }
     @ApiOperation("generate by group and description")
     @PostMapping("generateByPerson")
-    public Result generateByPerson(@RequestParam Long groupId){
+    public Result generateByPerson(@RequestBody Long groupId){
         return Result.ok(aiService.generateByPerson(groupId));
     }
 //    @ApiOperation("save Campaign Draft")
