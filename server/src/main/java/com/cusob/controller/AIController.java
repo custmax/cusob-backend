@@ -22,9 +22,9 @@ public class AIController {
         return Result.ok(aiService.generateByGroup(promptDto));
     }
     @ApiOperation("generate by group and description")
-    @PostMapping("generateByPerson")
-    public Result generateByPerson(@RequestBody Long groupId){
-        return Result.ok(aiService.generateByPerson(groupId));
+    @PostMapping("generate")
+    public Result generate(@RequestBody Long[] contacts){
+        return Result.ok(aiService.generate(contacts));
     }
 //    @ApiOperation("save Campaign Draft")
 //    @PostMapping("saveDraft")

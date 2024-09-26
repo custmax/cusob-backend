@@ -120,4 +120,6 @@ public interface ContactService extends IService<Contact> {
 
     void deleteContacts(Integer[] indexs);
 
+    List<Contact> getContactByIdList(Long[] contacts);
+
 }

@@ -9,5 +9,5 @@ public interface AIService{
 
     String generateByGroup(PromptDto promptDto);
 
-    Map<Long, String> generateByPerson(Long groupId);
+    Map<Long, String> generate(Long[] groupId);
 }

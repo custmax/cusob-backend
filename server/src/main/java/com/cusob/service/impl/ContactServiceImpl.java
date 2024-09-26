@@ -546,4 +546,10 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
         baseMapper.deleteContactsFromContact(indexs, userId);
     }
 
+    @Override
+    public List<Contact> getContactByIdList(Long[] contacts) {
+        Long userId = AuthContext.getUserId();
+        return baseMapper.getContactByIdList(userId, contacts);
+    }
+
 }

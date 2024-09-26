@@ -111,6 +111,14 @@
         order by id asc
     </select>
 
+    <select id="getContactByIdList" resultType="com.cusob.entity.Contact">
+        select * from contact
+        where contact.user_id = #{userId} and id in
+        <foreach collection="contacts" item="contact" separator="," open="(" close=")">
+            #{contact}
+        </foreach>
+    </select>
+
     <update id="deleteGroupsFromContact">
         update contact set is_deleted = 1 where user_id = #{userId} and group_id in
         <foreach collection="indexs" item="index" separator="," open="(" close=")">

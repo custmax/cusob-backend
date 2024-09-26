@@ -56,4 +56,6 @@ public interface ContactMapper extends BaseMapper<Contact> {
     void deleteGroupsFromReport(@Param("indexs")Integer[] indexs, @Param("userId") Long userId);
 
     void deleteContactsFromContact(Integer[] indexs, Long userId);
+
+    List<Contact> getContactByIdList(Long userId, Long[] contacts);
 }

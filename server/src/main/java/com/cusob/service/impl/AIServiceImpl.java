@@ -108,13 +108,12 @@ public class AIServiceImpl extends ServiceImpl<GroupMapper, Group> implements AI
     }
 
 
-    public Map<Long, String> generateByPerson(Long groupId) {
+    public Map<Long, String> generate(Long[] contacts) {
         HashMap<Long, String> personalScheme = new HashMap<>();
 
-        Group group = baseMapper.selectById(groupId);
-        List<Contact> contactList = contactService.getListByGroupId(groupId);
+        List<Contact> contactList = contactService.getContactByIdList(contacts);
 
-        if (control == "yes") {
+        if ("yes".equals(control)) {
             List<CompletableFuture<String>> futures = contactList.stream()
                     .map(contact -> CompletableFuture.supplyAsync(() -> sendPersonalizedEmail(contact), customThreadPool))
                     .toList();
