@@ -7,6 +7,7 @@ import com.cusob.constant.RedisConst;
 import com.cusob.dto.ContactDto;
 import com.cusob.dto.ContactInfoDto;
 import com.cusob.dto.ContactQueryDto;
+import com.cusob.dto.GroupDto;
 import com.cusob.entity.Contact;
 import com.cusob.entity.Minio;
 import com.cusob.result.Result;
@@ -16,6 +17,7 @@ import com.cusob.utils.ClientRedis;
 import com.cusob.vo.ContactGroupVo;
 import com.cusob.vo.ContactImportVo;
 import com.cusob.vo.ContactVo;
+import com.cusob.vo.GroupRequestVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundZSetOperations;
@@ -75,6 +77,13 @@ public class ContactController {
         List<ContactVo> contacts = contactService.getAllContact(searchInfo.substring(1, searchInfo.length() - 1));
         cleanCache("contact_*");
         return Result.ok(contacts);
+    }
+
+    @ApiOperation("add Group")
+    @PostMapping("addGroup")
+    public Result addGroupByContactId(@RequestBody GroupRequestVO groupRequestVO){
+        contactService.addGroupaddGroupByContactId(groupRequestVO);
+        return Result.ok();
     }
 
     @ApiOperation("deleteContacts")

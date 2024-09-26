@@ -26,6 +26,7 @@ public class GroupController {
         return Result.ok();
     }
 
+
     @ApiOperation("get Group By Id")
     @GetMapping("getById/{groupId}")
     public Result getGroupById(@PathVariable Long groupId){

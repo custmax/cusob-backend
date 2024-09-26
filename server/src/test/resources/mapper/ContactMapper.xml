@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cusob.mapper.ContactMapper">
+
+
+    <select id="pageQuery" resultType="com.cusob.vo.ContactVo">
+        SELECT contact.id, contact.first_name, contact.last_name, contact.email,
+        contact.phone, contact.mobile, contact.company, contact_groups.group_name, contact.subscriptionType
+        FROM contact JOIN contact_groups ON contact.group_id = contact_groups.id
+        WHERE contact.user_id = #{userId} AND contact.is_deleted = 0
+        <if test="groupId != null and groupId != 0">
+            AND contact.group_id = #{groupId}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (contact.first_name LIKE CONCAT('%', #{keyword}, '%')
+            OR contact.last_name LIKE CONCAT('%', #{keyword}, '%')
+            OR contact.company LIKE CONCAT('%', #{keyword}, '%')
+            OR contact.email LIKE CONCAT('%', #{keyword}, '%')
+            OR contact.phone LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="subscriptionType != null and subscriptionType != ''">
+            AND contact.subscriptionType = #{subscriptionType}
+        </if>
+    </select>
+
+    <select id="pageQueryByCompanyId" resultType="com.cusob.vo.ContactVo">
+        SELECT contact.id, contact.user_id, contact.first_name, contact.last_name, contact.email,
+        contact.phone, contact.mobile, contact.company, contact_groups.group_name, contact.subscriptionType
+        FROM contact JOIN contact_groups ON contact.group_id = contact_groups.id
+        WHERE contact.company_id = #{companyId} AND contact.is_deleted = 0
+        <if test="groupId != null and groupId != 0">
+            AND contact.group_id = #{groupId}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (contact.first_name LIKE CONCAT('%', #{keyword}, '%')
+            OR contact.last_name LIKE CONCAT('%', #{keyword}, '%')
+            OR contact.company LIKE CONCAT('%', #{keyword}, '%')
+            OR contact.email LIKE CONCAT('%', #{keyword}, '%')
+            OR contact.phone LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="subscriptionType != null and subscriptionType != ''">
+            AND contact.subscriptionType = #{subscriptionType}
+        </if>
+    </select>
+
+    <select id="selectByEmail" resultType="com.cusob.vo.ContactVo">
+        SELECT contact.id, contact.user_id, contact.first_name, contact.last_name, contact.email,
+        contact.phone, contact.mobile, contact.company, contact_groups.group_name,contact.subscriptionType
+        FROM contact JOIN contact_groups ON contact.group_id = contact_groups.id
+        WHERE contact.email = #{email}  AND contact.is_deleted = 0
+        <if test="groupId != null and groupId != 0">
+            and contact.group_id = #{groupId}
+        </if>
+
+    </select>
+
+    <select id="selectGroups" resultType="com.cusob.dto.ContactGroupDto">
+        select id, group_name, totals, create_time, update_time, open_rate, clicked_rate
+        from (select group_name,
+        totals,
+        now.id,
+        create_time,
+        update_time,
+        open_rate,
+        clicked_rate,
+        now.user_id,
+        is_deleted
+        from ((select group_name, totals, create_time, update_time, contact_groups.user_id, id, contact_groups.is_deleted
+        from (contact_groups left join (select user_id, group_id, count(*) totals, is_deleted
+        from contact
+        where is_deleted = 0
+        group by user_id, group_id) totals
+        on contact_groups.user_id = totals.user_id and
+        contact_groups.id = totals.group_id and contact_groups.is_deleted = 0)
+        ) now left join (select report.user_id,
+        report.group_id,
+        (opened / report.deliver_count) open_rate,
+        (clicked / report.deliver_count) clicked_rate
+        from report,
+        (select user_id, group_id, max(campaign_id) maxId
+        from report
+        group by user_id, group_id) maxTab
+        where report.user_id = maxTab.user_id
+        and report.group_id = maxTab.group_id
+        and report.campaign_id = maxId and is_deleted = 0) nearest
+        on now.user_id = nearest.user_id and now.id = nearest.group_id)) newTab
+        where user_id =#{userId} and is_deleted = 0
+        <choose>
+            <when test="selectType != null and selectOption != null">
+                order by ${selectOption} ${selectType}
+            </when>
+            <when test="selectType != null and selectOption == null">
+                order by group_name ${selectType}
+            </when>
+            <when test="selectType == null and selectOption != null">
+                order by ${selectOption} desc
+            </when>
+            <otherwise>
+                order by group_name desc
+            </otherwise>
+        </choose>
+    </select>
+    <select id="selectContacts" resultType="com.cusob.dto.ContactDto">
+        select contact.id, email, first_name, last_name, company, subscriptionType, group_name, phone
+        from contact, contact_groups
+        where contact.user_id = #{userId} and group_id = contact_groups.id and contact.is_deleted = 0
+        <if test="searchInfo != null">
+            and email like #{searchInfo}
+        </if>
+        order by id asc
+    </select>
+
+    <update id="deleteGroupsFromContact">
+        update contact set is_deleted = 1 where user_id = #{userId} and group_id in
+        <foreach collection="indexs" item="index" separator="," open="(" close=")">
+            #{index}
+        </foreach>
+    </update>
+    <update id="deleteGroupsFromReport">
+        update report set is_deleted = 1 where user_id = #{userId} and group_id in
+        <foreach collection="indexs" item="index" separator="," open="(" close=")">
+            #{index}
+        </foreach>
+    </update>
+    <update id="deleteGroupsFromContactGroups">
+        update contact_groups set is_deleted = 1 where user_id = #{userId} and id in
+        <foreach collection="indexs" item="index" separator="," open="(" close=")">
+            #{index}
+        </foreach>
+    </update>
+    <update id="deleteContactsFromContact">
+        update contact set is_deleted = 1 where user_id = #{userId} and id in
+        <foreach collection="indexs" item="index" separator="," open="(" close=")">
+            #{index}
+        </foreach>
+    </update>
+</mapper>

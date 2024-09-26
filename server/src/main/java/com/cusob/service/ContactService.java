@@ -7,6 +7,7 @@ import com.cusob.dto.ContactQueryDto;
 import com.cusob.entity.Contact;
 import com.cusob.vo.ContactGroupVo;
 import com.cusob.vo.ContactVo;
+import com.cusob.vo.GroupRequestVO;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,4 +121,7 @@ public interface ContactService extends IService<Contact> {
 
     void deleteContacts(Integer[] indexs);
 
+
+
+    Long addGroupaddGroupByContactId(GroupRequestVO groupRequestVO);
 }
