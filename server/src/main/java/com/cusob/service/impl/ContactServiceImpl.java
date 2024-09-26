@@ -19,12 +19,14 @@ import com.cusob.dto.GroupDto;
 import com.cusob.entity.*;
 import com.cusob.exception.CusobException;
 import com.cusob.mapper.ContactMapper;
+import com.cusob.mapper.GroupMapper;
 import com.cusob.result.ResultCodeEnum;
 import com.cusob.service.*;
 import com.cusob.utils.ClientRedis;
 import com.cusob.vo.ContactGroupVo;
 import com.cusob.vo.ContactImportVo;
 import com.cusob.vo.ContactVo;
+import com.cusob.vo.GroupRequestVO;
 import com.github.xiaoymin.knife4j.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -61,6 +63,9 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private ClientRedis clientRedis;
+
+    @Autowired
+    private GroupMapper groupMapper;
 
 
     /**
@@ -547,9 +552,24 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
     }
 
     @Override
-    public List<Contact> getContactByIdList(Long[] contacts) {
+    public Long addGroupaddGroupByContactId(GroupRequestVO groupRequestVO) {
+        Long[] contactList = groupRequestVO.getContactIdlist();
+        String groupName = groupRequestVO.getGroupName();
         Long userId = AuthContext.getUserId();
-        return baseMapper.getContactByIdList(userId, contacts);
+        Group group = new Group();
+        group.setGroupName(groupName);
+        group.setUserId(userId);
+        groupMapper.insert(group);
+        Group tmpGroup = groupMapper.selectById(userId);
+        long newGroupId = tmpGroup.getId();
+
+        for(int i = 0; i < contactList.length; i++){
+            Contact contact = baseMapper.selectById(contactList[i]);
+            contact.setGroupId(newGroupId);
+            baseMapper.insert(contact);
+        }
+
+        return group.getId();
     }
 
 }
