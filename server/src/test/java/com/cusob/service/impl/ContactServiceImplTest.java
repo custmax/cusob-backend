@@ -32,7 +32,7 @@ public class ContactServiceImplTest {
         request.setGroupName("Test Group");
 
         // 调用服务方法
-        Long result = contactService.addGroupaddGroupByContactId(request);
+        Long result = contactService.addGroupByContactId(request);
 
         // 检查数据库中是否插入成功
         Group group = groupMapper.selectById(result);

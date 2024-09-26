@@ -79,7 +79,7 @@ public class ContactController {
     @ApiOperation("add Group")
     @PostMapping("addGroup")
     public Result addGroupByContactId(@RequestBody GroupRequestVO groupRequestVO){
-        contactService.addGroupaddGroupByContactId(groupRequestVO);
+        contactService.addGroupByContactId(groupRequestVO);
         return Result.ok();
     }
 

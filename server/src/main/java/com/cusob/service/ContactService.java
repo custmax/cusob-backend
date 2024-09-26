@@ -121,7 +121,7 @@ public interface ContactService extends IService<Contact> {
 
     void deleteContacts(Integer[] indexs);
 
+    List<Contact> getContactByIdList(Long[] contacts);
 
-
-    Long addGroupaddGroupByContactId(GroupRequestVO groupRequestVO);
+    Long addGroupByContactId(GroupRequestVO groupRequestVO);
 }

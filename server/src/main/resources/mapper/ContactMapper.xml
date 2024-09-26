@@ -48,7 +48,7 @@
         SELECT contact.id, contact.user_id, contact.first_name, contact.last_name, contact.email,
         contact.phone, contact.mobile, contact.company, contact_groups.group_name,contact.subscriptionType
         FROM contact JOIN contact_groups ON contact.group_id = contact_groups.id
-        WHERE contact.email = #{email}  AND contact.is_deleted = 0
+        WHERE contact.email = #{email} AND contact.is_deleted = 0
         <if test="groupId != null and groupId != 0">
             and contact.group_id = #{groupId}
         </if>
@@ -66,7 +66,8 @@
         clicked_rate,
         now.user_id,
         is_deleted
-        from ((select group_name, totals, create_time, update_time, contact_groups.user_id, id, contact_groups.is_deleted
+        from ((select group_name, totals, create_time, update_time, contact_groups.user_id, id,
+        contact_groups.is_deleted
         from (contact_groups left join (select user_id, group_id, count(*) totals, is_deleted
         from contact
         where is_deleted = 0

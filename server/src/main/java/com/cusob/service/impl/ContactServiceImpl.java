@@ -552,7 +552,13 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
     }
 
     @Override
-    public Long addGroupaddGroupByContactId(GroupRequestVO groupRequestVO) {
+    public List<Contact> getContactByIdList(Long[] contacts) {
+        Long userId = AuthContext.getUserId();
+        return baseMapper.getContactByIdList(userId, contacts);
+    }
+
+    @Override
+    public Long addGroupByContactId(GroupRequestVO groupRequestVO) {
         Long[] contactList = groupRequestVO.getContactIdlist();
         String groupName = groupRequestVO.getGroupName();
         Long userId = AuthContext.getUserId();
