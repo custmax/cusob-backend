@@ -76,12 +76,14 @@ public class ContactController {
         return Result.ok(contacts);
     }
 
-    @ApiOperation("add Group")
-    @PostMapping("addGroup")
+    @ApiOperation("add Group by id")
+    @PostMapping("addGroupById")
     public Result addGroupByContactId(@RequestBody GroupRequestVO groupRequestVO){
         contactService.addGroupByContactId(groupRequestVO);
         return Result.ok();
     }
+    // 前端直接访问:groupControllewr 里面的addgroup方法即可
+
 
     @ApiOperation("deleteContacts")
     @DeleteMapping("deleteContact")

@@ -10,4 +10,6 @@ public interface AIService{
     String generateByGroup(PromptDto promptDto);
 
     Map<Long, String> generate(Long[] groupId);
+
+
 }
