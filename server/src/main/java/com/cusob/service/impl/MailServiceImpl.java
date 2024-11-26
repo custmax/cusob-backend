@@ -263,7 +263,10 @@ public class MailServiceImpl implements MailService {
 //            message.setHeader("Disposition-Notification-To", email);
 //            message.setHeader("X-Confirm-Reading-To", email);
             message.setHeader("List-Unsubscribe-Post","List-Unsubscribe=One-Click"); //添加一键退订的Header
-            message.setHeader("List-Unsubscribe", "<" + unsubscribeUrl + ">");
+            //message.setHeader("List-Unsubscribe", "<mailto:" + sender.getEmail()+ "?subject=unsubscribe>, \n<" + unsubscribeUrl  + ">");
+            message.setHeader("MIME-Version", "1.0");
+            message.setHeader("List-Unsubscribe", "<mailto:list@host.com?subject=unsubscribe>");
+
             // 发送邮件
             System.out.println(message.getContent());
             Transport.send(message);

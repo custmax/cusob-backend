@@ -1,6 +1,7 @@
 package com.cusob.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,6 +15,8 @@ import com.cusob.mapper.CampaignMapper;
 import com.cusob.result.ResultCodeEnum;
 import com.cusob.service.*;
 import com.cusob.vo.CampaignListVo;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.models.auth.In;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
@@ -77,7 +80,15 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
     public Long saveCampaign(CampaignDto campaignDto, Integer status) {//保存活动
         Campaign campaign = new Campaign();
         BeanUtils.copyProperties(campaignDto, campaign);
-
+        if (campaignDto.getDesignContent() != null) {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                String jsonContent = objectMapper.writeValueAsString(campaignDto.getDesignContent());
+                campaign.setDesignContent(jsonContent);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("Failed to serialize designContent to JSON", e);
+            }
+        }
         campaign.setUserId(AuthContext.getUserId());
         campaign.setStatus(status);
         baseMapper.insert(campaign);
@@ -103,10 +114,26 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
     public void updateCampaign(CampaignDto campaignDto) {
         Campaign campaign = new Campaign();
         BeanUtils.copyProperties(campaignDto, campaign);
+
+        // 将 designContent 转换为 JSON 字符串
+        if (campaignDto.getDesignContent() != null) {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                String jsonContent = objectMapper.writeValueAsString(campaignDto.getDesignContent());
+                campaign.setDesignContent(jsonContent);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("Failed to serialize designContent to JSON", e);
+            }
+        }
+
+        // 设置其他字段
         campaign.setUserId(AuthContext.getUserId());
         campaign.setStatus(Campaign.DRAFT);
+
+        // 执行更新
         baseMapper.updateById(campaign);
     }
+
 
     /**
      * get Campaign Page
@@ -120,7 +147,30 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
         Integer status = campaignQueryDto.getStatus();
         Integer order = campaignQueryDto.getOrder();
         Long userId = AuthContext.getUserId();
-        IPage<CampaignListVo> pageModel = baseMapper.getCampaignPage(pageParam, userId, name, status, order);
+        Integer order1 = order == null ? 0 : order;
+        //Page<Campaign> pageParam1=new Page<>(pageParam.getCurrent(),pageParam.getSize());
+        QueryWrapper<Campaign> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("is_deleted", 0)
+                .eq("user_id", userId)
+                .like(!StringUtils.isEmpty(name), "campaign_name", name)  // 只在有关键字时加上 LIKE 条件
+                .eq(status != null, "status", status)
+                .orderByDesc("create_time");
+        // 执行分页查询，返回 Page<Campaign> 类型
+        IPage<Campaign> campaignPage = this.page(pageParam, queryWrapper);
+
+        // 将查询到的 Page<Campaign> 转换为 Page<CampaignListVo>
+        IPage<CampaignListVo> pageModel = campaignPage.convert(campaign -> {
+            // 在这里将 Campaign 转换为 CampaignListVo
+            CampaignListVo vo = new CampaignListVo();
+            vo.setId(campaign.getId());
+            vo.setCampaignName(campaign.getCampaignName());
+            vo.setStatus(campaign.getStatus());
+            vo.setUpdateTime(campaign.getUpdateTime());
+            // 继续根据需要设置其他字段
+            return vo;
+        });
+
+
         return pageModel;
     }
 
@@ -147,8 +197,11 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
         }
         Campaign campaign = this.getCampaignById(campaignDto.getId());//获取活动
         if (campaign != null){//活动存在
-            campaignId = campaign.getId();//获取活动id
-            this.saveCampaign(campaignDto, Campaign.ONGOING);//保存活动
+            campaignId = campaign.getId();
+            BeanUtils.copyProperties(campaignDto, campaign);
+            campaign.setUserId(AuthContext.getUserId());
+            campaign.setStatus(Campaign.ONGOING);
+            baseMapper.updateById(campaign);
         }else {//活动不存在
             campaignId = this.saveCampaign(campaignDto, Campaign.ONGOING);//保存活动
             campaign = this.getCampaignById(campaignId);//获取活动
@@ -196,6 +249,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
     @Override
     public void MassMailing(Campaign campaign) {//正式批量发送邮件
         String campaignName = campaign.getCampaignName();
+        System.out.println("当前用户id："+AuthContext.getUserId());
         Campaign campaign1 = baseMapper.selectOne(new LambdaQueryWrapper<Campaign>()
                 .eq(Campaign::getUserId, AuthContext.getUserId())
                 .eq(Campaign::getCampaignName, campaignName)
@@ -239,23 +293,6 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                         "        .footer p {\n" +
                         "            margin: 5px 0;\n" +
                         "        }</style>";
-//                String img = "<img style=\"display: none;\" src=\"" + baseUrl + "/read/count/"
-//                        + campaign.getId() + "/" + contact.getId() + "\">"; //加入一个不可见图片用于追踪打开率
-//                String img = "<img style=\"width:1px;height:1px;background-color:#FF0000;\" src=\""
-//                        + baseUrl
-//                        + "/read/count/"
-//                        + campaign.getId()
-//                        + "/"
-//                        + contact.getId() + "\" alt=\"\">";
-// 使用 StringBuilder 来构建 img 标签内容
-                // 手动对特殊字符进行编码替换
-//                String img = "<img style=\"width:1px;height:1px;background-color:#FF0000;\" src=\""
-//                        + baseUrl.replace("=", "&#61;")
-//                        + "/read/count/"
-//                        + campaign.getId()
-//                        + "/"
-//                        + contact.getId()
-//                        + "\" alt=\"\">";
                 String url=baseUrl + "/read/count/" + campaign.getId() + "/" + contact.getId();
                 //String img = "<img  src=\""+ "https://gitee.com/jadeinrain/athena-blog-img/raw/f9e39c2309398832ea5083fd03274c8fa13d9552/athena.JPG\" "+ "alt=\"\">";
                 String img = "<img  src=\""+ url+ "\" alt=\"\">";
@@ -273,6 +310,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                         "        <p>" + addr + "</p>\n" +
                         "    </div>";
                 String emailContent = style + replace + btnUnsubscribe + address + img ;
+                String listUnsubscribe = "<" + unsubscribeUrl + ">, <mailto:" + sender.getEmail() + "?subject=Unsubscribe>";
                 ScheduledThreadPoolExecutor executor =
                         new ScheduledThreadPoolExecutor(2, new ThreadPoolExecutor.CallerRunsPolicy());
                 executor.schedule(() -> {//定时发送邮件

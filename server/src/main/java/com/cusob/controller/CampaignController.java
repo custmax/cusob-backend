@@ -25,6 +25,8 @@ public class CampaignController {
     @ApiOperation("save Campaign Draft")
     @PostMapping("saveDraft")
     public Result saveDraft(@RequestBody CampaignDto campaignDto){
+        System.out.println("Received designContent: " + campaignDto.getDesignContent());
+
         campaignService.saveCampaign(campaignDto, Campaign.DRAFT);
         return Result.ok();
     }

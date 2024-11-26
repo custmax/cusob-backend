@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Map;
 
 
 @Data
@@ -44,4 +45,6 @@ public class CampaignDto implements Serializable {
     private Boolean trackTextClicks;
 
     private Boolean trackLink;
+
+    private Object designContent;
 }

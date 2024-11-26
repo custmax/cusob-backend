@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Map;
 
 
 @Data
@@ -66,5 +67,8 @@ public class Campaign extends BaseEntity {
 
     @TableField("track_link")
     private Boolean trackLink;
+
+    @TableField("designContent")
+    private String designContent;
 
 }
