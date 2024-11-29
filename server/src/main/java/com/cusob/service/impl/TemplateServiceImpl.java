@@ -58,8 +58,6 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
         BeanUtils.copyProperties(templateDto, template);
         template.setIsCustomized(1);
         template.setUserId(AuthContext.getUserId());
-        // todo 这里因为前端不传值进来，默认为0
-        template.setType(0);
         baseMapper.insert(template);
     }
 
@@ -103,7 +101,6 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
         BeanUtils.copyProperties(templateDto, template);
         template.setIsCustomized(1);
         template.setUserId(AuthContext.getUserId());
-        template.setType(0);
         baseMapper.updateById(template);
     }
 
