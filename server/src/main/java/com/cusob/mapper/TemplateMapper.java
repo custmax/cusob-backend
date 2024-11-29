@@ -16,4 +16,10 @@ public interface TemplateMapper extends BaseMapper<Template> {
      * @return
      */
     List<String> getFolderList();
+
+    /**
+     * get Folder List By UserId
+     * @return
+     */
+    List<Template> getFolderListByUserId(Long userId);
 }

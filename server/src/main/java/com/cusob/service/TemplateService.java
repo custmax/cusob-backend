@@ -42,6 +42,13 @@ public interface TemplateService extends IService<Template> {
      */
     List<String> getFolderList();
 
+
+    /**
+     * get Folder List By UserId
+     * @return
+     */
+    List<Template> getFolderListByUserId(Long userId);
+
     /**
      * get Template List By Folder
      * @param folder

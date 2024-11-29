@@ -74,6 +74,7 @@ public enum ResultCodeEnum {
     TEMPLATE_FOLDER_EMPTY(262, "The template folder is empty"),
     TEMPLATE_REMOVE_ERROR(263, "The system templates cannot be deleted"),
     TEMPLATE_UPDATE_ERROR(263, "The system templates cannot be updated"),
+    TEMPLATE_FOLDER_ERROR(264, "The folder is not available"),
 
     INVITE_LINK_INVALID(270, "The invitation link is invalid"),
     EMAIL_NOT_INVITED(271, "The email is not invited"),
