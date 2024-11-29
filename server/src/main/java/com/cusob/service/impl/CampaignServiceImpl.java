@@ -47,7 +47,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
     @Autowired
     private CompanyService companyService;
 
-    @Value("${cusob.host}")
+    @Value("${cusob.imghost}")
     private String baseUrl;
 
     @Autowired
@@ -302,7 +302,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                 String unsubscribeUrl = host + "/unsubscribe?email=" + email;
                 String btnUnsubscribe = "<a href=\"" + unsubscribeUrl +"\">\n" +
                         "    <div style=\"text-align: center; margin-top: 20px;\">\n" +
-                        "        <button style=\"border-radius: 4px; height: 30px; color: white; border: none; background-color: #e7e7e7;\">Unsubscribe</button>\n" +
+                        "        <button style=\"border-radius: 45px; height: 30px; color: white; border: none; background-color: #e7e7e7;\">Unsubscribe</button>\n" +
                         "    </div>\n" +
                         "</a>"; //加入退订链接
 

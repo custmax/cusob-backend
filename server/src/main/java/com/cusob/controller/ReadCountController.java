@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/read")
+@RequestMapping("read")
 public class ReadCountController {
 
     @Autowired
@@ -20,6 +20,7 @@ public class ReadCountController {
     @GetMapping("count/{campaignId}/{contactId}") //用于邮件统计环节中统计open的数量
     public Result ReadCount(@PathVariable Long campaignId,
                             @PathVariable Long contactId){
+        System.out.println("追踪成功");
         campaignContactService.opened(campaignId, contactId);
         return Result.ok();
     }
