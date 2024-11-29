@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +51,14 @@ public class TemplateController {
     @ApiOperation("get Folder List")
     @GetMapping("getFolderList")
     public Result getFolderList(){
-        List<String> folderList = templateService.getFolderList();
+        //List<String> folderList = templateService.getFolderList();
+        //todo 这里使用硬编码，应当设计一个template_category表
+        List<String> folderList = new ArrayList<>();
+        folderList.add("All");
+        folderList.add("Personal");
+        folderList.add("Welcome");
+        folderList.add("Seasons");
+        folderList.add("Deals & Offers");
         return Result.ok(folderList);
     }
 

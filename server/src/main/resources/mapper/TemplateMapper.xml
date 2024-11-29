@@ -7,4 +7,8 @@
     <select id="getFolderList" resultType="java.lang.String">
         SELECT DISTINCT template.folder from template
     </select>
+    <select id="getFolderListByUserId" resultType="com.cusob.entity.Template">
+        select distinct * from template where ( user_id = #{userId} or user_id is null) and is_deleted = 0
+    </select>
+
 </mapper>
