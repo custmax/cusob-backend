@@ -37,4 +37,7 @@ public class Template extends BaseEntity {
 
     @TableField("price")
     private BigDecimal price;
+
+    @TableField("designContent")
+    private String designContent;
 }

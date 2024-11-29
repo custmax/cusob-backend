@@ -23,4 +23,7 @@ public class TemplateDto implements Serializable {
 
     private String content;
 
+    @TableField("designContent")
+    private String designContent;
+
 }

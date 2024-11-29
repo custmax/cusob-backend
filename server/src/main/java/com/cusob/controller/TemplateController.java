@@ -27,8 +27,8 @@ public class TemplateController {
     }
 
     @ApiOperation("get template by id")
-    @GetMapping("get")
-    public Result getTemplateById(Long id){
+    @GetMapping("get/{id}")
+    public Result getTemplateById(@PathVariable Long id){
         Template template = templateService.getTemplateById(id);
         return Result.ok(template);
     }
