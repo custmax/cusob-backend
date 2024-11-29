@@ -31,7 +31,7 @@ public class TemplateController {
     @GetMapping("get/{id}")
     public Result getTemplateById(@PathVariable Long id){
         Template template = templateService.getTemplateById(id);
-        return Result.ok(template);git checkout tony
+        return Result.ok(template);
     }
 
     @ApiOperation("update Template")
