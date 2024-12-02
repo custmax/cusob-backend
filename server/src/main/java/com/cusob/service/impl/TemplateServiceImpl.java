@@ -45,14 +45,14 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
         //        }
         System.out.println("修改时传入的folder value : " + templateDto.getFolder());
         // todo 此处使用硬编码,防止用户新增系统所给的folder
-        if (templateDto.getFolder().equals("all") ||
-                templateDto.getFolder().equals("personal") ||
-                templateDto.getFolder().equals("welcome") ||
-                templateDto.getFolder().equals("seasons") ||
-                templateDto.getFolder().equals("dealsAndOffers"))
-        {
-            throw new CusobException(ResultCodeEnum.TEMPLATE_FOLDER_ERROR);
-        }
+        //if (templateDto.getFolder().equals("all") ||
+        //        templateDto.getFolder().equals("personal") ||
+        //        templateDto.getFolder().equals("welcome") ||
+        //        templateDto.getFolder().equals("seasons") ||
+        //        templateDto.getFolder().equals("dealsAndOffers"))
+        //{
+        //    throw new CusobException(ResultCodeEnum.TEMPLATE_FOLDER_ERROR);
+        //}
         this.paramVerify(templateDto);
         Template template = new Template();
         BeanUtils.copyProperties(templateDto, template);
