@@ -23,4 +23,6 @@ public interface AccountInfoService extends IService<AccountInfo> {
     void updateAccountInfo(AccountInfoDto accountInfoDto);
 
     String getAddr(Long userId);
+
+    AccountInfo getByUserId(Long userId);
 }

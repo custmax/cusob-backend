@@ -44,6 +44,15 @@ public class AccountInfoServiceImpl
         );
         return accountInfo;
     }
+    @Override
+    public AccountInfo getByUserId(Long userId) {
+        AccountInfo accountInfo = baseMapper.selectOne(
+                new LambdaQueryWrapper<AccountInfo>()
+                        .eq(AccountInfo::getUserId, userId)
+        );
+        return accountInfo;
+    }
+
 
     /**
      * update account information

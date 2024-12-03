@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cusob.dto.ContactDto;
 import com.cusob.dto.ContactQueryDto;
+import com.cusob.entity.CampaignReturn;
 import com.cusob.entity.Contact;
 import com.cusob.entity.Minio;
 import com.cusob.result.Result;
@@ -130,9 +131,10 @@ public class ContactController {
     @ApiOperation("batch import contacts")
     @PostMapping("batchImport")
     public Result batchImport(@RequestPart("file") MultipartFile file, String groupName,String subscriptionType){
-        contactService.batchImport(file, groupName,subscriptionType);
+        CampaignReturn campaignReturn =contactService.batchImport(file, groupName,subscriptionType);
         cleanCache("contact_*"); // 清除相关缓存
-        return Result.ok();
+        System.out.println("success = " + campaignReturn.getSuccessCount());
+        return Result.ok(campaignReturn);
     }
 
     @ApiOperation("get All Contacts email By GroupId")

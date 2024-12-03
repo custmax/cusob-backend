@@ -20,8 +20,6 @@ import com.cusob.vo.ContactVo;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -29,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -244,11 +243,12 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
      * @param file
      */
     @Override
-    public void batchImport(MultipartFile file, String groupName,String subscriptionType) {
+    public CampaignReturn batchImport(MultipartFile file, String groupName,String subscriptionType) {
         if (file==null){
             throw new CusobException(ResultCodeEnum.FILE_IS_EMPTY);
         }
-
+        AtomicInteger success= new AtomicInteger(0);
+        AtomicInteger fail= new AtomicInteger(0);
         Long userId = AuthContext.getUserId();
         Long companyId = AuthContext.getCompanyId();
         Integer count = this.selectCountByCompanyId(companyId);//获取当前公司的联系人数量
@@ -279,13 +279,20 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
                         // 你可以选择重新抛出异常或者执行其他的异常处理逻辑
                         //throw new CusobException(e); // 自定义异常处理
                     }
-                    baseMapper.insert(contact);  // todo 待优化
+                    if(contact.getValid()==1){
+                        baseMapper.insert(contact);  // todo 待优化
+                        success.getAndIncrement();
+                    }else fail.getAndIncrement();
                 }
             })).sheet().doRead();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+        CampaignReturn campaignReturn = new CampaignReturn();
+        campaignReturn.setSuccessCount(success.get());
+        campaignReturn.setFailCount(fail.get());
+        return campaignReturn;
     }
     @Override
     public Map<String, Object> parseFields(MultipartFile file) {

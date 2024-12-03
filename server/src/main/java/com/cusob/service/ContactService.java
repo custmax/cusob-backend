@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cusob.dto.ContactDto;
 import com.cusob.dto.ContactQueryDto;
+import com.cusob.entity.CampaignReturn;
 import com.cusob.entity.Contact;
 import com.cusob.vo.ContactVo;
 import org.springframework.web.multipart.MultipartFile;
@@ -60,7 +61,7 @@ public interface ContactService extends IService<Contact> {
      * batch import contacts
      * @param file
      */
-    void batchImport(MultipartFile file, String groupName,String subscriptionType);
+    CampaignReturn batchImport(MultipartFile file, String groupName, String subscriptionType);
 
     /**
      * get Contact Count By Group id

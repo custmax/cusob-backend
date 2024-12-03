@@ -282,7 +282,8 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                         .replace("#{DEPT}",contact.getBirthDate()==null ? "#{DEPT}":contact.getDept())
                         //动态替换收件人信息
                         ;
-                String addr = accountInfoService.getAddr(userId);
+
+                //String addr = accountInfoService.getAddr(userId);
                 String style = "        <style>.footer {\n" +
                         "            padding-top: 0; \n" +
                         "            padding-bottom: 20px; \n" +
@@ -305,11 +306,64 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                         "        <button style=\"border-radius: 45px; height: 30px; color: white; border: none; background-color: #e7e7e7;\">Unsubscribe</button>\n" +
                         "    </div>\n" +
                         "</a>"; //加入退订链接
+                AccountInfo accountInfo = accountInfoService.getByUserId(userId);
+                StringBuilder downContent = new StringBuilder();
 
-                String address = "    <div class=\"footer\">\n" +
-                        "        <p>" + addr + "</p>\n" +
-                        "    </div>";
-                String emailContent = style + replace + btnUnsubscribe + address + img ;
+                try {
+                    // 检查并拼接公司信息
+                    String comp = accountInfo.getCompany();
+                    if (comp != null && !comp.isEmpty()) {
+                        downContent.append("    <div class=\"footer\">\n")
+                                .append("        <p>").append(comp).append("</p>\n")
+                                .append("    </div>");
+                    }
+
+                    // 检查并拼接地址信息
+                    String addressLine1 = accountInfo.getAddressLine1();
+                    String addressLine2 = accountInfo.getAddressLine2();
+                    String addr = ((addressLine1 != null) ? addressLine1 : "") +
+                            ((addressLine2 != null) ? " " + addressLine2 : "");
+                    if (!addr.trim().isEmpty()) {
+                        downContent.append("    <div class=\"footer\">\n")
+                                .append("        <p>").append(addr).append("</p>\n")
+                                .append("    </div>");
+                    }
+
+                    // 检查并拼接城市和国家信息
+                    String city = accountInfo.getCity();
+                    String country = accountInfo.getCountry();
+                    String cityAndCou = ((city != null) ? city : "") +
+                            ((country != null) ? " " + country : "");
+                    if (!cityAndCou.trim().isEmpty()) {
+                        downContent.append("    <div class=\"footer\">\n")
+                                .append("        <p>").append(cityAndCou).append("</p>\n")
+                                .append("    </div>");
+                    }
+
+                    // 检查并拼接邮政编码
+                    String zip = accountInfo.getZipCode();
+                    if (zip != null && !zip.isEmpty()) {
+                        downContent.append("    <div class=\"footer\">\n")
+                                .append("        <p>").append(zip).append("</p>\n")
+                                .append("    </div>");
+                    }
+
+                    // 检查并拼接电话号码
+                    String phon = accountInfo.getPhone();
+                    if (phon != null && !phon.isEmpty()) {
+                        downContent.append("    <div class=\"footer\">\n")
+                                .append("        <p>").append(phon).append("</p>\n")
+                                .append("    </div>");
+                    }
+                } catch (NullPointerException e) {
+                    // 如果 accountInfo 或某些字段为 null，则不执行操作
+                    System.err.println("AccountInfo contains null fields: " + e.getMessage());
+                }
+
+// 最终生成的 HTML 内容
+                String finalDownContent = downContent.toString();
+
+                String emailContent = style + replace + btnUnsubscribe + finalDownContent + img ;
                 String listUnsubscribe = "<" + unsubscribeUrl + ">, <mailto:" + sender.getEmail() + "?subject=Unsubscribe>";
                 ScheduledThreadPoolExecutor executor =
                         new ScheduledThreadPoolExecutor(2, new ThreadPoolExecutor.CallerRunsPolicy());
