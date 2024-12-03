@@ -71,15 +71,15 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
     public Template getTemplateById(Long id)
     {
         Template template = baseMapper.selectById(id);
-        Integer isCustomized = template.getIsCustomized();
-        Company company = companyService.getById(AuthContext.getCompanyId());
-        if (company.getPlanId().equals(PlanPrice.FREE))
-        {
-            if (isCustomized.equals(Template.SYSTEM))
-            {
-                //                throw new CusobException(ResultCodeEnum.NO_PERMISSION);
-            }
-        }
+        //Integer isCustomized = template.getIsCustomized();
+        //Company company = companyService.getById(AuthContext.getCompanyId());
+        //if (company.getPlanId().equals(PlanPrice.FREE))
+        //{
+        //    if (isCustomized.equals(Template.SYSTEM))
+        //    {
+        //        //                throw new CusobException(ResultCodeEnum.NO_PERMISSION);
+        //    }
+        //}
         return template;
     }
 
