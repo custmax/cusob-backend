@@ -6,14 +6,22 @@ import com.cusob.dto.CampaignDto;
 import com.cusob.dto.CampaignQueryDto;
 import com.cusob.entity.Campaign;
 import com.cusob.entity.Contact;
+import com.cusob.entity.Sender;
 import com.cusob.result.Result;
 import com.cusob.service.CampaignService;
+import com.cusob.service.SenderService;
 import com.cusob.vo.CampaignListVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/campaign")
@@ -21,6 +29,10 @@ public class CampaignController {
 
     @Autowired
     private CampaignService campaignService;
+    @Autowired
+    private SenderService senderService;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @ApiOperation("save Campaign Draft")
     @PostMapping("saveDraft")
@@ -58,8 +70,47 @@ public class CampaignController {
     @ApiOperation("send Email")
     @PostMapping("sendEmail")
     public Result sendEmail(@RequestBody CampaignDto campaignDto){
-        campaignService.sendEmail(campaignDto);
-        return Result.ok();
+        //获取userId和email，然后拼接成key，从redis中获取
+        Long senderId=campaignDto.getSenderId();
+        Sender sender = senderService.getById(senderId);
+        String email=sender.getEmail();
+        Long userId=sender.getUserId();
+        String key=userId+"_"+email;
+        String value=stringRedisTemplate.opsForValue().get(key);//当前额度
+
+        //若value为空或value对应的数字大于0则发送邮件，然后value对应的值减去groupid内的人数，然后重新保存至redis
+        if(value==null||Integer.parseInt(value)>0) {
+            campaignService.sendEmail(campaignDto);
+            Long groupId=campaignDto.getToGroup();
+            int count=campaignService.getSendList(groupId).size();
+            //若value为空则设置为200
+            if(value==null){
+                value="200";
+            }
+            int newValue=Integer.parseInt(value)-count;
+            //将新的value保存至redis，设置过期时间为第二天的零点
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+
+            long expireSeconds = (calendar.getTimeInMillis() - System.currentTimeMillis()) / 1000;
+
+            // 设置键值对，并设置过期时间
+            stringRedisTemplate.opsForValue().set(
+                    key,
+                    String.valueOf(newValue),
+                    expireSeconds,
+                    TimeUnit.SECONDS
+            );
+            return Result.ok();
+        }
+        else{
+            int restValue=Integer.parseInt(value);
+            return Result.fail("You have reached the daily limit of 200 emails. You can send" + restValue + " more emails today.");
+        }
     }
 
     @ApiOperation("Email list")
