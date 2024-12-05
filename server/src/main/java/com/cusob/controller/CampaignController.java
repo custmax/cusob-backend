@@ -132,7 +132,7 @@ public class CampaignController
         return Result.ok(sendList);
     }
 
-    @ApiOperation("Get SenderName")
+    @ApiOperation("Get SenderName By CampaignName")
     @GetMapping("getSenderName/{campaignName}")
     public Result EmailList(@PathVariable String campaignName)
     {
@@ -152,8 +152,8 @@ public class CampaignController
     @GetMapping("/getCampaignByName/{name}")
     public Result getCampaignByName(@PathVariable("name") String campaignName) {
         System.out.println("campaignName : " + campaignName);
-        Campaign campaignByname = campaignService.getCampaignByname(campaignName);
-        if (StringUtils.hasText(campaignName)) {
+        Campaign campaign = campaignService.getCampaignByName(campaignName,AuthContext.getUserId());
+        if (campaign != null) {
             return Result.fail(ResultCodeEnum.CAMPAIGN_NAME_EXISTS_FAIL);
         }
         else {
