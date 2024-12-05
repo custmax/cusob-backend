@@ -77,16 +77,15 @@ public class CampaignController {
         Long userId=sender.getUserId();
         String key=userId+"_"+email;
         String value=stringRedisTemplate.opsForValue().get(key);//当前额度
-
+        //若value为空则设置为200
+        if(value==null){
+            value="200";
+        }
+        Long groupId=campaignDto.getToGroup();
+        int count=campaignService.getSendList(groupId).size();
         //若value为空或value对应的数字大于0则发送邮件，然后value对应的值减去groupid内的人数，然后重新保存至redis
-        if(value==null||Integer.parseInt(value)>0) {
-            campaignService.sendEmail(campaignDto);
-            Long groupId=campaignDto.getToGroup();
-            int count=campaignService.getSendList(groupId).size();
-            //若value为空则设置为200
-            if(value==null){
-                value="200";
-            }
+        if(Integer.parseInt(value)>=count) {
+
             int newValue=Integer.parseInt(value)-count;
             //将新的value保存至redis，设置过期时间为第二天的零点
             Calendar calendar = Calendar.getInstance();
@@ -105,6 +104,7 @@ public class CampaignController {
                     expireSeconds,
                     TimeUnit.SECONDS
             );
+            campaignService.sendEmail(campaignDto);
             return Result.ok();
         }
         else{
