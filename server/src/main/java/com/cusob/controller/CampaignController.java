@@ -154,7 +154,7 @@ public class CampaignController
         System.out.println("campaignName : " + campaignName);
         Campaign campaign = campaignService.getCampaignByName(campaignName,AuthContext.getUserId());
         if (campaign != null) {
-            return Result.fail(ResultCodeEnum.CAMPAIGN_NAME_EXISTS_FAIL);
+            return Result.fail(ResultCodeEnum.CAMPAIGN_NAME_EXISTS_FAIL.getMessage());
         }
         else {
             return Result.ok();
