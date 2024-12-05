@@ -13,19 +13,17 @@ import com.cusob.service.SenderService;
 import com.cusob.vo.CampaignListVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/campaign")
-public class CampaignController {
+public class CampaignController
+{
 
     @Autowired
     private CampaignService campaignService;
@@ -36,7 +34,8 @@ public class CampaignController {
 
     @ApiOperation("save Campaign Draft")
     @PostMapping("saveDraft")
-    public Result saveDraft(@RequestBody CampaignDto campaignDto){
+    public Result saveDraft(@RequestBody CampaignDto campaignDto)
+    {
         System.out.println("Received designContent: " + campaignDto.getDesignContent());
 
         campaignService.saveCampaign(campaignDto, Campaign.DRAFT);
@@ -45,14 +44,16 @@ public class CampaignController {
 
     @ApiOperation("get Campaign By Id")
     @GetMapping("get/{id}")
-    public Result getCampaignById(@PathVariable Long id){
+    public Result getCampaignById(@PathVariable Long id)
+    {
         Campaign campaign = campaignService.getCampaignById(id);
         return Result.ok(campaign);
     }
 
     @ApiOperation("update Campaign")
     @PostMapping("update")
-    public Result updateCampaign(@RequestBody CampaignDto campaignDto){
+    public Result updateCampaign(@RequestBody CampaignDto campaignDto)
+    {
         campaignService.updateCampaign(campaignDto);
         return Result.ok();
     }
@@ -61,7 +62,8 @@ public class CampaignController {
     @GetMapping("getPage/{limit}/{page}")
     public Result getCampaignPage(@PathVariable Long limit,
                                   @PathVariable Long page,
-                                  CampaignQueryDto campaignQueryDto){
+                                  CampaignQueryDto campaignQueryDto)
+    {
         Page<Campaign> pageParam = new Page<>(page, limit);
         IPage<CampaignListVo> pageVo = campaignService.getCampaignPage(pageParam, campaignQueryDto);
         return Result.ok(pageVo);
@@ -69,9 +71,11 @@ public class CampaignController {
 
     @ApiOperation("send Email")
     @PostMapping("sendEmail")
-    public Result sendEmail(@RequestBody CampaignDto campaignDto){
+    public Result sendEmail(@RequestBody CampaignDto campaignDto)
+    {
+        System.out.println(campaignDto);
         //获取userId和email，然后拼接成key，从redis中获取
-        Long senderId=campaignDto.getSenderId();
+        Long senderId = campaignDto.getSenderId();
         Sender sender = senderService.getById(senderId);
         String email=sender.getEmail();
         Long userId=sender.getUserId();
@@ -107,28 +111,33 @@ public class CampaignController {
             campaignService.sendEmail(campaignDto);
             return Result.ok();
         }
-        else{
-            int restValue=Integer.parseInt(value);
-            return Result.fail("You have reached the daily limit of 200 emails. You can send" + restValue + " more emails today.");
+        else
+        {
+            int restValue = Integer.parseInt(value);
+            System.out.println("在fail里返回的restValue: " + restValue);
+            return Result.fail(restValue);
         }
     }
 
     @ApiOperation("Email list")
     @GetMapping("emailList/{groupId}")
-    public Result EmailList(@PathVariable long groupId){
+    public Result EmailList(@PathVariable long groupId)
+    {
         List<Contact> sendList = campaignService.getSendList(groupId);
         return Result.ok(sendList);
     }
 
     @ApiOperation("Get SenderName")
     @GetMapping("getSenderName/{campaignName}")
-    public Result EmailList(@PathVariable String campaignName){
+    public Result EmailList(@PathVariable String campaignName)
+    {
         return Result.ok(campaignService.getCampaignByname(campaignName).getSenderName());
     }
 
     @ApiOperation("remove Campaign")
     @DeleteMapping("remove/{id}")
-    public Result removeCampaign(@PathVariable Long id){
+    public Result removeCampaign(@PathVariable Long id)
+    {
         campaignService.removeCampaign(id);
         return Result.ok();
     }
