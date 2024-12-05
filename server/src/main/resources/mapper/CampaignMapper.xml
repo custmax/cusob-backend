@@ -20,10 +20,10 @@
             order by campaign.update_time desc
         </if>
     </select>
-    <select id="getCampaignByname" resultType="com.cusob.entity.Campaign">
+    <select id="getCampaignByName" resultType="com.cusob.entity.Campaign">
         select campaign.id, campaign.campaign_name, campaign.status, campaign.update_time,campaign.sender_name
         from campaign
-        where campaign.campaign_name = #{campaignName}
+        where campaign.campaign_name = #{campaignName} and campaign.user_id = #{userId}
     </select>
 
 </mapper>

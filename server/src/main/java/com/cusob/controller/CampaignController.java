@@ -2,6 +2,7 @@ package com.cusob.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cusob.auth.AuthContext;
 import com.cusob.dto.CampaignDto;
 import com.cusob.dto.CampaignQueryDto;
 import com.cusob.entity.Campaign;
@@ -131,7 +132,8 @@ public class CampaignController
     @GetMapping("getSenderName/{campaignName}")
     public Result EmailList(@PathVariable String campaignName)
     {
-        return Result.ok(campaignService.getCampaignByname(campaignName).getSenderName());
+        Long userId= AuthContext.getUserId();
+        return Result.ok(campaignService.getCampaignByName(campaignName,userId).getSenderName());
     }
 
     @ApiOperation("remove Campaign")

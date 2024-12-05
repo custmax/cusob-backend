@@ -66,5 +66,5 @@ public interface CampaignService extends IService<Campaign> {
      */
     void updateStatus(Long campaignId, Integer status);
 
-    Campaign getCampaignByname(String campaignName);
+    Campaign getCampaignByName(String campaignName, Long userId);
 }
