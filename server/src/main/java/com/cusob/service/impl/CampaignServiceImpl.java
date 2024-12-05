@@ -191,8 +191,8 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
         }
         // Parameter validation
         this.paramVerify(campaignDto);//参数验证
-        Long campaignId;//活动id
-        if(campaignDto.getId()==0 && this.getCampaignByname(campaignDto.getCampaignName())!=null){//判断活动名称是否存在
+        Long campaignId;
+        if(campaignDto.getId()==0 && this.getCampaignByName(campaignDto.getCampaignName(),AuthContext.getUserId())!=null){//判断活动名称是否存在
             throw new CusobException(ResultCodeEnum.TITLE_IS_EXISTED);//标题已存在
         }
         Campaign campaign = this.getCampaignById(campaignDto.getId());//获取活动
@@ -395,8 +395,8 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
     }
 
     @Override
-    public Campaign getCampaignByname(String campaignName) {
-        return baseMapper.getCampaignByname(campaignName);
+    public Campaign getCampaignByName(String campaignName,Long userId) {
+        return baseMapper.getCampaignByName(campaignName, userId);
     }
 
 

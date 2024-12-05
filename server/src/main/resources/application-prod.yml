@@ -50,7 +50,7 @@ spring:
 cusob:
   url: https://www.cusob.com
   host: http://www.cusob.com:8080
-  imghost: http://www.cusob.com
+  imghost: http://www.cusob.com/api
   phone: 001 517 7606 888
   cf-secret-key: 0x4AAAAAAAbYSzALmlAgdCCHu8ISaZVj_UA
   website: www.cusob.com

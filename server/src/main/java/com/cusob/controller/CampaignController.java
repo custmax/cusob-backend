@@ -2,6 +2,7 @@ package com.cusob.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cusob.auth.AuthContext;
 import com.cusob.dto.CampaignDto;
 import com.cusob.dto.CampaignQueryDto;
 import com.cusob.entity.Campaign;
@@ -81,24 +82,20 @@ public class CampaignController
         //获取userId和email，然后拼接成key，从redis中获取
         Long senderId = campaignDto.getSenderId();
         Sender sender = senderService.getById(senderId);
-        String email = sender.getEmail();
-        Long userId = sender.getUserId();
-        String key = userId + "_" + email;
-        String value = stringRedisTemplate.opsForValue().get(key);//当前额度
-
-        Long groupId = campaignDto.getToGroup();
-        int count = campaignService.getSendList(groupId).size();
+        String email=sender.getEmail();
+        Long userId=sender.getUserId();
+        String key=userId+"_"+email;
+        String value=stringRedisTemplate.opsForValue().get(key);//当前额度
         //若value为空则设置为200
-        if (value == null)
-        {
-            value = "200";
+        if(value==null){
+            value="200";
         }
-        System.out.println("count = " + count);
-        System.out.println("value = " + value);
+        Long groupId=campaignDto.getToGroup();
+        int count=campaignService.getSendList(groupId).size();
         //若value为空或value对应的数字大于0则发送邮件，然后value对应的值减去groupid内的人数，然后重新保存至redis
-        if (Integer.parseInt(value) >= count)
-        {
-            int newValue = Integer.parseInt(value) - count;
+        if(Integer.parseInt(value)>=count) {
+
+            int newValue=Integer.parseInt(value)-count;
             //将新的value保存至redis，设置过期时间为第二天的零点
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, 1);
@@ -139,7 +136,8 @@ public class CampaignController
     @GetMapping("getSenderName/{campaignName}")
     public Result EmailList(@PathVariable String campaignName)
     {
-        return Result.ok(campaignService.getCampaignByname(campaignName).getSenderName());
+        Long userId= AuthContext.getUserId();
+        return Result.ok(campaignService.getCampaignByName(campaignName,userId).getSenderName());
     }
 
     @ApiOperation("remove Campaign")

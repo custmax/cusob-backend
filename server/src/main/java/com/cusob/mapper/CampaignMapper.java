@@ -23,6 +23,6 @@ public interface CampaignMapper extends BaseMapper<Campaign> {
                                           @Param("order") Integer order
     );
 
-    Campaign getCampaignByname(String campaignName);
+    Campaign getCampaignByName(String campaignName, Long userId);
 
 }
