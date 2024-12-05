@@ -8,12 +8,14 @@ import com.cusob.entity.Campaign;
 import com.cusob.entity.Contact;
 import com.cusob.entity.Sender;
 import com.cusob.result.Result;
+import com.cusob.result.ResultCodeEnum;
 import com.cusob.service.CampaignService;
 import com.cusob.service.SenderService;
 import com.cusob.vo.CampaignListVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Calendar;
@@ -73,7 +75,9 @@ public class CampaignController
     @PostMapping("sendEmail")
     public Result sendEmail(@RequestBody CampaignDto campaignDto)
     {
-        System.out.println(campaignDto);
+        System.out.println("\n\n\n");
+        System.out.println("campaignDto" + campaignDto);
+        System.out.println("\n\n\n");
         //获取userId和email，然后拼接成key，从redis中获取
         Long senderId = campaignDto.getSenderId();
         Sender sender = senderService.getById(senderId);
@@ -146,4 +150,16 @@ public class CampaignController
         return Result.ok();
     }
 
+    @ApiOperation("getCampaign By CampaignName")
+    @GetMapping("/getCampaignByName/{name}")
+    public Result getCampaignByName(@PathVariable("name") String campaignName) {
+        System.out.println("campaignName : " + campaignName);
+        Campaign campaignByname = campaignService.getCampaignByname(campaignName);
+        if (StringUtils.hasText(campaignName)) {
+            return Result.fail(ResultCodeEnum.CAMPAIGN_NAME_EXISTS_FAIL);
+        }
+        else {
+            return Result.ok();
+        }
+    }
 }

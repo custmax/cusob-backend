@@ -147,14 +147,14 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
         Integer status = campaignQueryDto.getStatus();
         Integer order = campaignQueryDto.getOrder();
         Long userId = AuthContext.getUserId();
-        Integer order1 = order == null ? 0 : order;
+        //Integer order1 = order == null ? 0 : order;
         //Page<Campaign> pageParam1=new Page<>(pageParam.getCurrent(),pageParam.getSize());
         QueryWrapper<Campaign> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("is_deleted", 0)
                 .eq("user_id", userId)
                 .like(!StringUtils.isEmpty(name), "campaign_name", name)  // 只在有关键字时加上 LIKE 条件
                 .eq(status != null, "status", status)
-                .orderByDesc("create_time");
+                .orderByDesc(order == 1 ? "create_time" : "update_time");
         // 执行分页查询，返回 Page<Campaign> 类型
         IPage<Campaign> campaignPage = this.page(pageParam, queryWrapper);
 

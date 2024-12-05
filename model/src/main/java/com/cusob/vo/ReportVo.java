@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -18,7 +19,7 @@ public class ReportVo implements Serializable {
     private String groupName;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date sendTime;
+    private LocalDateTime sendTime;
 
     private Integer deliverCount;
 

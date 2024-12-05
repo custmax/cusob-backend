@@ -66,6 +66,7 @@ public enum ResultCodeEnum {
     VERIFY_CODE_WRONG(251, "Cloudflare verification failed, please try again"),
     GENERATE_CAPTCHA_FAIL(252, "Failed to generate a verification code"),
 
+
     FILE_IS_Abnormal(255, "The file is abnormal"),
     FILE_IS_EMPTY(256, "The file is empty"),
 
@@ -97,6 +98,8 @@ public enum ResultCodeEnum {
 
     DOMAIN_IS_EXISTED(299,"The domain has already existed in your Domain list"),
 
+
+    CAMPAIGN_NAME_EXISTS_FAIL(301, "The campaign name already exists."),
     ;
 
     private Integer code;
