@@ -76,9 +76,6 @@ public class CampaignController
     @PostMapping("sendEmail")
     public Result sendEmail(@RequestBody CampaignDto campaignDto)
     {
-        System.out.println("\n\n\n");
-        System.out.println("campaignDto" + campaignDto);
-        System.out.println("\n\n\n");
         //获取userId和email，然后拼接成key，从redis中获取
         Long senderId = campaignDto.getSenderId();
         Sender sender = senderService.getById(senderId);

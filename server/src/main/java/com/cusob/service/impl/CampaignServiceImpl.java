@@ -154,7 +154,7 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                 .eq("user_id", userId)
                 .like(!StringUtils.isEmpty(name), "campaign_name", name)  // 只在有关键字时加上 LIKE 条件
                 .eq(status != null, "status", status)
-                .orderByDesc(order == 1 ? "create_time" : "update_time");
+                .orderByDesc(order == 0 ? "create_time" : "update_time");
         // 执行分页查询，返回 Page<Campaign> 类型
         IPage<Campaign> campaignPage = this.page(pageParam, queryWrapper);
 
