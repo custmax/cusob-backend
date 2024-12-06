@@ -3,11 +3,13 @@ package com.cusob.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cusob.auth.AuthContext;
 import com.cusob.dto.ContactDto;
 import com.cusob.dto.ContactQueryDto;
 import com.cusob.entity.CampaignReturn;
 import com.cusob.entity.Contact;
 import com.cusob.entity.Minio;
+import com.cusob.entity.User;
 import com.cusob.result.Result;
 import com.cusob.service.ContactService;
 import com.cusob.service.MinioService;
@@ -86,7 +88,8 @@ public class ContactController {
     public Result getContactList(@PathVariable Long page,
                                  @PathVariable Long limit,
                                  ContactQueryDto contactQueryDto){
-        String rekey = "contact_list_" + page + "_" + limit + "_" + contactQueryDto.hashCode();
+        Long userId= AuthContext.getUserId();
+        String rekey = "contact_list_" + page + "_" + limit + "_" +userId+ contactQueryDto.hashCode();
         String countKey=rekey+"_totalCount";
 //        IPage<ContactVo> contactVoPage = (IPage<ContactVo>) redisTemplate.opsForValue().get(key);
         BoundZSetOperations<String, Object> boundZSetOps = redisTemplate.boundZSetOps(rekey);

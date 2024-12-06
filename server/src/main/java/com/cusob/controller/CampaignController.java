@@ -116,7 +116,6 @@ public class CampaignController
         else
         {
             int restValue = Integer.parseInt(value);
-            System.out.println("在fail里返回的restValue: " + restValue);
             return Result.fail(restValue);
         }
     }
