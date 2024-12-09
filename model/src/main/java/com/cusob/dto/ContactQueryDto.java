@@ -12,6 +12,7 @@ public class ContactQueryDto implements Serializable {
     private String keyword;
 
     private Long groupId;
+
     private String subscriptionType;
 
 }
