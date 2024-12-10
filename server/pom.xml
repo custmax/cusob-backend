@@ -25,6 +25,24 @@
         </dependency>
 
 
+        <!-- 添加resend-java依赖来源是resend.com -->
+        <dependency>
+            <!-- 依赖的groupId -->
+            <groupId>com.resend</groupId>
+            <!-- 依赖的artifactId -->
+            <artifactId>resend-java</artifactId>
+            <!-- 依赖的版本号 -->
+            <version>4.0.0</version>
+        </dependency>
+
+
+        <!-- 添加awssdk依赖来源是amazonaws.com -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>aws-sdk-java</artifactId>
+            <version>2.17.100</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -6,6 +6,10 @@ import com.cusob.result.ResultCodeEnum;
 import com.cusob.service.ContactService;
 import com.cusob.service.MailService;
 import com.cusob.service.ReportService;
+import com.resend.Resend;
+import com.resend.core.exception.ResendException;
+import com.resend.services.emails.model.CreateEmailOptions;
+import com.resend.services.emails.model.CreateEmailResponse;
 import com.sun.mail.smtp.SMTPSendFailedException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +27,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Service
@@ -57,40 +59,42 @@ public class MailServiceImpl implements MailService {
 
     /**
      * 检测邮件信息类
+     *
      * @param to
      * @param subject
      * @param text
      */
-    private void checkMail(String to,String subject,String text){
-        if(StringUtils.isEmpty(to)){//如果收件人为空
+    private void checkMail(String to, String subject, String text) {
+        if (StringUtils.isEmpty(to)) {//如果收件人为空
             throw new CusobException(ResultCodeEnum.EMAIL_RECIPIENT_EMPTY);//收件人为空
         }
         boolean flag = Pattern.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", to);
-        if (!flag){
+        if (!flag) {
             throw new CusobException(ResultCodeEnum.EMAIL_FORMAT_ERROR);//邮箱格式错误
         }
-        if(StringUtils.isEmpty(subject)){
+        if (StringUtils.isEmpty(subject)) {
             throw new CusobException(ResultCodeEnum.EMAIL_SUBJECT_EMPTY);//邮件主题为空
         }
-        if(StringUtils.isEmpty(text)){
+        if (StringUtils.isEmpty(text)) {
             throw new CusobException(ResultCodeEnum.EMAIL_CONTENT_EMPTY);//邮件内容为空
         }
     }
 
     /**
      * 发送纯文本邮件
+     *
      * @param to
      * @param subject
      * @param text
      */
     @Override
-    public void sendTextMailMessage(String to,String subject,String text){
+    public void sendTextMailMessage(String to, String subject, String text) {
         this.checkMail(to, subject, text);
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
             //true 代表支持复杂的类型
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,true);
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
             //邮件发信人
             mimeMessageHelper.setFrom(mailSender);
             //邮件收信人  1或多个
@@ -110,6 +114,7 @@ public class MailServiceImpl implements MailService {
 
     /**
      * 发送Html邮件
+     *
      * @param to
      * @param subject
      * @param content
@@ -189,6 +194,7 @@ public class MailServiceImpl implements MailService {
 
     /**
      * send Email SetTime
+     *
      * @param sender
      * @param senderName
      * @param to
@@ -197,7 +203,7 @@ public class MailServiceImpl implements MailService {
      */
     @Override
     public void sendEmail(Sender sender, String senderName, String to, String content,
-                          String subject,String unsubscribeUrl,Long groupId,Long campaignId) {
+                          String subject, String unsubscribeUrl, Long groupId, Long campaignId) {
         String email = sender.getEmail();
         String password = sender.getPassword();
         String smtpServer = sender.getSmtpServer();
@@ -262,7 +268,7 @@ public class MailServiceImpl implements MailService {
 //            message.setHeader("Return-Receipt-To", email);
 //            message.setHeader("Disposition-Notification-To", email);
 //            message.setHeader("X-Confirm-Reading-To", email);
-            message.setHeader("List-Unsubscribe-Post","List-Unsubscribe=One-Click"); //添加一键退订的Header
+            message.setHeader("List-Unsubscribe-Post", "List-Unsubscribe=One-Click"); //添加一键退订的Header
             //message.setHeader("List-Unsubscribe", "<mailto:" + sender.getEmail()+ "?subject=unsubscribe>, \n<" + unsubscribeUrl  + ">");
             message.setHeader("MIME-Version", "1.0");
             message.setHeader("List-Unsubscribe", "<mailto:list@host.com?subject=unsubscribe>");
@@ -277,9 +283,9 @@ public class MailServiceImpl implements MailService {
                 // 处理 SMTPSendFailedException 类型的异常
                 SMTPSendFailedException smtpSendFailedException = (SMTPSendFailedException) e;
                 int smtpErrorCode = ((SMTPSendFailedException) e).getReturnCode();
-                if(smtpErrorCode == 550){  //如果为硬弹回
+                if (smtpErrorCode == 550) {  //如果为硬弹回
                     reportService.updateHardBounceCount(campaignId);
-                    contactService.updateByEmail(to,groupId,sender.getUserId(),0); //将该邮件valid设置为0
+                    contactService.updateByEmail(to, groupId, sender.getUserId(), 0); //将该邮件valid设置为0
                 }
                 System.out.println("SMTPSendFailedException: " + smtpSendFailedException.getMessage());
             }
@@ -293,6 +299,7 @@ public class MailServiceImpl implements MailService {
 
     /**
      * send email by simple-java-mail
+     *
      * @param sender
      * @param senderName
      * @param to
@@ -305,4 +312,48 @@ public class MailServiceImpl implements MailService {
     }
 
 
+    /**
+     * send email by Resend
+     *
+     * @param sender
+     * @param senderName
+     * @param to
+     * @param content
+     * @param subject
+     */
+    @Override
+    public void sendResendEmail(Sender sender, String senderName, String to, String content,
+                                String subject, String unsubscribeUrl, Long groupId, Long campaignId) {
+
+        // 创建一个Resend对象，并赋予API Key；
+        Resend resend = new Resend("re_WYTx1mLY_M1fkEkzUGo1AXSVTTb2egQmC");
+
+        // 创建一个邮件头
+        Map<String, String> headers = new HashMap<>();
+        headers.put("List-Unsubscribe-Post", "List-Unsubscribe=One-Click"); //添加一键退订的Header
+        headers.put("MIME-Version", "1.0");
+        headers.put("List-Unsubscribe", "<mailto:list@host.com?subject=unsubscribe>");
+
+        // 创建一个发送邮件的请求
+        CreateEmailOptions sendEmailRequest = CreateEmailOptions.builder()
+                // 设置发件人
+                .from(sender.getEmail())
+                // 设置收件人
+                .to(to)
+                // 设置邮件头部
+                .headers(headers)
+                // 设置邮件主题
+                .subject(subject)
+                // 设置邮件内容
+                .html("<p>it works!</p>")
+                // 构建请求
+                .build();
+
+        try {
+            CreateEmailResponse data = resend.emails().send(sendEmailRequest);
+        } catch (ResendException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }

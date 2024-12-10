@@ -42,4 +42,14 @@ public interface MailService {
      */
     void sendSimpleEmail(Sender sender, String senderName, String to, String content, String subject);
 
+    /**
+     * send email by Resend
+     * @param sender
+     * @param senderName
+     * @param to
+     * @param content
+     * @param subject
+     */
+    void sendResendEmail(Sender sender, String senderName, String to, String content,
+                         String subject,String unsubscribeUrl,Long groupId,Long campaignId);
 }
