@@ -147,12 +147,12 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
     }
 
     private void paramVerify(ContactDto contactDto) {
-        if (!StringUtils.hasText(contactDto.getFirstName())) {
-            throw new CusobException(ResultCodeEnum.FIRST_NAME_IS_EMPTY);
-        }
-        if (!StringUtils.hasText(contactDto.getLastName())) {
-            throw new CusobException(ResultCodeEnum.LAST_NAME_IS_EMPTY);
-        }
+//        if (!StringUtils.hasText(contactDto.getFirstName())) {
+//            throw new CusobException(ResultCodeEnum.FIRST_NAME_IS_EMPTY);
+//        }
+//        if (!StringUtils.hasText(contactDto.getLastName())) {
+//            throw new CusobException(ResultCodeEnum.LAST_NAME_IS_EMPTY);
+//        }
         if (!StringUtils.hasText(contactDto.getEmail())) {
             throw new CusobException(ResultCodeEnum.EMAIL_IS_EMPTY);
         }

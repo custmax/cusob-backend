@@ -100,6 +100,11 @@ public enum ResultCodeEnum {
 
 
     CAMPAIGN_NAME_EXISTS_FAIL(301, "The campaign name already exists."),
+
+
+
+    ADD_CONTACT_SUCCESS(302, "add contact success"),
+    UPDATE_CONTACT_SUCCESS(303, "update contact success"),
     ;
 
     private Integer code;

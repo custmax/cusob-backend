@@ -313,9 +313,11 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                     // 检查并拼接公司信息
                     String comp = accountInfo.getCompany();
                     if (comp != null && !comp.isEmpty()) {
-                        downContent.append("    <div class=\"footer\">\n")
-                                .append("        <p>").append(comp).append("</p>\n")
-                                .append("    </div>");
+//                        downContent.append("    <div class=\"footer\">\n")
+//                                .append("        <p>").append(comp).append("</p>\n")
+//                                .append("    </div>");
+                        downContent.append("    <div class=\"footer\" style=\"font-size:10px; line-height:1;\">\n")
+                                .append("        <p>").append(comp).append("\n").append("</p>\n");
                     }
 
                     // 检查并拼接地址信息
@@ -324,9 +326,10 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                     String addr = ((addressLine1 != null) ? addressLine1 : "") +
                             ((addressLine2 != null) ? " " + addressLine2 : "");
                     if (!addr.trim().isEmpty()) {
-                        downContent.append("    <div class=\"footer\">\n")
-                                .append("        <p>").append(addr).append("</p>\n")
-                                .append("    </div>");
+//                        downContent.append("    <div class=\"footer\">\n")
+//                                .append("        <p>").append(addr).append("</p>\n")
+//                                .append("    </div>");
+                        downContent.append("        <p>").append(addr);
                     }
 
                     // 检查并拼接城市和国家信息
@@ -335,24 +338,28 @@ public class CampaignServiceImpl extends ServiceImpl<CampaignMapper, Campaign> i
                     String cityAndCou = ((city != null) ? city : "") +
                             ((country != null) ? " " + country : "");
                     if (!cityAndCou.trim().isEmpty()) {
-                        downContent.append("    <div class=\"footer\">\n")
-                                .append("        <p>").append(cityAndCou).append("</p>\n")
-                                .append("    </div>");
+//                        downContent.append("    <div class=\"footer\">\n")
+//                                .append("        <p>").append(cityAndCou).append("</p>\n")
+//                                .append("    </div>");
+                        downContent.append(", ").append(cityAndCou);
                     }
 
                     // 检查并拼接邮政编码
                     String zip = accountInfo.getZipCode();
                     if (zip != null && !zip.isEmpty()) {
-                        downContent.append("    <div class=\"footer\">\n")
-                                .append("        <p>").append(zip).append("</p>\n")
-                                .append("    </div>");
+//                        downContent.append("    <div class=\"footer\">\n")
+//                                .append("        <p>").append(zip).append("</p>\n")
+//                                .append("    </div>");
+                        downContent.append(", ").append(zip);
                     }
 
                     // 检查并拼接电话号码
                     String phon = accountInfo.getPhone();
                     if (phon != null && !phon.isEmpty()) {
-                        downContent.append("    <div class=\"footer\">\n")
-                                .append("        <p>").append(phon).append("</p>\n")
+//                        downContent.append("    <div class=\"footer\">\n")
+//                                .append("        <p>").append(phon).append("</p>\n")
+//                                .append("    </div>");
+                        downContent.append(", ").append(phon).append("</p>\n")
                                 .append("    </div>");
                     }
                 } catch (NullPointerException e) {
