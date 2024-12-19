@@ -25,8 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/campaign")
-public class CampaignController
-{
+public class CampaignController {
 
     @Autowired
     private CampaignService campaignService;
@@ -37,8 +36,7 @@ public class CampaignController
 
     @ApiOperation("save Campaign Draft")
     @PostMapping("saveDraft")
-    public Result saveDraft(@RequestBody CampaignDto campaignDto)
-    {
+    public Result saveDraft(@RequestBody CampaignDto campaignDto) {
         System.out.println("Received designContent: " + campaignDto.getDesignContent());
 
         campaignService.saveCampaign(campaignDto, Campaign.DRAFT);
@@ -47,16 +45,14 @@ public class CampaignController
 
     @ApiOperation("get Campaign By Id")
     @GetMapping("get/{id}")
-    public Result getCampaignById(@PathVariable Long id)
-    {
+    public Result getCampaignById(@PathVariable Long id) {
         Campaign campaign = campaignService.getCampaignById(id);
         return Result.ok(campaign);
     }
 
     @ApiOperation("update Campaign")
     @PostMapping("update")
-    public Result updateCampaign(@RequestBody CampaignDto campaignDto)
-    {
+    public Result updateCampaign(@RequestBody CampaignDto campaignDto) {
         campaignService.updateCampaign(campaignDto);
         return Result.ok();
     }
@@ -65,8 +61,7 @@ public class CampaignController
     @GetMapping("getPage/{limit}/{page}")
     public Result getCampaignPage(@PathVariable Long limit,
                                   @PathVariable Long page,
-                                  CampaignQueryDto campaignQueryDto)
-    {
+                                  CampaignQueryDto campaignQueryDto) {
         Page<Campaign> pageParam = new Page<>(page, limit);
         IPage<CampaignListVo> pageVo = campaignService.getCampaignPage(pageParam, campaignQueryDto);
         return Result.ok(pageVo);
@@ -74,25 +69,27 @@ public class CampaignController
 
     @ApiOperation("send Email")
     @PostMapping("sendEmail")
-    public Result sendEmail(@RequestBody CampaignDto campaignDto)
-    {
+    public Result sendEmail(@RequestBody CampaignDto campaignDto) {
         //获取userId和email，然后拼接成key，从redis中获取
         Long senderId = campaignDto.getSenderId();
         Sender sender = senderService.getById(senderId);
-        String email=sender.getEmail();
-        Long userId=sender.getUserId();
-        String key=userId+"_"+email;
-        String value=stringRedisTemplate.opsForValue().get(key);//当前额度
+        String email = sender.getEmail();
+        Long userId = sender.getUserId();
+        String key = userId + "_" + email;
+        int num = 0;
+        String value = stringRedisTemplate.opsForValue().get(key);//当前额度
         //若value为空则设置为200
-        if(value==null){
-            value="200";
+        if (!StringUtils.hasText(value)) {
+            value = "200";
+            stringRedisTemplate.opsForValue().set(key, value);
         }
-        Long groupId=campaignDto.getToGroup();
-        int count=campaignService.getSendList(groupId).size();
+        num = Integer.parseInt(value);
+        Long groupId = campaignDto.getToGroup();
+        int count = campaignService.getSendList(groupId).size();
         //若value为空或value对应的数字大于0则发送邮件，然后value对应的值减去groupid内的人数，然后重新保存至redis
-        if(Integer.parseInt(value)>=count) {
+        if (num >= count) {
 
-            int newValue=Integer.parseInt(value)-count;
+            int newValue = num - count;
             //将新的value保存至redis，设置过期时间为第二天的零点
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, 1);
@@ -113,33 +110,29 @@ public class CampaignController
             campaignService.sendEmail(campaignDto);
             return Result.ok();
         }
-        else
-        {
-            int restValue = Integer.parseInt(value);
+        else {
+            int restValue = num;
             return Result.fail(restValue);
         }
     }
 
     @ApiOperation("Email list")
     @GetMapping("emailList/{groupId}")
-    public Result EmailList(@PathVariable long groupId)
-    {
+    public Result EmailList(@PathVariable long groupId) {
         List<Contact> sendList = campaignService.getSendList(groupId);
         return Result.ok(sendList);
     }
 
     @ApiOperation("Get SenderName By CampaignName")
     @GetMapping("getSenderName/{campaignName}")
-    public Result EmailList(@PathVariable String campaignName)
-    {
-        Long userId= AuthContext.getUserId();
-        return Result.ok(campaignService.getCampaignByName(campaignName,userId).getSenderName());
+    public Result EmailList(@PathVariable String campaignName) {
+        Long userId = AuthContext.getUserId();
+        return Result.ok(campaignService.getCampaignByName(campaignName, userId).getSenderName());
     }
 
     @ApiOperation("remove Campaign")
     @DeleteMapping("remove/{id}")
-    public Result removeCampaign(@PathVariable Long id)
-    {
+    public Result removeCampaign(@PathVariable Long id) {
         campaignService.removeCampaign(id);
         return Result.ok();
     }
@@ -148,7 +141,7 @@ public class CampaignController
     @GetMapping("/getCampaignByName/{name}")
     public Result getCampaignByName(@PathVariable("name") String campaignName) {
         System.out.println("campaignName : " + campaignName);
-        Campaign campaign = campaignService.getCampaignByName(campaignName,AuthContext.getUserId());
+        Campaign campaign = campaignService.getCampaignByName(campaignName, AuthContext.getUserId());
         if (campaign != null) {
             return Result.fail(ResultCodeEnum.CAMPAIGN_NAME_EXISTS_FAIL.getMessage());
         }

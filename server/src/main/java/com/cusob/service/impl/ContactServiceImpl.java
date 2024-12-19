@@ -249,7 +249,6 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
         long current = pageParam.getCurrent();
         long pageSize = pageParam.getSize();
         Long groupId = contactQueryDto.getGroupId();
-        System.out.println("groupId ---------------" + groupId);
         String groupName = groupId == null ? "" : groupService.getGroupById(groupId).getGroupName();
         // 拼接redis Key
         String rekey =

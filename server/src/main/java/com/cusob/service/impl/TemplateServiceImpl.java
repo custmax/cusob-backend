@@ -159,10 +159,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
         }
         // 控制访问权限，只有当user_id is null 或者为其本身user_id时，才允许访问
         Long userId = AuthContext.getUserId();
-        System.out.println("此处userId:" + userId);
-        System.out.println("此处的searchVal " + keyword);
         List<Template> templateListByUserId = this.getFolderListByUserId(userId);
-        System.out.println("从前端传过来的folder：" + folder);
         templateListByUserId = filterTemplateByFolderAndKeyword(folder, keyword, templateListByUserId);
         for (Template item : templateListByUserId)
         {
