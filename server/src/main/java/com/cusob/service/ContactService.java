@@ -110,4 +110,6 @@ public interface ContactService extends IService<Contact> {
     void saveUnsubsribedEmail(String email);
 
     Map<String, Object> parseFields(MultipartFile file);
+
+    void saveSubsribedEmail(String email);
 }

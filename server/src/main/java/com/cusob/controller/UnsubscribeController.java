@@ -22,10 +22,13 @@ public class UnsubscribeController {
     @ApiOperation("Unsubscribe")
     @GetMapping("campaign")
     public Result Unsubscribe(String email){
-//        byte[] decode = Base64.getDecoder().decode(URLDecoder.decode(email));
-//        String emailUnsubscribe = new String(decode);
-//        unsubscribeService.saveEmail(email);
         contactService.saveUnsubsribedEmail(email);
+        return Result.ok();
+    }
+    @ApiOperation("Subscribe again")
+    @GetMapping("subscribe")
+    public Result subscribe(String email){
+        contactService.saveSubsribedEmail(email);
         return Result.ok();
     }
 }

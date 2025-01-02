@@ -396,6 +396,17 @@ public class ContactServiceImpl extends ServiceImpl<ContactMapper, Contact> impl
         }
     }
 
+    @Override
+    public void saveSubsribedEmail(String email) {
+        List<Contact> contacts = baseMapper.selectList(new LambdaQueryWrapper<Contact>()
+                .eq(Contact::getEmail, email)
+        );
+        for (Contact contact : contacts) {
+            contact.setSubscriptionType("Subscribed");
+            baseMapper.updateById(contact);
+        }
+    }
+
     /**
      * get Contact Count By Group id
      *
